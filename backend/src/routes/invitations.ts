@@ -123,6 +123,7 @@ router.post("/", requireAdmin, async (req: Request, res: Response, next: NextFun
 
 router.put("/:slug", requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
   try {
+    console.debug("Received payload", req.headers["content-type"], req.body);
     const parsed = invitationSchema.parse({ ...req.body, slug: req.params.slug });
     const invitation = await upsertInvitation(parsed as InvitationPayload);
     res.json(invitation);

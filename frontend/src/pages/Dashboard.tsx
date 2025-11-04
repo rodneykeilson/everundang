@@ -141,21 +141,70 @@ const Dashboard: FC = () => {
     setFetchError("");
   };
 
-  const buildPayload = (): InvitationFormData => ({
-    ...form,
-    sections: [
-      {
-        type: "loveStory",
-        title: loveStoryTitle,
-        content: loveStoryItems,
+  const sanitize = (value?: string | null) => {
+    const trimmed = value?.trim();
+    return trimmed && trimmed.length > 0 ? trimmed : undefined;
+  };
+
+  const buildPayload = (): InvitationFormData => {
+    const parents = {
+      bride: sanitize(form.couple.parents?.bride),
+      groom: sanitize(form.couple.parents?.groom),
+    };
+    const hasParents = Boolean(parents.bride || parents.groom);
+
+    const event = {
+      title: form.event.title.trim(),
+      date: form.event.date,
+      venue: form.event.venue.trim(),
+    } as InvitationFormData["event"];
+
+    const eventTime = sanitize(form.event.time);
+    if (eventTime) event.time = eventTime;
+    const eventAddress = sanitize(form.event.address);
+    if (eventAddress) event.address = eventAddress;
+    const eventMap = sanitize(form.event.mapLink);
+    if (eventMap) event.mapLink = eventMap;
+
+    const theme: Theme = {
+      primaryColor: form.theme.primaryColor,
+      secondaryColor: form.theme.secondaryColor,
+    };
+
+    const backgroundPattern = sanitize(form.theme.backgroundPattern);
+    if (backgroundPattern) theme.backgroundPattern = backgroundPattern;
+    const musicUrl = sanitize(form.theme.musicUrl);
+    if (musicUrl) theme.musicUrl = musicUrl;
+
+    return {
+      slug: form.slug.trim().toLowerCase(),
+      headline: form.headline.trim(),
+      couple: {
+        brideName: form.couple.brideName.trim(),
+        groomName: form.couple.groomName.trim(),
+        ...(hasParents ? { parents } : {}),
       },
-      {
-        type: "gallery",
-        title: galleryTitle,
-        content: gallery,
-      },
-    ],
-  });
+      event,
+      sections: [
+        {
+          type: "loveStory",
+          title: sanitize(loveStoryTitle) ?? "Our Love Story",
+          content: loveStoryItems.map<LoveStoryItem>((item) => ({
+            title: sanitize(item.title),
+            description: sanitize(item.description),
+            date: sanitize(item.date),
+          })),
+        },
+        {
+          type: "gallery",
+          title: sanitize(galleryTitle) ?? "Photo Gallery",
+          content: gallery.map((url) => url.trim()).filter((url) => url.length > 0),
+        },
+      ],
+      theme,
+      isPublished: form.isPublished,
+    };
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

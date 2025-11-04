@@ -8,12 +8,14 @@ import type {
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const headers = new Headers(init?.headers ?? {});
+  if (!headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
   const response = await fetch(`${API_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers ?? {}),
-    },
     ...init,
+    headers,
   });
 
   if (!response.ok) {
@@ -53,6 +55,7 @@ export function saveInvitation(data: InvitationFormData, adminSecret: string) {
     method: "PUT",
     body: JSON.stringify(data),
     headers: {
+      "Content-Type": "application/json",
       "x-admin-secret": adminSecret,
     },
   });
@@ -63,6 +66,7 @@ export function createInvitation(data: InvitationFormData, adminSecret: string) 
     method: "POST",
     body: JSON.stringify(data),
     headers: {
+      "Content-Type": "application/json",
       "x-admin-secret": adminSecret,
     },
   });

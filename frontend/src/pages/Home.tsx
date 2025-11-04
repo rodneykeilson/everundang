@@ -7,11 +7,12 @@ import Features from "../components/Features";
 import HowItWorks from "../components/HowItWorks";
 import Footer from "../components/Footer";
 import { getInvitations } from "../api/client";
+import type { Invitation } from "../types";
 
 const Home: React.FC = () => {
-  const invitationQuery = useQuery({
+  const invitationQuery = useQuery<Invitation[]>({
     queryKey: ["invitations"],
-    queryFn: getInvitations,
+    queryFn: () => getInvitations(),
   });
 
   const published = invitationQuery.data?.filter((invitation) => invitation.isPublished) ?? [];

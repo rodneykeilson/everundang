@@ -24,6 +24,13 @@ export async function listInvitations(): Promise<InvitationRecord[]> {
   return result.rows.map(mapInvitationRow);
 }
 
+export async function listPublishedInvitations(): Promise<InvitationRecord[]> {
+  const result = await pool.query(
+    "SELECT * FROM invitations WHERE is_published = TRUE ORDER BY created_at DESC",
+  );
+  return result.rows.map(mapInvitationRow);
+}
+
 export async function getInvitationBySlug(slug: string): Promise<InvitationRecord | null> {
   const result = await pool.query("SELECT * FROM invitations WHERE slug = $1", [slug]);
   return result.rows[0] ? mapInvitationRow(result.rows[0]) : null;

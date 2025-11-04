@@ -51,12 +51,31 @@ const Dashboard: FC = () => {
   const [gallery, setGallery] = useState<string[]>([]);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
+  const [fetchError, setFetchError] = useState<string>("");
 
   const queryClient = useQueryClient();
-  const invitationQuery = useQuery({
-    queryKey: ["invitations"],
-    queryFn: getInvitations,
+  const invitationQuery = useQuery<Invitation[]>({
+    queryKey: ["invitations", adminSecret || null],
+    queryFn: () => getInvitations(adminSecret || undefined),
+    retry: (failureCount, error) => {
+      if (error instanceof Error && error.message === "Unauthorized") {
+        return false;
+      }
+      return failureCount < 3;
+    },
   });
+
+  useEffect(() => {
+    if (invitationQuery.error instanceof Error) {
+      const messageText =
+        invitationQuery.error.message === "Unauthorized"
+          ? "Invalid admin secret. Showing published invitations only."
+          : invitationQuery.error.message;
+      setFetchError(messageText);
+    } else {
+      setFetchError("");
+    }
+  }, [invitationQuery.error]);
 
   const mutation = useMutation({
     mutationFn: async (payload: InvitationFormData) => {
@@ -119,6 +138,7 @@ const Dashboard: FC = () => {
     setGalleryTitle("Photo Gallery");
     setGallery([]);
     setMessage("");
+    setFetchError("");
   };
 
   const buildPayload = (): InvitationFormData => ({
@@ -171,6 +191,9 @@ const Dashboard: FC = () => {
         </div>
         <div className="invitation-list">
           {invitationQuery.isLoading && <p>Loading invitations...</p>}
+          {fetchError && !invitationQuery.isLoading && (
+            <p className="form-message error">{fetchError}</p>
+          )}
           {invitationQuery.data?.map((invitation) => (
             <button
               type="button"

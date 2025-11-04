@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "firebase": "^12.3.0",
+    "@tanstack/react-query": "^5.62.8",
+    "dayjs": "^1.11.13",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.3"

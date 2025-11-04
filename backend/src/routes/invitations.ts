@@ -5,6 +5,7 @@ import {
   getInvitationBySlug,
   listGuestbookEntries,
   listInvitations,
+  listPublishedInvitations,
   upsertInvitation,
 } from "../repositories/invitations.js";
 import type { InvitationPayload } from "../types.js";
@@ -70,9 +71,19 @@ const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-router.get("/", async (_req: Request, res: Response, next: NextFunction) => {
+router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const invitations = await listInvitations();
+    const secret = req.headers["x-admin-secret"];
+
+    if (typeof secret === "string" && secret.length > 0) {
+      if (secret !== ADMIN_SECRET) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      const invitations = await listInvitations();
+      return res.json(invitations);
+    }
+
+    const invitations = await listPublishedInvitations();
     res.json(invitations);
   } catch (error) {
     next(error);
@@ -83,6 +94,11 @@ router.get("/:slug", async (req: Request, res: Response, next: NextFunction) => 
   try {
     const invitation = await getInvitationBySlug(req.params.slug);
     if (!invitation) {
+      return res.status(404).json({ message: "Invitation not found" });
+    }
+    const secret = req.headers["x-admin-secret"];
+    const isAdmin = typeof secret === "string" && secret === ADMIN_SECRET;
+    if (!invitation.isPublished && !isAdmin) {
       return res.status(404).json({ message: "Invitation not found" });
     }
     const guestbook = await listGuestbookEntries(invitation.id);
@@ -125,6 +141,9 @@ router.post(
     const invitation = await getInvitationBySlug(req.params.slug);
     if (!invitation) {
       return res.status(404).json({ message: "Invitation not found" });
+    }
+    if (!invitation.isPublished) {
+      return res.status(400).json({ message: "Guestbook is unavailable for this invitation" });
     }
     const parsed = guestbookSchema.parse(req.body);
     const entry = await addGuestbookEntry(invitation.id, parsed);

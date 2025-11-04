@@ -28,12 +28,24 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
-export function getInvitations() {
-  return request<Invitation[]>("/api/invitations");
+export function getInvitations(adminSecret?: string) {
+  return request<Invitation[]>("/api/invitations", {
+    headers: adminSecret
+      ? {
+          "x-admin-secret": adminSecret,
+        }
+      : undefined,
+  });
 }
 
-export function getInvitation(slug: string) {
-  return request<InvitationDetail>(`/api/invitations/${slug}`);
+export function getInvitation(slug: string, adminSecret?: string) {
+  return request<InvitationDetail>(`/api/invitations/${slug}`, {
+    headers: adminSecret
+      ? {
+          "x-admin-secret": adminSecret,
+        }
+      : undefined,
+  });
 }
 
 export function saveInvitation(data: InvitationFormData, adminSecret: string) {

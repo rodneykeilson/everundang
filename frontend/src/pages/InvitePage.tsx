@@ -60,6 +60,7 @@ const InvitePage: React.FC = () => {
   const queryClient = useQueryClient();
   const [guestName, setGuestName] = useState("");
   const [message, setMessage] = useState("");
+  const [submitError, setSubmitError] = useState<string>("");
 
   const query = useQuery({
     queryKey: ["invitation", slug],
@@ -72,7 +73,11 @@ const InvitePage: React.FC = () => {
     onSuccess: async () => {
       setGuestName("");
       setMessage("");
+      setSubmitError("");
       await queryClient.invalidateQueries({ queryKey: ["invitation", slug] });
+    },
+    onError: (error: unknown) => {
+      setSubmitError(error instanceof Error ? error.message : "Failed to send message");
     },
   });
 
@@ -90,6 +95,14 @@ const InvitePage: React.FC = () => {
 
   if (query.isLoading) {
     return <div className="page-loading">Loading invitation...</div>;
+  }
+
+  if (query.error instanceof Error) {
+    const notFoundMessage =
+      query.error.message === "Invitation not found"
+        ? "Invitation not found or not published."
+        : query.error.message;
+    return <div className="page-error">{notFoundMessage}</div>;
   }
 
   if (!invitation || !invitation.isPublished) {
@@ -154,6 +167,8 @@ const InvitePage: React.FC = () => {
             {mutation.isPending ? "Sending..." : "Send Message"}
           </button>
         </form>
+
+        {submitError && <p className="form-message error">{submitError}</p>}
 
         <div className="guestbook-list">
           {detail?.guestbook?.length ? (

@@ -9,7 +9,7 @@ const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: "/t/:slug",
+    path: "/i/:slug",
     element: <InvitePage />,
   },
   {

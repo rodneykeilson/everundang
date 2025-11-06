@@ -1,35 +1,47 @@
-import React from "react";
+const steps = [
+  {
+    number: "01",
+    title: "Design in minutes",
+    body:
+      "Pick a template, arrange sections, and preview every change instantly across devices.",
+  },
+  {
+    number: "02",
+    title: "Share securely",
+    body:
+      "Send the owner link to collaborators, publish your invite, and deliver guest links via chat apps.",
+  },
+  {
+    number: "03",
+    title: "Track RSVPs",
+    body:
+      "Monitor responses, export guest lists, and manage attendance from a single dashboard.",
+  },
+];
 
 const HowItWorks: React.FC = () => {
   return (
-    <section className="container how">
-      <h2>How it works</h2>
-      <p className="muted">Three simple steps to get your wedding invitation live.</p>
-
-      <div className="steps" style={{ marginTop: 12 }}>
-        <div className="step card">
-          <div className="step-icon">1</div>
-          <div>
-            <strong>Register & Create</strong>
-            <div className="muted">Create an account and start with a template.</div>
-          </div>
-        </div>
-
-        <div className="step card">
-          <div className="step-icon">2</div>
-          <div>
-            <strong>Personalize & Design</strong>
-            <div className="muted">Edit text, images, and colors to match your style.</div>
-          </div>
-        </div>
-
-        <div className="step card">
-          <div className="step-icon">3</div>
-          <div>
-            <strong>Share & Celebrate</strong>
-            <div className="muted">Share the link with guests and collect RSVPs.</div>
-          </div>
-        </div>
+    <section className="section" aria-labelledby="workflow-heading">
+      <div className="container">
+        <header className="section__header">
+          <p className="eyebrow">Workflow</p>
+          <h2 id="workflow-heading">From idea to live invite in three steps</h2>
+          <p className="section__lead">
+            Collaborate with your partner or team, publish in a click, and keep guests engaged through
+            a delightful experience.
+          </p>
+        </header>
+        <ol className="workflow-grid">
+          {steps.map((step) => (
+            <li key={step.number} className="workflow-card">
+              <span className="workflow-card__index" aria-hidden="true">
+                {step.number}
+              </span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );

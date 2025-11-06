@@ -1,7 +1,13 @@
 import { Pool } from "pg";
 import { DATABASE_URL } from "./config.js";
 
-export const pool = new Pool({ connectionString: DATABASE_URL });
+const shouldUseSsl =
+  process.env.PGSSLMODE === "require" || DATABASE_URL.includes("render.com");
+
+export const pool = new Pool({
+  connectionString: DATABASE_URL,
+  ssl: shouldUseSsl ? { rejectUnauthorized: false } : undefined,
+});
 
 export async function initDatabase() {
   await pool.query(`

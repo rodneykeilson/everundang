@@ -1,12 +1,24 @@
-import React from "react";
+import { useLocale } from "../hooks/useLocale";
 
 const Footer: React.FC = () => {
   const yr = new Date().getFullYear();
+  const { t } = useLocale();
+
   return (
-    <footer className="site-footer container">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-        <div>© {yr} everundang — Powered by everundang</div>
-        <div className="muted">Made for modern Indonesian weddings • Placeholder UI</div>
+    <footer className="app-footer" role="contentinfo">
+      <div className="container app-footer__inner">
+        <p>© {yr} EverUndang. {t("footerRights")}</p>
+        <nav aria-label="Legal" className="footer-links">
+          <a href="#" className="footer-link">
+            Terms
+          </a>
+          <a href="#" className="footer-link">
+            Privacy
+          </a>
+          <a href="#" className="footer-link">
+            Status
+          </a>
+        </nav>
       </div>
     </footer>
   );

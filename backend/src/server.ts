@@ -2,7 +2,7 @@ import express, { type Request, type Response, type NextFunction } from "express
 import cors from "cors";
 import morgan from "morgan";
 import invitationsRouter from "./routes/invitations.js";
-import { FRONTEND_URL, PORT } from "./config.js";
+import { FRONTEND_ORIGINS, FRONTEND_URL, PORT } from "./config.js";
 import { initDatabase } from "./db.js";
 
 async function main() {
@@ -10,7 +10,7 @@ async function main() {
 
   const app = express();
 
-  app.use(cors({ origin: [FRONTEND_URL, "http://localhost:5173"], credentials: true }));
+  app.use(cors({ origin: FRONTEND_ORIGINS, credentials: true }));
   app.use(express.json({ limit: "1mb" }));
   app.use(morgan("dev"));
 

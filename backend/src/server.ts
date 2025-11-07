@@ -10,6 +10,16 @@ async function main() {
 
   const app = express();
 
+  app.set("etag", false);
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.path.startsWith("/api/")) {
+      res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+      res.setHeader("Pragma", "no-cache");
+      res.setHeader("Expires", "0");
+    }
+    next();
+  });
+
   app.use(cors({ origin: FRONTEND_ORIGINS, credentials: true }));
   app.use(express.json({ limit: "1mb" }));
   app.use(morgan("dev"));

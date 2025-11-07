@@ -34,10 +34,16 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
+  const requestInit: RequestInit = {
     ...init,
     headers,
-  });
+  };
+
+  if (requestInit.cache === undefined) {
+    requestInit.cache = "no-store";
+  }
+
+  const response = await fetch(`${API_URL}${path}`, requestInit);
 
   if (!response.ok) {
     let message = response.statusText;

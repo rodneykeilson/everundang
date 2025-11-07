@@ -2,8 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { deleteInvitationAdmin, getInvitations } from "../api/client";
-import type { Invitation } from "../types";
+import {
+  deleteInvitationAdmin,
+  getInvitations,
+  rotateOwnerLinkAdmin,
+  updateInvitationAdmin,
+} from "../api/client";
+import type { Invitation, InvitationStatus } from "../types";
 
 const STORAGE_KEY = "everundang-admin-key";
 
@@ -26,6 +31,8 @@ const AdminConsole: React.FC = () => {
   const [activeKey, setActiveKey] = useState<string>(() => readStoredAdminKey());
   const [formError, setFormError] = useState<string | null>(null);
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
+  const [pendingStatusId, setPendingStatusId] = useState<string | null>(null);
+  const [pendingOwnerLinkId, setPendingOwnerLinkId] = useState<string | null>(null);
 
   const invitationsQuery = useQuery({
     queryKey: ["admin-invitations", activeKey],
@@ -54,10 +61,110 @@ const AdminConsole: React.FC = () => {
     },
   });
 
+  const statusMutation = useMutation({
+    mutationFn: ({
+      invitationId,
+      status,
+      adminSecret,
+    }: {
+      invitationId: string;
+      status: InvitationStatus;
+      adminSecret: string;
+    }) =>
+      updateInvitationAdmin(
+        invitationId,
+        { status, isPublished: status === "published" },
+        adminSecret,
+      ),
+    onMutate: ({ invitationId }) => {
+      setPendingStatusId(invitationId);
+      setActionFeedback(null);
+      setFormError(null);
+    },
+    onSuccess: (updated, { adminSecret }) => {
+      queryClient.setQueryData(["admin-invitations", adminSecret], (current: Invitation[] | undefined) =>
+        current?.map((inv) => (inv.id === updated.id ? updated : inv)) ?? current,
+      );
+      const updatedStatus = updated.status ?? (updated.isPublished ? "published" : "draft");
+      setActionFeedback(`Status updated to ${updatedStatus}`);
+      setFormError(null);
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Unable to update status.";
+      setFormError(message);
+    },
+    onSettled: () => {
+      setPendingStatusId(null);
+    },
+  });
+
+  const ownerLinkMutation = useMutation({
+    mutationFn: ({ invitationId, adminSecret }: { invitationId: string; adminSecret: string }) =>
+      rotateOwnerLinkAdmin(invitationId, adminSecret),
+    onMutate: ({ invitationId }) => {
+      setPendingOwnerLinkId(invitationId);
+      setActionFeedback(null);
+      setFormError(null);
+    },
+    onSuccess: async ({ invitation: updatedInvitation, ownerLink }, { adminSecret }) => {
+      queryClient.setQueryData(["admin-invitations", adminSecret], (current: Invitation[] | undefined) =>
+        current?.map((inv) => (updatedInvitation && inv.id === updatedInvitation.id ? updatedInvitation : inv)) ??
+        current,
+      );
+      const canCopy =
+        typeof navigator !== "undefined" &&
+        typeof navigator.clipboard !== "undefined" &&
+        typeof navigator.clipboard.writeText === "function";
+      if (canCopy) {
+        try {
+          await navigator.clipboard.writeText(ownerLink);
+          setActionFeedback("Owner link copied to clipboard");
+          setFormError(null);
+          return;
+        } catch (error) {
+          console.warn("Failed to copy owner link", error);
+        }
+      }
+      setActionFeedback(`Owner link ready: ${ownerLink}`);
+      setFormError(null);
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Unable to create owner link.";
+      setFormError(message);
+    },
+    onSettled: () => {
+      setPendingOwnerLinkId(null);
+    },
+  });
+
   const invitations = useMemo<Invitation[]>(
     () => (invitationsQuery.data ? [...invitationsQuery.data] : []),
     [invitationsQuery.data],
   );
+
+  const statusOptions: InvitationStatus[] = ["draft", "published", "closed"];
+
+  const handleStatusChange = (invitation: Invitation, nextStatus: InvitationStatus) => {
+    if (!activeKey) {
+      setFormError("Admin secret missing. Re-authenticate to continue.");
+      return;
+    }
+    const currentStatus = invitation.status ?? (invitation.isPublished ? "published" : "draft");
+    if (currentStatus === nextStatus || pendingStatusId === invitation.id) {
+      return;
+    }
+    statusMutation.mutate({ invitationId: invitation.id, status: nextStatus, adminSecret: activeKey });
+  };
+
+  const handleCopyOwnerLink = (invitation: Invitation) => {
+    if (!activeKey || pendingOwnerLinkId === invitation.id) {
+      if (!activeKey) {
+        setFormError("Admin secret missing. Re-authenticate to continue.");
+      }
+      return;
+    }
+    ownerLinkMutation.mutate({ invitationId: invitation.id, adminSecret: activeKey });
+  };
 
   const handleConnect = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -184,6 +291,7 @@ const AdminConsole: React.FC = () => {
                         <th scope="col">Headline</th>
                         <th scope="col">Slug</th>
                         <th scope="col">Status</th>
+                        <th scope="col">Owner tools</th>
                         <th scope="col">Updated</th>
                         <th scope="col">Actions</th>
                       </tr>
@@ -203,7 +311,37 @@ const AdminConsole: React.FC = () => {
                               <code>{invitation.slug}</code>
                             </td>
                             <td>
-                              <span className={`status-badge status-${statusLabel}`}>{statusLabel}</span>
+                              <div className="admin-console__status-control">
+                                <span className={`status-badge status-${statusLabel}`}>{statusLabel}</span>
+                                <label className="sr-only" htmlFor={`status-${invitation.id}`}>
+                                  Invitation status
+                                </label>
+                                <select
+                                  id={`status-${invitation.id}`}
+                                  className="admin-console__status-select"
+                                  value={statusLabel}
+                                  onChange={(event) =>
+                                    handleStatusChange(invitation, event.target.value as InvitationStatus)
+                                  }
+                                  disabled={!isAuthenticated || pendingStatusId === invitation.id}
+                                >
+                                  {statusOptions.map((option) => (
+                                    <option key={option} value={option}>
+                                      {option}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="link-btn"
+                                onClick={() => handleCopyOwnerLink(invitation)}
+                                disabled={!isAuthenticated || pendingOwnerLinkId === invitation.id}
+                              >
+                                {pendingOwnerLinkId === invitation.id ? "Copying…" : "Copy owner link"}
+                              </button>
                             </td>
                             <td>{formatDate(invitation.updatedAt)}</td>
                             <td>

@@ -239,4 +239,3 @@ export async function countYesGuests(invitationId: string): Promise<number> {
   );
   return Number(result.rows[0]?.total ?? 0);
 }
-```},

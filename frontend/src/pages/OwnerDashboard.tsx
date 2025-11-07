@@ -72,6 +72,7 @@ interface DesignState {
   eventMap: string;
   primaryColor: string;
   secondaryColor: string;
+  backgroundImageUrl: string;
 }
 
 const defaultDesignState = (): DesignState => ({
@@ -86,6 +87,7 @@ const defaultDesignState = (): DesignState => ({
   eventMap: "",
   primaryColor: "#a855f7",
   secondaryColor: "#f472b6",
+  backgroundImageUrl: "",
 });
 
 type DashboardTab = "design" | "rsvp" | "analytics" | "export";
@@ -172,6 +174,7 @@ const OwnerDashboard: React.FC = () => {
       eventMap: invitation.event.mapLink ?? "",
       primaryColor: invitation.theme?.primaryColor ?? "#a855f7",
       secondaryColor: invitation.theme?.secondaryColor ?? "#f472b6",
+      backgroundImageUrl: invitation.theme?.backgroundImageUrl ?? "",
     });
   }, [invitation]);
 
@@ -283,6 +286,10 @@ const OwnerDashboard: React.FC = () => {
         theme: {
           primaryColor: designState.primaryColor.trim() || undefined,
           secondaryColor: designState.secondaryColor.trim() || undefined,
+          backgroundImageUrl:
+            designState.backgroundImageUrl.trim()
+              ? designState.backgroundImageUrl.trim()
+              : null,
         },
       };
       const updated = await updateInvitationOwner(id, payload, ownerToken);
@@ -592,6 +599,21 @@ const OwnerDashboard: React.FC = () => {
               />
             </label>
           </div>
+
+          <label>
+            Background image URL (optional)
+            <input
+              type="url"
+              value={designState.backgroundImageUrl}
+              onChange={(event) =>
+                setDesignState((prev) => ({ ...prev, backgroundImageUrl: event.target.value }))
+              }
+              placeholder="https://images.example.com/invite-background.jpg"
+            />
+            <span className="hint">
+              Provide a high-resolution landscape image. The hero section applies a soft overlay for legibility.
+            </span>
+          </label>
 
           <div className="owner-form__actions">
             <button type="submit" className="ui-button primary" disabled={savingDesign}>

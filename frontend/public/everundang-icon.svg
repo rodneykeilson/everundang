@@ -1,0 +1,11 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="everundangIconGradient" x1="0" y1="64" x2="64" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6366F1" />
+      <stop offset="1" stop-color="#EC4899" />
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="url(#everundangIconGradient)" opacity="0.2" />
+  <path d="M16 40.5C21.8 31.6 32.6 21.2 46.5 24.6" stroke="url(#everundangIconGradient)" stroke-width="4" stroke-linecap="round" />
+  <path d="M18 23c3.4 4.2 7.6 6.8 13.6 6.8 6 0 10.2-2.6 13.6-6.8" stroke="url(#everundangIconGradient)" stroke-width="3" stroke-linecap="round" />
+</svg>

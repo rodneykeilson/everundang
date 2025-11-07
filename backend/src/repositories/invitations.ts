@@ -278,6 +278,11 @@ export async function updateInvitationById(
   return applyInvitationUpdate("id", id, payload);
 }
 
+export async function deleteInvitationById(id: string): Promise<boolean> {
+  const result = await pool.query("DELETE FROM invitations WHERE id = $1", [id]);
+  return (result.rowCount ?? 0) > 0;
+}
+
 export async function updateOwnerSecret(
   invitationId: string,
   ownerSecretHash: string,

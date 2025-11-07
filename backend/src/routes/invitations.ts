@@ -11,6 +11,7 @@ import {
   updateInvitation,
   updateInvitationById,
   updateOwnerSecret,
+  deleteInvitationById,
 } from "../repositories/invitations.js";
 import {
   consumeGuestCode,
@@ -67,6 +68,7 @@ const themeSchema = z.object({
   primaryColor: z.string().optional(),
   secondaryColor: z.string().optional(),
   backgroundPattern: z.string().optional(),
+  backgroundImageUrl: z.string().url().nullable().optional(),
   musicUrl: z.string().url().optional(),
 });
 
@@ -396,11 +398,18 @@ router.patch(
 
       const mergeTheme = () => {
         if (!parsed.theme) return undefined;
+        const hasBackgroundImage = Object.prototype.hasOwnProperty.call(
+          parsed.theme,
+          "backgroundImageUrl",
+        );
         return {
           primaryColor: parsed.theme.primaryColor ?? existing.theme?.primaryColor,
           secondaryColor: parsed.theme.secondaryColor ?? existing.theme?.secondaryColor,
           backgroundPattern:
             parsed.theme.backgroundPattern ?? existing.theme?.backgroundPattern,
+          backgroundImageUrl: hasBackgroundImage
+            ? parsed.theme.backgroundImageUrl ?? null
+            : existing.theme?.backgroundImageUrl ?? null,
           musicUrl: parsed.theme.musicUrl ?? existing.theme?.musicUrl,
         };
       };
@@ -438,6 +447,22 @@ router.patch(
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Validation failed", issues: error.issues });
       }
+      next(error);
+    }
+  },
+);
+
+router.delete(
+  "/:id",
+  requireAdmin,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const deleted = await deleteInvitationById(req.params.id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Invitation not found" });
+      }
+      res.status(204).end();
+    } catch (error) {
       next(error);
     }
   },

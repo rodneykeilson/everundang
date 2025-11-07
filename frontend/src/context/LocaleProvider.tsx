@@ -28,6 +28,23 @@ const translations: Record<Locale, Record<string, string>> = {
     footerRights: "All rights reserved.",
     languageLabel: "Language",
     themeLabel: "Theme",
+    navTemplates: "Templates",
+    navFaq: "FAQ",
+    navAdmin: "Admin",
+    navDashboard: "Dashboard",
+    templatesCuratedLabel: "Curated starting points",
+    templatesLiveLabel: "Live invitations",
+    templateUseButton: "Use this template",
+    templateDetailsButton: "Learn more",
+    templateApplied: "Using template",
+    templateAppliedDescription: "Fields are pre-filled from this template. You can still customise every detail before publishing.",
+    templateClear: "Remove template",
+    createTitle: "Launch a new invitation",
+    createLead:
+      "Share a few basics and we will generate a private owner link so you can continue crafting the perfect experience.",
+    createTemplateCallout: "Template applied",
+    templatesEmptyMessage:
+      "No live invitations yet. Publish your first invitation to showcase it here.",
   },
   id: {
     heroTitle: "Buat undangan digital yang menawan dalam hitungan menit",
@@ -61,6 +78,23 @@ const translations: Record<Locale, Record<string, string>> = {
     footerRights: "Seluruh hak cipta dilindungi.",
     languageLabel: "Bahasa",
     themeLabel: "Tema",
+    navTemplates: "Template",
+    navFaq: "FAQ",
+    navAdmin: "Admin",
+    navDashboard: "Dashboard",
+    templatesCuratedLabel: "Pilihan template",
+    templatesLiveLabel: "Undangan yang sudah tayang",
+    templateUseButton: "Pakai template ini",
+    templateDetailsButton: "Selengkapnya",
+    templateApplied: "Menggunakan template",
+    templateAppliedDescription: "Field sudah terisi dari template ini. Anda tetap bisa mengubah semua detail sebelum publikasi.",
+    templateClear: "Hapus template",
+    createTitle: "Buat undangan baru",
+    createLead:
+      "Isi informasi dasar dan kami akan membuat tautan pemilik pribadi agar Anda bisa lanjut mengatur semuanya.",
+    createTemplateCallout: "Template aktif",
+    templatesEmptyMessage:
+      "Belum ada undangan tayang. Publikasikan undangan pertama Anda untuk menampilkannya di sini.",
   },
 };
 

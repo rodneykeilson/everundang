@@ -34,6 +34,7 @@ export interface Theme {
   primaryColor?: string;
   secondaryColor?: string;
   backgroundPattern?: string;
+  backgroundImageUrl?: string | null;
   musicUrl?: string;
 }
 

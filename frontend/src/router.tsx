@@ -4,6 +4,7 @@ import InvitePage from "./pages/InvitePage";
 import Dashboard from "./pages/Dashboard";
 import CreateInvitation from "./pages/CreateInvitation";
 import OwnerDashboard from "./pages/OwnerDashboard";
+import AdminConsole from "./pages/AdminConsole";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
+  },
+  {
+    path: "/admin",
+    element: <AdminConsole />,
   },
 ]);
 

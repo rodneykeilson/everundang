@@ -121,6 +121,13 @@ export function createInvitationAdmin(data: InvitationFormData, adminSecret: str
   });
 }
 
+export function deleteInvitationAdmin(id: string, adminSecret: string) {
+  return request<void>(`/api/invitations/${id}`, {
+    method: "DELETE",
+    headers: withAdminHeaders(adminSecret),
+  });
+}
+
 export function createInvitation(data: InvitationFormData) {
   return request<OwnerLinkResponse>(`/api/invitations`, {
     method: "POST",

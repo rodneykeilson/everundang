@@ -20,7 +20,7 @@ const Header: React.FC = () => {
           <Link to="/#faq" className="nav-link">
             FAQ
           </Link>
-          <Link to="/dashboard" className="nav-link nav-link--primary">
+          <Link to="/new" className="nav-link nav-link--primary">
             {t("dashboardCta")}
           </Link>
         </nav>

@@ -14,7 +14,7 @@ const Hero: React.FC = () => {
           </h1>
           <p className="hero__lead">{t("heroSubtitle")}</p>
           <div className="hero__actions">
-            <Link to="/dashboard" className="ui-button primary">
+            <Link to="/new" className="ui-button primary">
               {t("heroPrimaryCta")}
             </Link>
             <Link to="/#templates" className="ui-button subtle">

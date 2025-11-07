@@ -22,7 +22,10 @@ const Home: React.FC = () => {
     queryFn: () => getInvitations(),
   });
 
-  const published = invitationQuery.data?.filter((invitation) => invitation.isPublished) ?? [];
+  const published =
+    invitationQuery.data?.filter((invitation) =>
+      (invitation.status ?? (invitation.isPublished ? "published" : "draft")) === "published"
+    ) ?? [];
 
   return (
     <div className="page">
@@ -47,7 +50,7 @@ const Home: React.FC = () => {
               {published.length === 0 && !invitationQuery.isLoading ? (
                 <article className="template-empty">
                   <p>No live invitations yet. Publish your first invitation to showcase it here.</p>
-                  <Link to="/dashboard" className="ui-button primary">
+                  <Link to="/new" className="ui-button primary">
                     {t("dashboardCta")}
                   </Link>
                 </article>

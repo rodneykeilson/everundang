@@ -17,3 +17,14 @@ export const FRONTEND_ORIGINS = (process.env.FRONTEND_ORIGINS ?? FRONTEND_URL)
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+export const INVITE_OWNER_JWT_SECRET = required(
+  process.env.INVITE_OWNER_JWT_SECRET,
+  "INVITE_OWNER_JWT_SECRET",
+);
+export const OWNER_TOKEN_TTL_SECONDS = Number(
+  process.env.OWNER_TOKEN_TTL_SECONDS ?? 60 * 60 * 24 * 30,
+);
+export const ADMIN_IP_ALLOWLIST = (process.env.ADMIN_IP_ALLOWLIST ?? "")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);

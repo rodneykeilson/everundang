@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type FC } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createInvitation, getInvitations, saveInvitation } from "../api/client";
+import { createInvitationAdmin, getInvitations, saveInvitationAdmin } from "../api/client";
 import type {
   Invitation,
   InvitationFormData,
@@ -82,8 +82,8 @@ const Dashboard: FC = () => {
       const invitations = invitationQuery.data ?? [];
       const existing = invitations.find((inv) => inv.slug === payload.slug);
       return existing
-        ? saveInvitation(payload, adminSecret)
-        : createInvitation(payload, adminSecret);
+        ? saveInvitationAdmin(payload, adminSecret)
+        : createInvitationAdmin(payload, adminSecret);
     },
     onSuccess: async (result: Invitation) => {
       setMessage(`Invitation "${result.slug}" saved successfully.`);

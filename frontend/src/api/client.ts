@@ -128,6 +128,24 @@ export function deleteInvitationAdmin(id: string, adminSecret: string) {
   });
 }
 
+export function updateInvitationAdmin(
+  id: string,
+  payload: Partial<InvitationFormData> & {
+    status?: Invitation["status"];
+    isPublished?: boolean;
+    rsvpMode?: InvitationRsvpMode;
+    rsvpPasscode?: string | null;
+    capacity?: number | null;
+  },
+  adminSecret: string,
+) {
+  return request<Invitation>(`/api/invitations/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+    headers: withAdminHeaders(adminSecret),
+  });
+}
+
 export function createInvitation(data: InvitationFormData) {
   return request<OwnerLinkResponse>(`/api/invitations`, {
     method: "POST",
@@ -162,6 +180,13 @@ export function rotateOwnerLink(id: string, ownerToken: string) {
   return request<OwnerLinkResponse>(`/api/invitations/${id}/rotate-owner-link`, {
     method: "POST",
     headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+export function rotateOwnerLinkAdmin(id: string, adminSecret: string) {
+  return request<OwnerLinkResponse>(`/api/invitations/${id}/rotate-owner-link`, {
+    method: "POST",
+    headers: withAdminHeaders(adminSecret),
   });
 }
 

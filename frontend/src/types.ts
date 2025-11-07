@@ -37,6 +37,9 @@ export interface Theme {
   musicUrl?: string;
 }
 
+export type InvitationStatus = "draft" | "published" | "closed";
+export type InvitationRsvpMode = "passcode" | "guest_codes" | "open";
+
 export interface Invitation {
   id: string;
   slug: string;
@@ -46,6 +49,10 @@ export interface Invitation {
   sections: Section[];
   theme: Theme;
   isPublished: boolean;
+  status?: InvitationStatus;
+  rsvpMode?: InvitationRsvpMode;
+  capacity?: number | null;
+  hasRsvpPasscode?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -71,4 +78,53 @@ export interface InvitationFormData {
   sections: Section[];
   theme: Theme;
   isPublished: boolean;
+  status?: InvitationStatus;
+  rsvpMode?: InvitationRsvpMode;
+  capacity?: number | null;
+}
+
+export type InvitationManageResponse = InvitationDetail;
+
+export interface OwnerLinkResponse {
+  invitation: Invitation;
+  ownerToken: string;
+  ownerLink: string;
+}
+
+export interface Rsvp {
+  id: string;
+  name: string;
+  phone?: string;
+  status: "yes" | "maybe" | "no";
+  partySize: number;
+  message?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RsvpStats {
+  yesCount: number;
+  maybeCount: number;
+  noCount: number;
+  totalGuests: number;
+}
+
+export interface GuestCodeSummary {
+  id: string;
+  issuedTo?: string | null;
+  usedAt?: string | null;
+  createdAt: string;
+}
+
+export interface OwnerRsvpManageResponse {
+  invitation: Invitation;
+  stats: RsvpStats;
+  rsvps: Rsvp[];
+  guestCodes: GuestCodeSummary[];
+}
+
+export interface GeneratedGuestCode {
+  id: string;
+  code: string;
+  issuedTo?: string | null;
 }

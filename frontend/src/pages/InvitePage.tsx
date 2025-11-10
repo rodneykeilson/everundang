@@ -367,8 +367,8 @@ const InvitePage: React.FC = () => {
     if (!invitation) {
       return null;
     }
-    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    const url = `${baseUrl}/i/${invitation.slug}`;
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const url = `${baseUrl}/#/i/${invitation.slug}`;
     return {
       url,
       title: invitation.headline,

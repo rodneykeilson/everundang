@@ -111,7 +111,7 @@ const Home: React.FC = () => {
                   <div className="template-grid">
                     {published.map((invitation) => (
                       <Link
-                        to={`/#/i/${invitation.slug}`}
+                        to={`/i/${invitation.slug}`}
                         key={invitation.id}
                         className="template-card"
                       >

@@ -200,14 +200,14 @@ const OwnerDashboard: React.FC = () => {
 
   const shareUrl = useMemo(() => {
     if (!invitation) return "";
-    const base = window.location.origin;
-    return `${base}/i/${invitation.slug}`;
+  const base = window.location.origin;
+  return `${base}/#/i/${invitation.slug}`;
   }, [invitation]);
 
   const ownerLink = useMemo(() => {
     if (!invitation || !ownerToken) return "";
-    const base = window.location.origin;
-    return `${base}/edit/${invitation.id}?k=${ownerToken}`;
+  const base = window.location.origin;
+  return `${base}/#/edit/${invitation.id}?k=${ownerToken}`;
   }, [invitation, ownerToken]);
 
   const shareLinks = useMemo(() => {

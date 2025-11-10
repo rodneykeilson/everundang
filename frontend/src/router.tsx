@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 import Home from "./pages/Home";
 import InvitePage from "./pages/InvitePage";
 import Dashboard from "./pages/Dashboard";
@@ -6,7 +6,7 @@ import CreateInvitation from "./pages/CreateInvitation";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminConsole from "./pages/AdminConsole";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Home />,

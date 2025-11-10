@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -346,14 +347,14 @@ const AdminConsole: React.FC = () => {
                             <td>{formatDate(invitation.updatedAt)}</td>
                             <td>
                               <div className="admin-console__actions">
-                                <a
-                                  href={`/i/${invitation.slug}`}
+                                <Link
+                                  to={`/i/${invitation.slug}`}
                                   className="link-btn"
                                   target="_blank"
                                   rel="noreferrer"
                                 >
                                   View public
-                                </a>
+                                </Link>
                                 <button
                                   type="button"
                                   className="link-btn danger"

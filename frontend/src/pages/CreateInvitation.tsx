@@ -145,7 +145,7 @@ const CreateInvitation: React.FC = () => {
       };
 
       const response = await createInvitation(payload);
-      navigate(`/edit/${response.invitation.id}?k=${response.ownerToken}`);
+      navigate(`/#/edit/${response.invitation.id}?k=${response.ownerToken}`);
     } catch (createError) {
       const message = createError instanceof Error ? createError.message : "Failed to create invitation.";
       setError(message);

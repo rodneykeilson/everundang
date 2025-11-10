@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -34,6 +33,7 @@ const AdminConsole: React.FC = () => {
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
   const [pendingStatusId, setPendingStatusId] = useState<string | null>(null);
   const [pendingOwnerLinkId, setPendingOwnerLinkId] = useState<string | null>(null);
+  const [rowMessages, setRowMessages] = useState<Record<string, string>>({});
 
   const invitationsQuery = useQuery({
     queryKey: ["admin-invitations", activeKey],
@@ -89,6 +89,16 @@ const AdminConsole: React.FC = () => {
       const updatedStatus = updated.status ?? (updated.isPublished ? "published" : "draft");
       setActionFeedback(`Status updated to ${updatedStatus}`);
       setFormError(null);
+      if (updatedStatus === "published") {
+        setRowMessages((previous) => {
+          if (!(updated.id in previous)) {
+            return previous;
+          }
+          const next = { ...previous };
+          delete next[updated.id];
+          return next;
+        });
+      }
     },
     onError: (error: unknown) => {
       const message = error instanceof Error ? error.message : "Unable to update status.";
@@ -189,6 +199,7 @@ const AdminConsole: React.FC = () => {
     setInputKey("");
     setActionFeedback(null);
     setFormError(null);
+    setRowMessages({});
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(STORAGE_KEY);
     }
@@ -201,7 +212,42 @@ const AdminConsole: React.FC = () => {
       `Delete invitation “${invitation.headline}”? This also removes RSVPs, guest codes, and guestbook entries.`,
     );
     if (!confirmed) return;
+    setRowMessages((previous) => {
+      if (!(invitation.id in previous)) {
+        return previous;
+      }
+      const next = { ...previous };
+      delete next[invitation.id];
+      return next;
+    });
     deleteMutation.mutate(invitation.id);
+  };
+
+  const handleOpenPublic = (invitation: Invitation) => {
+    const statusLabel = invitation.status ?? (invitation.isPublished ? "published" : "draft");
+    if (statusLabel !== "published") {
+      setRowMessages((previous) => ({
+        ...previous,
+        [invitation.id]: "Publish the invitation before previewing the public page.",
+      }));
+      setFormError(null);
+      setActionFeedback(null);
+      return;
+    }
+    if (typeof window === "undefined") {
+      return;
+    }
+    setRowMessages((previous) => {
+      if (!(invitation.id in previous)) {
+        return previous;
+      }
+      const next = { ...previous };
+      delete next[invitation.id];
+      return next;
+    });
+    setFormError(null);
+    const url = `/#/i/${invitation.slug}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const isAuthenticated = Boolean(activeKey);
@@ -347,14 +393,13 @@ const AdminConsole: React.FC = () => {
                             <td>{formatDate(invitation.updatedAt)}</td>
                             <td>
                               <div className="admin-console__actions">
-                                <Link
-                                  to={`/i/${invitation.slug}`}
+                                <button
+                                  type="button"
                                   className="link-btn"
-                                  target="_blank"
-                                  rel="noreferrer"
+                                  onClick={() => handleOpenPublic(invitation)}
                                 >
                                   View public
-                                </Link>
+                                </button>
                                 <button
                                   type="button"
                                   className="link-btn danger"
@@ -364,6 +409,11 @@ const AdminConsole: React.FC = () => {
                                   {deleteMutation.isPending ? "Deleting…" : "Delete"}
                                 </button>
                               </div>
+                              {rowMessages[invitation.id] && (
+                                <p className="form-message error admin-console__row-message" role="status">
+                                  {rowMessages[invitation.id]}
+                                </p>
+                              )}
                             </td>
                           </tr>
                         );

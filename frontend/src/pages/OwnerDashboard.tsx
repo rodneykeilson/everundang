@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -101,6 +101,10 @@ const OwnerDashboard: React.FC = () => {
   const [ownerToken, setOwnerToken] = useState(initialToken);
   const [activeTab, setActiveTab] = useState<DashboardTab>("design");
   const [designState, setDesignState] = useState<DesignState>(defaultDesignState);
+  const [designFeedback, setDesignFeedback] = useState<{
+    text: string;
+    tone: "success" | "error" | "info";
+  } | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [savingDesign, setSavingDesign] = useState(false);
@@ -200,14 +204,14 @@ const OwnerDashboard: React.FC = () => {
 
   const shareUrl = useMemo(() => {
     if (!invitation) return "";
-  const base = window.location.origin;
-  return `${base}/#/i/${invitation.slug}`;
+    const base = window.location.origin;
+    return `${base}/#/i/${invitation.slug}`;
   }, [invitation]);
 
   const ownerLink = useMemo(() => {
     if (!invitation || !ownerToken) return "";
-  const base = window.location.origin;
-  return `${base}/#/edit/${invitation.id}?k=${ownerToken}`;
+    const base = window.location.origin;
+    return `${base}/#/edit/${invitation.id}?k=${ownerToken}`;
   }, [invitation, ownerToken]);
 
   const shareLinks = useMemo(() => {
@@ -229,6 +233,28 @@ const OwnerDashboard: React.FC = () => {
       },
     ];
   }, [invitation, shareUrl]);
+
+  const handlePreviewPublic = useCallback(() => {
+    if (!invitation) {
+      return;
+    }
+    const statusLabel = currentStatus ?? "draft";
+    if (statusLabel !== "published") {
+      setDesignFeedback({
+        text: "Publish the invitation before previewing the public page.",
+        tone: "error",
+      });
+      return;
+    }
+    if (!shareUrl) {
+      setDesignFeedback({ text: "Public link is unavailable right now.", tone: "error" });
+      return;
+    }
+    setDesignFeedback(null);
+    if (typeof window !== "undefined") {
+      window.open(shareUrl, "_blank", "noopener,noreferrer");
+    }
+  }, [currentStatus, invitation, shareUrl]);
 
   const applyOwnerToken = (token: string, latestInvitation: Invitation) => {
     setOwnerToken(token);
@@ -267,7 +293,7 @@ const OwnerDashboard: React.FC = () => {
     event.preventDefault();
     if (!id || !ownerToken) return;
     setSavingDesign(true);
-    setFeedback(null);
+    setDesignFeedback(null);
     try {
       const payload = {
         headline: designState.headline.trim(),
@@ -294,10 +320,10 @@ const OwnerDashboard: React.FC = () => {
       };
       const updated = await updateInvitationOwner(id, payload, ownerToken);
       updateInvitationCache(updated);
-      setFeedback("Design settings saved.");
+      setDesignFeedback({ text: "Design settings saved.", tone: "success" });
     } catch (updateError) {
       const message = updateError instanceof Error ? updateError.message : "Failed to save changes.";
-      setFeedback(message);
+      setDesignFeedback({ text: message, tone: "error" });
     } finally {
       setSavingDesign(false);
     }
@@ -619,10 +645,24 @@ const OwnerDashboard: React.FC = () => {
             <button type="submit" className="ui-button primary" disabled={savingDesign}>
               {savingDesign ? "Saving…" : "Save changes"}
             </button>
-            <Link to={shareUrl} target="_blank" rel="noopener" className="ui-button subtle">
+            <button type="button" className="ui-button subtle" onClick={handlePreviewPublic}>
               Preview public page
-            </Link>
+            </button>
           </div>
+          {designFeedback && (
+            <p
+              className={`form-message${
+                designFeedback.tone === "error"
+                  ? " error"
+                  : designFeedback.tone === "success"
+                    ? " success"
+                    : ""
+              }`}
+              role="status"
+            >
+              {designFeedback.text}
+            </p>
+          )}
         </form>
       );
     }
@@ -973,7 +1013,7 @@ const OwnerDashboard: React.FC = () => {
             <p className="eyebrow">Owner dashboard</p>
             <h1>{invitation.headline}</h1>
             <div className="owner-dashboard__meta">
-              <span className="slug">/i/{invitation.slug}</span>
+              <span className="slug">/#/i/{invitation.slug}</span>
               {currentStatus && <span className={`status-badge status-${currentStatus}`}>{currentStatus}</span>}
             </div>
           </div>

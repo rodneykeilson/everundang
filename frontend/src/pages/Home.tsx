@@ -111,11 +111,11 @@ const Home: React.FC = () => {
                   <div className="template-grid">
                     {published.map((invitation) => (
                       <Link
-                        to={`/i/${invitation.slug}`}
+                        to={`/#/i/${invitation.slug}`}
                         key={invitation.id}
                         className="template-card"
                       >
-                        <span className="badge">/i/{invitation.slug}</span>
+                        <span className="badge">/#/i/{invitation.slug}</span>
                         <h3>{invitation.headline}</h3>
                         <p>
                           {invitation.couple.brideName} &amp; {invitation.couple.groomName}

@@ -3,10 +3,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { addGuestbookEntry, getInvitation, submitRsvp } from "../api/client";
+import utc from "dayjs/plugin/utc";
+import { addGuestbookEntry, getGiftSuggestions, getInvitation, submitRsvp } from "../api/client";
+import { useLocale } from "../hooks/useLocale";
 import type { Invitation, InvitationDetail, LoveStoryItem, Section, RsvpStats } from "../types";
 
 dayjs.extend(relativeTime);
+dayjs.extend(utc);
 
 const formatDate = (value: string) => {
   const d = dayjs(value);
@@ -295,6 +298,7 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
 const InvitePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const queryClient = useQueryClient();
+  const { formatCurrency } = useLocale();
   const [guestName, setGuestName] = useState("");
   const [message, setMessage] = useState("");
   const [submitError, setSubmitError] = useState<string>("");
@@ -321,6 +325,19 @@ const InvitePage: React.FC = () => {
 
   const detail = query.data as InvitationDetail | undefined;
   const invitation = detail?.invitation;
+
+  const giftSuggestionsQuery = useQuery({
+    queryKey: ["gift-suggestions", invitation?.id],
+    queryFn: async () => {
+      if (!invitation?.id) {
+        throw new Error("Invitation id is missing");
+      }
+      return getGiftSuggestions(invitation.id, { count: 6 });
+    },
+    enabled: Boolean(invitation?.id),
+    staleTime: 10 * 60 * 1000,
+    retry: false,
+  });
 
   useEffect(() => {
     if (!invitation) {
@@ -395,6 +412,94 @@ const InvitePage: React.FC = () => {
       setShareStatus("Unable to share link. Copy manually instead.");
     }
   }, [sharePayload]);
+
+  const handleDownloadCalendar = useCallback(() => {
+    if (!invitation) return;
+
+    const escapeIcs = (value: string) =>
+      value
+        .replace(/\\/g, "\\\\")
+        .replace(/\n/g, "\\n")
+        .replace(/\r/g, "")
+        .replace(/,/g, "\\,")
+        .replace(/;/g, "\\;");
+
+    const date = invitation.event.date;
+    const time = formatTime(invitation.event.time);
+    const title = `${invitation.event.title} - ${invitation.couple.brideName} & ${invitation.couple.groomName}`;
+    const location = [invitation.event.venue, invitation.event.address].filter(Boolean).join(", ");
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+    const url = `${baseUrl}/#/i/${invitation.slug}`;
+
+    const toIcsDate = (d: string) => d.replace(/-/g, "");
+    const toIcsDateTime = (d: string, hhmm: string) => `${toIcsDate(d)}T${hhmm.replace(":", "")}00`;
+
+    let dtStartLine = "";
+    let dtEndLine = "";
+
+    if (!time) {
+      const start = toIcsDate(date);
+      const endDate = dayjs(date).add(1, "day").format("YYYY-MM-DD");
+      const end = toIcsDate(endDate);
+      dtStartLine = `DTSTART;VALUE=DATE:${start}`;
+      dtEndLine = `DTEND;VALUE=DATE:${end}`;
+    } else {
+      const startDateTime = dayjs(`${date}T${time}`);
+      const endDateTime = startDateTime.add(2, "hour");
+      dtStartLine = `DTSTART:${toIcsDateTime(date, time)}`;
+      dtEndLine = `DTEND:${endDateTime.format("YYYYMMDDTHHmmss")}`;
+    }
+
+    const ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//EverUndang//EN",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      "BEGIN:VEVENT",
+      `UID:everundang-${invitation.id}`,
+      `DTSTAMP:${dayjs().format("YYYYMMDDTHHmmss")}`,
+      dtStartLine,
+      dtEndLine,
+      `SUMMARY:${escapeIcs(title)}`,
+      `DESCRIPTION:${escapeIcs(`${invitation.headline}\\n${url}`)}`,
+      location ? `LOCATION:${escapeIcs(location)}` : "",
+      "END:VEVENT",
+      "END:VCALENDAR",
+    ]
+      .filter(Boolean)
+      .join("\r\n");
+
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = `everundang-${invitation.slug}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(objectUrl);
+  }, [invitation]);
+
+  const googleCalendarUrl = useMemo(() => {
+    if (!invitation) return undefined;
+    const title = `${invitation.event.title} - ${invitation.couple.brideName} & ${invitation.couple.groomName}`;
+    const location = [invitation.event.venue, invitation.event.address].filter(Boolean).join(", ");
+    const time = formatTime(invitation.event.time);
+
+    const formatGoogleDate = (d: dayjs.Dayjs) => d.utc().format("YYYYMMDDTHHmmss[Z]");
+    const start = time ? dayjs(`${invitation.event.date}T${time}`) : dayjs(invitation.event.date).startOf("day");
+    const end = time ? start.add(2, "hour") : start.add(1, "day");
+
+    const params = new URLSearchParams({
+      action: "TEMPLATE",
+      text: title,
+      dates: `${formatGoogleDate(start)}/${formatGoogleDate(end)}`,
+      location,
+      details: invitation.headline,
+    });
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  }, [invitation]);
 
   if (query.isLoading) {
     return <div className="page-loading">Loading invitation...</div>;
@@ -478,6 +583,47 @@ const InvitePage: React.FC = () => {
               </div>
             )}
           </dl>
+
+          <div className="calendar-actions" aria-label="Add to calendar">
+            <button type="button" className="ui-button subtle" onClick={handleDownloadCalendar}>
+              Download calendar (.ics)
+            </button>
+            {googleCalendarUrl ? (
+              <a className="ui-button subtle" href={googleCalendarUrl} target="_blank" rel="noreferrer">
+                Add to Google Calendar
+              </a>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      <section className="invite__section" aria-labelledby="gift-ideas-heading">
+        <div className="section-shell">
+          <header>
+            <h2 id="gift-ideas-heading">Gift ideas</h2>
+            <p className="section-shell__lead">
+              A curated list of gift ideas for guests who want inspiration.
+            </p>
+          </header>
+
+          {giftSuggestionsQuery.isLoading ? (
+            <p className="hint" aria-live="polite">Loading gift ideas…</p>
+          ) : giftSuggestionsQuery.data?.suggestions?.length ? (
+            <div className="gift-grid">
+              {giftSuggestionsQuery.data.suggestions.map((gift) => (
+                <article key={`${gift.name}-${gift.category}`} className="gift-card">
+                  <header className="gift-card__header">
+                    <h3>{gift.name}</h3>
+                    <span className="gift-card__price">{formatCurrency(gift.estimatedPrice, "IDR")}</span>
+                  </header>
+                  <p className="gift-card__desc">{gift.description}</p>
+                  <p className="gift-card__reason">{gift.reason}</p>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="empty">Gift ideas will appear here soon.</p>
+          )}
         </div>
       </section>
 

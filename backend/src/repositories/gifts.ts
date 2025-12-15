@@ -1,13 +1,10 @@
 /**
  * Gift Suggestion Engine
  * 
- * AI-powered gift suggestion system that recommends gifts based on:
- * - Couple preferences and interests
- * - Budget ranges
- * - Category preferences
- * - Guest relationship context
- * 
- * This is a unique feature that distinguishes EverUndang from other invitation platforms.
+ * Curated gift suggestion system based on:
+ * - Pre-defined gift templates by category
+ * - Budget/price range filtering
+ * - Couple preference matching
  * 
  * @module repositories/gifts
  */

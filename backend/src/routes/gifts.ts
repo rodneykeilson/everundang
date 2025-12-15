@@ -2,7 +2,7 @@
  * Gift Registry API Routes
  * 
  * Handles all gift registry operations including:
- * - AI-powered gift suggestions
+ * - Curated gift suggestions from templates
  * - Gift preferences management
  * - Gift item CRUD operations
  * - Gift reservation system

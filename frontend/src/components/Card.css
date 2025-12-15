@@ -1,0 +1,344 @@
+/**
+ * Card Styles
+ * 
+ * Core card component with various styles and layouts.
+ * Includes header, body, footer, and hover effects.
+ */
+
+/* ============================================================================
+   CSS Variables
+   ============================================================================ */
+
+:root {
+  --card-bg: #ffffff;
+  --card-text: #1a1a1a;
+  --card-text-secondary: #6b7280;
+  --card-border: #e5e7eb;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --card-radius: 16px;
+  --card-padding: 1.5rem;
+  --card-icon-gradient: linear-gradient(135deg, #fff1d6, #ffdede);
+}
+
+/* Dark mode */
+.dark {
+  --card-bg: #262626;
+  --card-text: #f3f4f6;
+  --card-text-secondary: #9ca3af;
+  --card-border: #374151;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  --card-icon-gradient: linear-gradient(135deg, rgba(255, 241, 214, 0.2), rgba(255, 222, 222, 0.2));
+}
+
+/* ============================================================================
+   Base Card
+   ============================================================================ */
+
+.card {
+  background: var(--card-bg);
+  color: var(--card-text);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: var(--card-padding);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: var(--card-hover-shadow);
+}
+
+/* ============================================================================
+   Card Icon
+   ============================================================================ */
+
+.card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--card-icon-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card__icon svg {
+  width: 22px;
+  height: 22px;
+  color: #c9a961;
+}
+
+/* ============================================================================
+   Card Header
+   ============================================================================ */
+
+.card__header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--card-text);
+}
+
+.card__subtitle {
+  font-size: 0.875rem;
+  color: var(--card-text-secondary);
+  margin: 0.25rem 0 0;
+}
+
+/* ============================================================================
+   Card Body
+   ============================================================================ */
+
+.card__body {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--card-text-secondary);
+}
+
+.card__body p {
+  margin: 0 0 1rem;
+}
+
+.card__body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================================================
+   Card Footer
+   ============================================================================ */
+
+.card__footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* ============================================================================
+   Card Variants
+   ============================================================================ */
+
+/* Outlined */
+.card--outlined {
+  box-shadow: none;
+  border: 1px solid var(--card-border);
+}
+
+.card--outlined:hover {
+  box-shadow: none;
+  border-color: #c9a961;
+}
+
+/* Elevated */
+.card--elevated {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.card--elevated:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16);
+}
+
+/* Flat */
+.card--flat {
+  box-shadow: none;
+  background: var(--card-border);
+}
+
+/* Interactive/Clickable */
+.card--interactive {
+  cursor: pointer;
+}
+
+.card--interactive:active {
+  transform: scale(0.98);
+}
+
+/* Featured */
+.card--featured {
+  border: 2px solid #c9a961;
+  position: relative;
+}
+
+.card--featured::before {
+  content: 'Featured';
+  position: absolute;
+  top: -0.5rem;
+  left: 1rem;
+  padding: 0.25rem 0.75rem;
+  background: #c9a961;
+  color: white;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+}
+
+/* ============================================================================
+   Card Sizes
+   ============================================================================ */
+
+.card--sm {
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.card--lg {
+  padding: 2rem;
+  border-radius: 20px;
+}
+
+/* ============================================================================
+   Card with Image
+   ============================================================================ */
+
+.card--image {
+  padding: 0;
+  overflow: hidden;
+}
+
+.card--image .card__image {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+}
+
+.card--image .card__content {
+  padding: var(--card-padding);
+}
+
+/* ============================================================================
+   Horizontal Card
+   ============================================================================ */
+
+.card--horizontal {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  overflow: hidden;
+}
+
+.card--horizontal .card__image {
+  width: 200px;
+  height: auto;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.card--horizontal .card__content {
+  padding: var(--card-padding);
+  flex: 1;
+}
+
+@media (max-width: 480px) {
+  .card--horizontal {
+    flex-direction: column;
+  }
+
+  .card--horizontal .card__image {
+    width: 100%;
+    aspect-ratio: 16/9;
+  }
+}
+
+/* ============================================================================
+   Card Actions (Overlay)
+   ============================================================================ */
+
+.card__actions {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  gap: 0.375rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.card:hover .card__actions {
+  opacity: 1;
+}
+
+.card__action-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-bg);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.card__action-btn:hover {
+  background: var(--card-border);
+}
+
+.card__action-btn svg {
+  width: 16px;
+  height: 16px;
+  color: var(--card-text);
+}
+
+/* ============================================================================
+   Muted Text Helper
+   ============================================================================ */
+
+.muted {
+  color: var(--card-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ============================================================================
+   Reduced Motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .card--elevated:hover {
+    transform: none;
+  }
+
+  .card--interactive:active {
+    transform: none;
+  }
+
+  .card__actions {
+    opacity: 1;
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   Print Styles
+   ============================================================================ */
+
+@media print {
+  .card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    page-break-inside: avoid;
+  }
+
+  .card__actions {
+    display: none;
+  }
+}

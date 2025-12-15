@@ -10,8 +10,9 @@ import { getInvitations } from "../api/client";
 import type { Invitation } from "../types";
 import { useLocale } from "../hooks/useLocale";
 import { curatedTemplates } from "../data/curatedTemplates";
+import type { TranslationKey } from "../i18n";
 
-const faqItems = [
+const faqItems: Array<{ titleKey: TranslationKey; bodyKey: TranslationKey }> = [
   { titleKey: "faq01Title", bodyKey: "faq01Body" },
   { titleKey: "faq02Title", bodyKey: "faq02Body" },
   { titleKey: "faq03Title", bodyKey: "faq03Body" },

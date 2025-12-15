@@ -253,3 +253,291 @@ export function submitRsvp(
     body: JSON.stringify(payload),
   });
 }
+
+// ============================================================================
+// Gift Registry API
+// ============================================================================
+
+import type {
+  GiftItem,
+  GiftPreference,
+  GiftRegistryResponse,
+  GiftSuggestionsResponse,
+  GiftRegistryStats,
+  GiftCategory,
+  PriceRange,
+} from "../types";
+
+/**
+ * Get AI-powered gift suggestions for an invitation
+ */
+export function getGiftSuggestions(
+  invitationId: string,
+  options?: {
+    categories?: GiftCategory[];
+    priceRanges?: PriceRange[];
+    count?: number;
+    acceptsCash?: boolean;
+  }
+) {
+  const params = new URLSearchParams();
+  if (options?.categories?.length) {
+    params.set("categories", options.categories.join(","));
+  }
+  if (options?.priceRanges?.length) {
+    params.set("priceRanges", options.priceRanges.join(","));
+  }
+  if (options?.count) {
+    params.set("count", String(options.count));
+  }
+  if (options?.acceptsCash !== undefined) {
+    params.set("acceptsCash", String(options.acceptsCash));
+  }
+  const query = params.toString();
+  const url = `/api/gifts/${invitationId}/suggestions${query ? `?${query}` : ""}`;
+  return request<GiftSuggestionsResponse>(url);
+}
+
+/**
+ * Get gift preferences for an invitation (owner only)
+ */
+export function getGiftPreferences(invitationId: string, ownerToken: string) {
+  return request<{ preferences: GiftPreference | null }>(`/api/gifts/${invitationId}/preferences`, {
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Update gift preferences for an invitation (owner only)
+ */
+export function updateGiftPreferences(
+  invitationId: string,
+  ownerToken: string,
+  preferences: Partial<Omit<GiftPreference, "id" | "invitationId" | "createdAt" | "updatedAt">>
+) {
+  return request<{ preferences: GiftPreference }>(`/api/gifts/${invitationId}/preferences`, {
+    method: "PUT",
+    body: JSON.stringify(preferences),
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Get the public gift registry for an invitation
+ */
+export function getGiftRegistry(invitationId: string) {
+  return request<GiftRegistryResponse>(`/api/gifts/${invitationId}/registry`);
+}
+
+/**
+ * Get the gift registry with full management details (owner only)
+ */
+export function getGiftRegistryManage(invitationId: string, ownerToken: string) {
+  return request<{
+    items: GiftItem[];
+    preferences: GiftPreference | null;
+    stats: GiftRegistryStats;
+  }>(`/api/gifts/${invitationId}/registry/manage`, {
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Add a gift item to the registry (owner only)
+ */
+export function addGiftItem(
+  invitationId: string,
+  ownerToken: string,
+  item: {
+    name: string;
+    description?: string | null;
+    category: GiftCategory;
+    priceRange: PriceRange;
+    estimatedPrice?: number | null;
+    imageUrl?: string | null;
+    purchaseUrl?: string | null;
+    priority?: number;
+  }
+) {
+  return request<{ item: GiftItem }>(`/api/gifts/${invitationId}/registry`, {
+    method: "POST",
+    body: JSON.stringify(item),
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Reserve a gift item (public)
+ */
+export function reserveGiftItem(invitationId: string, itemId: string, guestName: string) {
+  return request<{ item: GiftItem }>(`/api/gifts/${invitationId}/registry/${itemId}/reserve`, {
+    method: "POST",
+    body: JSON.stringify({ guestName }),
+  });
+}
+
+/**
+ * Unreserve a gift item (owner only)
+ */
+export function unreserveGiftItem(invitationId: string, itemId: string, ownerToken: string) {
+  return request<{ item: GiftItem }>(`/api/gifts/${invitationId}/registry/${itemId}/unreserve`, {
+    method: "POST",
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Delete a gift item from the registry (owner only)
+ */
+export function deleteGiftItemApi(invitationId: string, itemId: string, ownerToken: string) {
+  return request<void>(`/api/gifts/${invitationId}/registry/${itemId}`, {
+    method: "DELETE",
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+// ============================================================================
+// Analytics API
+// ============================================================================
+
+import type {
+  AnalyticsDashboard,
+  RsvpTrendPoint,
+  DailyActivity,
+  ResponseTimeAnalysis,
+  EngagementMetrics,
+  AttendancePrediction,
+} from "../types";
+
+/**
+ * Get complete analytics dashboard for an invitation (owner only)
+ */
+export function getAnalyticsDashboard(invitationId: string, ownerToken: string) {
+  return request<AnalyticsDashboard>(`/api/analytics/${invitationId}/dashboard`, {
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Get RSVP trends over time (owner only)
+ */
+export function getRsvpTrends(invitationId: string, ownerToken: string, days?: number) {
+  const params = days ? `?days=${days}` : "";
+  return request<{ trends: RsvpTrendPoint[] }>(`/api/analytics/${invitationId}/trends${params}`, {
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Get daily activity summary (owner only)
+ */
+export function getDailyActivity(invitationId: string, ownerToken: string, days?: number) {
+  const params = days ? `?days=${days}` : "";
+  return request<{ activity: DailyActivity[] }>(`/api/analytics/${invitationId}/activity${params}`, {
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Get response time analysis (owner only)
+ */
+export function getResponseAnalysis(invitationId: string, ownerToken: string) {
+  return request<{ analysis: ResponseTimeAnalysis }>(`/api/analytics/${invitationId}/response-analysis`, {
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Get engagement metrics (owner only)
+ */
+export function getEngagementMetrics(invitationId: string, ownerToken: string) {
+  return request<{ engagement: EngagementMetrics }>(`/api/analytics/${invitationId}/engagement`, {
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Get attendance prediction (owner only)
+ */
+export function getAttendancePrediction(invitationId: string, ownerToken: string) {
+  return request<{ prediction: AttendancePrediction }>(`/api/analytics/${invitationId}/prediction`, {
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+// ============================================================================
+// Export API
+// ============================================================================
+
+/**
+ * Download RSVPs as CSV (owner only)
+ */
+export async function downloadRsvpsCsv(invitationId: string, ownerToken: string): Promise<Blob> {
+  return request<Blob>(`/api/exports/${invitationId}/rsvps/csv`, {
+    headers: withOwnerHeaders(ownerToken),
+    expect: "blob",
+  });
+}
+
+/**
+ * Download guestbook as CSV (owner only)
+ */
+export async function downloadGuestbookCsv(invitationId: string, ownerToken: string): Promise<Blob> {
+  return request<Blob>(`/api/exports/${invitationId}/guestbook/csv`, {
+    headers: withOwnerHeaders(ownerToken),
+    expect: "blob",
+  });
+}
+
+/**
+ * Download full event report as JSON (owner only)
+ */
+export async function downloadEventReportJson(invitationId: string, ownerToken: string): Promise<Blob> {
+  return request<Blob>(`/api/exports/${invitationId}/report/json`, {
+    headers: withOwnerHeaders(ownerToken),
+    expect: "blob",
+  });
+}
+
+/**
+ * Download event summary as text (owner only)
+ */
+export async function downloadEventSummaryText(invitationId: string, ownerToken: string): Promise<Blob> {
+  return request<Blob>(`/api/exports/${invitationId}/summary/text`, {
+    headers: withOwnerHeaders(ownerToken),
+    expect: "blob",
+  });
+}
+
+/**
+ * Get RSVP summary statistics (owner only, inline data)
+ */
+export interface RsvpSummary {
+  totalResponses: number;
+  yesCount: number;
+  maybeCount: number;
+  noCount: number;
+  totalGuests: number;
+  responseRate: string;
+}
+
+export function getRsvpSummary(invitationId: string, ownerToken: string) {
+  return request<RsvpSummary>(`/api/exports/${invitationId}/rsvps/summary`, {
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+/**
+ * Helper to trigger file download from Blob
+ */
+export function downloadBlob(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+

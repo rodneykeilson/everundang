@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import CreateInvitation from "./pages/CreateInvitation";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminConsole from "./pages/AdminConsole";
+import NotFound from "./pages/NotFound";
 
 const router = createHashRouter([
   {
@@ -30,6 +31,10 @@ const router = createHashRouter([
   {
     path: "/admin",
     element: <AdminConsole />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

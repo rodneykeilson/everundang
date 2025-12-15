@@ -269,7 +269,7 @@ import type {
 } from "../types";
 
 /**
- * Get AI-powered gift suggestions for an invitation
+ * Get curated gift suggestions for an invitation
  */
 export function getGiftSuggestions(
   invitationId: string,

@@ -141,7 +141,41 @@ export async function initDatabase() {
        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
      );`,
     `CREATE INDEX IF NOT EXISTS denylist_ip_hash_idx ON denylist (ip_hash);`,
-    `CREATE INDEX IF NOT EXISTS denylist_device_hash_idx ON denylist (device_hash);`
+    `CREATE INDEX IF NOT EXISTS denylist_device_hash_idx ON denylist (device_hash);`,
+    // Gift Registry Tables
+    `CREATE TABLE IF NOT EXISTS gift_preferences (
+       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+       invitation_id UUID NOT NULL REFERENCES invitations(id) ON DELETE CASCADE,
+       categories TEXT[] NOT NULL DEFAULT '{}',
+       preferred_price_ranges TEXT[] NOT NULL DEFAULT '{}',
+       notes TEXT,
+       accepts_cash BOOLEAN NOT NULL DEFAULT true,
+       cash_note TEXT,
+       charity_preference TEXT,
+       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+       UNIQUE(invitation_id)
+     );`,
+    `CREATE TABLE IF NOT EXISTS gift_items (
+       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+       invitation_id UUID NOT NULL REFERENCES invitations(id) ON DELETE CASCADE,
+       name TEXT NOT NULL,
+       description TEXT,
+       category TEXT NOT NULL,
+       price_range TEXT NOT NULL,
+       estimated_price NUMERIC,
+       image_url TEXT,
+       purchase_url TEXT,
+       priority INTEGER NOT NULL DEFAULT 0,
+       reserved BOOLEAN NOT NULL DEFAULT false,
+       reserved_by TEXT,
+       reserved_at TIMESTAMPTZ,
+       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+     );`,
+    `CREATE INDEX IF NOT EXISTS gift_items_invitation_idx ON gift_items(invitation_id);`,
+    `CREATE INDEX IF NOT EXISTS gift_items_category_idx ON gift_items(category);`,
+    `CREATE INDEX IF NOT EXISTS gift_items_reserved_idx ON gift_items(reserved);`
   ];
 
   for (const statement of statements) {

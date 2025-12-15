@@ -35,6 +35,7 @@ import {
   verifySecret,
 } from "../utils/auth.js";
 import { requireAdmin, requireOwnerOrAdmin } from "../middleware/auth.js";
+import { rateLimiters } from "../middleware/rateLimit.js";
 import QRCode from "qrcode";
 import { createHash } from "crypto";
 
@@ -276,6 +277,7 @@ router.get("/:slug", async (req: Request, res: Response, next: NextFunction) => 
 router.post(
   "/:id/manage/guest-codes",
   requireOwnerOrAdmin,
+  rateLimiters.guestCodes,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const invitation = req.ownerContext?.invitation ?? (await getInvitationById(req.params.id));
@@ -492,6 +494,7 @@ router.post(
 
 router.post(
   "/:slug/rsvp",
+  rateLimiters.rsvp,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const invitation = await getInvitationBySlug(req.params.slug);
@@ -560,6 +563,7 @@ router.post(
 
 router.post(
   "/:slug/guestbook",
+  rateLimiters.guestbook,
   async (req: Request, res: Response, next: NextFunction) => {
   try {
     const invitation = await getInvitationBySlug(req.params.slug);

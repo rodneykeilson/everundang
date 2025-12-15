@@ -1,6 +1,7 @@
 import { useLocale } from "../hooks/useLocale";
+import type { TranslationKey } from "../i18n";
 
-const featureList = [
+const featureList: Array<{ key: TranslationKey; icon: string; descriptionKey: TranslationKey }> = [
   {
     key: "featureTemplates",
     icon: "🎨",

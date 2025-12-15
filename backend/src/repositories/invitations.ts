@@ -6,6 +6,13 @@ import type {
   InvitationRecord,
   InvitationStatus,
 } from "../types.js";
+import {
+  invitationCache,
+  CacheKeys,
+  CacheTags,
+  CacheTTL,
+  invalidateInvitationCaches,
+} from "../utils/cache.js";
 
 const mapInvitationRow = (row: any): InvitationRecord => ({
   id: row.id,
@@ -157,29 +164,81 @@ const applyInvitationUpdate = async (
       updated.ownerSecretHash,
     ],
   );
-  return result.rows[0] ? mapInvitationRow(result.rows[0]) : null;
+
+  if (result.rows[0]) {
+    const invitation = mapInvitationRow(result.rows[0]);
+    // Invalidate caches for this invitation
+    invalidateInvitationCaches(invitation.id, existing.slug);
+    // Also invalidate if slug changed
+    if (updated.slug !== existing.slug) {
+      invitationCache.delete(CacheKeys.invitationBySlug(updated.slug));
+    }
+    return invitation;
+  }
+  return null;
 };
 
 export async function listInvitations(): Promise<InvitationRecord[]> {
-  const result = await pool.query("SELECT * FROM invitations ORDER BY created_at DESC");
-  return result.rows.map(mapInvitationRow);
+  // List all invitations - short cache TTL since admin may need fresh data
+  return invitationCache.getOrSet(
+    "invitations:all",
+    async () => {
+      const result = await pool.query("SELECT * FROM invitations ORDER BY created_at DESC");
+      return result.rows.map(mapInvitationRow);
+    },
+    { ttl: CacheTTL.SHORT, tags: [CacheTags.invitations] }
+  );
 }
 
 export async function listPublishedInvitations(): Promise<InvitationRecord[]> {
-  const result = await pool.query(
-    "SELECT * FROM invitations WHERE status = 'published' ORDER BY created_at DESC",
+  return invitationCache.getOrSet(
+    "invitations:published",
+    async () => {
+      const result = await pool.query(
+        "SELECT * FROM invitations WHERE status = 'published' ORDER BY created_at DESC",
+      );
+      return result.rows.map(mapInvitationRow);
+    },
+    { ttl: CacheTTL.MEDIUM, tags: [CacheTags.invitations] }
   );
-  return result.rows.map(mapInvitationRow);
 }
 
 export async function getInvitationBySlug(slug: string): Promise<InvitationRecord | null> {
-  const result = await pool.query("SELECT * FROM invitations WHERE slug = $1", [slug]);
-  return result.rows[0] ? mapInvitationRow(result.rows[0]) : null;
+  return invitationCache.getOrSet(
+    CacheKeys.invitationBySlug(slug),
+    async () => {
+      const result = await pool.query("SELECT * FROM invitations WHERE slug = $1", [slug]);
+      const row = result.rows[0];
+      if (!row) return null;
+      const invitation = mapInvitationRow(row);
+      // Also cache by ID for cross-reference
+      invitationCache.set(CacheKeys.invitation(invitation.id), invitation, {
+        ttl: CacheTTL.MEDIUM,
+        tags: [CacheTags.invitation(invitation.id)],
+      });
+      return invitation;
+    },
+    { ttl: CacheTTL.MEDIUM }
+  );
 }
 
 export async function getInvitationById(id: string): Promise<InvitationRecord | null> {
-  const result = await pool.query("SELECT * FROM invitations WHERE id = $1", [id]);
-  return result.rows[0] ? mapInvitationRow(result.rows[0]) : null;
+  return invitationCache.getOrSet(
+    CacheKeys.invitation(id),
+    async () => {
+      const result = await pool.query("SELECT * FROM invitations WHERE id = $1", [id]);
+      const row = result.rows[0];
+      if (!row) return null;
+      const invitation = mapInvitationRow(row);
+      // Also cache by slug for cross-reference
+      invitationCache.set(CacheKeys.invitationBySlug(invitation.slug), invitation, {
+        ttl: CacheTTL.MEDIUM,
+        tags: [CacheTags.invitation(id)],
+      });
+      return invitation;
+    },
+    { ttl: CacheTTL.MEDIUM, tags: [CacheTags.invitation(id)] }
+  );
 }
 
 export async function createInvitation(payload: InvitationPayload): Promise<InvitationRecord> {

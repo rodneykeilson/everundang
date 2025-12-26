@@ -1,0 +1,47 @@
+.theme-morpher {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--color-brand);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.theme-morpher:hover {
+  transform: scale(1.05) translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.theme-morpher:active {
+  transform: scale(0.95);
+}
+
+.morpher-icon {
+  font-size: 1.2rem;
+}
+
+.morpher-label {
+  white-space: nowrap;
+}
+
+body.morphing {
+  transition: background-color 1s ease, color 1s ease;
+}
+
+body.morphing * {
+  transition: background-color 1s ease, color 1s ease, border-color 1s ease, font-family 1s ease;
+}
+
+/* Import some fonts for the vibes */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Space+Grotesk:wght@400;700&family=Cormorant+Garamond:wght@400;700&display=swap');

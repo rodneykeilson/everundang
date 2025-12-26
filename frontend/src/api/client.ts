@@ -528,6 +528,25 @@ export function getRsvpSummary(invitationId: string, ownerToken: string) {
 }
 
 /**
+ * Get global activity for the landing page pulse
+ */
+export interface GlobalActivity {
+  invitations: Array<{ slug: string; headline: string; created_at: string }>;
+  rsvps: Array<{ slug: string; headline: string; name: string; status: string; created_at: string }>;
+  guestbook: Array<{
+    slug: string;
+    headline: string;
+    guest_name: string;
+    message: string;
+    created_at: string;
+  }>;
+}
+
+export function getGlobalActivity() {
+  return request<GlobalActivity>("/api/analytics/global/activity");
+}
+
+/**
  * Helper to trigger file download from Blob
  */
 export function downloadBlob(blob: Blob, filename: string): void {

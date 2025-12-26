@@ -16,12 +16,30 @@ import {
   getEngagementMetrics,
   getAttendancePrediction,
   getAnalyticsDashboard,
+  getGlobalActivity,
 } from "../repositories/analytics.js";
 import { getInvitationById } from "../repositories/invitations.js";
 import { requireOwnerOrAdmin } from "../middleware/auth.js";
 import { rateLimiters } from "../middleware/rateLimit.js";
 
 const router = Router();
+
+/**
+ * GET /api/analytics/global/activity
+ * Get global activity for the landing page pulse (public)
+ */
+router.get(
+  "/global/activity",
+  rateLimiters.general,
+  async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const activity = await getGlobalActivity();
+      res.json(activity);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 /**
  * Query parameter schemas

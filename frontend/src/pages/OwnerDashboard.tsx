@@ -11,6 +11,7 @@ import {
   generateGuestCodes,
   rotateOwnerLink,
   updateInvitationOwner,
+  checkInGuest,
 } from "../api/client";
 import type {
   GeneratedGuestCode,
@@ -18,6 +19,7 @@ import type {
   InvitationManageResponse,
   InvitationRsvpMode,
   InvitationStatus,
+  LoveStoryItem,
 } from "../types";
 
 const statusOptions: Array<{ value: InvitationStatus; label: string; description: string }> = [
@@ -90,7 +92,7 @@ const defaultDesignState = (): DesignState => ({
   backgroundImageUrl: "",
 });
 
-type DashboardTab = "design" | "rsvp" | "analytics" | "export";
+type DashboardTab = "design" | "rsvp" | "live" | "analytics" | "export";
 
 const OwnerDashboard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -121,6 +123,15 @@ const OwnerDashboard: React.FC = () => {
   const [codeIssuedTo, setCodeIssuedTo] = useState("");
   const [generatingCodes, setGeneratingCodes] = useState(false);
   const [deletingCodeId, setDeletingCodeId] = useState<string | null>(null);
+
+  // Live Tab State
+  const [checkInToken, setCheckInToken] = useState("");
+  const [isCheckingIn, setIsCheckingIn] = useState(false);
+  const [checkInFeedback, setCheckInFeedback] = useState<{
+    text: string;
+    tone: "success" | "error";
+  } | null>(null);
+  const [isUpdatingLiveEvent, setIsUpdatingLiveEvent] = useState(false);
 
   useEffect(() => {
     if (!initialToken) return;
@@ -503,6 +514,45 @@ const OwnerDashboard: React.FC = () => {
       setFeedback(message);
     } finally {
       setDeletingCodeId(null);
+    }
+  };
+
+  const handleCheckIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id || !ownerToken || !checkInToken.trim()) return;
+
+    setIsCheckingIn(true);
+    setCheckInFeedback(null);
+
+    try {
+      const result = await checkInGuest(id, checkInToken.trim(), ownerToken);
+      setCheckInFeedback({
+        text: `Success! Checked in ${result.rsvp.name}.`,
+        tone: "success",
+      });
+      setCheckInToken("");
+      await refreshRsvpData();
+    } catch (err) {
+      setCheckInFeedback({
+        text: err instanceof Error ? err.message : "Check-in failed.",
+        tone: "error",
+      });
+    } finally {
+      setIsCheckingIn(false);
+    }
+  };
+
+  const handleSetLiveEvent = async (eventId: string | null) => {
+    if (!id || !ownerToken) return;
+
+    setIsUpdatingLiveEvent(true);
+    try {
+      await updateInvitationOwner(id, { currentEventId: eventId }, ownerToken);
+      await invitationQuery.refetch();
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to update live event.");
+    } finally {
+      setIsUpdatingLiveEvent(false);
     }
   };
 
@@ -963,6 +1013,78 @@ const OwnerDashboard: React.FC = () => {
         );
       }
 
+    if (activeTab === "live") {
+      const timelineSection = invitation?.sections.find((s) => s.type === "loveStory");
+      const timelineItems = (timelineSection?.content as LoveStoryItem[]) || [];
+
+      return (
+        <div className="owner-live">
+          <div className="owner-live__grid">
+            <section className="owner-card">
+              <h3>Live Event Tracking</h3>
+              <p className="hint">
+                Select which part of your event is currently happening. This will show a "Live Now"
+                badge on the guest's invitation page.
+              </p>
+              <div className="live-event-list">
+                <button
+                  type="button"
+                  className={`live-event-item ${!invitation?.currentEventId ? "active" : ""}`}
+                  onClick={() => handleSetLiveEvent(null)}
+                  disabled={isUpdatingLiveEvent}
+                >
+                  None (Event not started or ended)
+                </button>
+                {timelineItems.map((item, idx) => {
+                  const itemId = item.id || `event-${idx}`;
+                  return (
+                    <button
+                      key={itemId}
+                      type="button"
+                      className={`live-event-item ${
+                        invitation?.currentEventId === itemId ? "active" : ""
+                      }`}
+                      onClick={() => handleSetLiveEvent(itemId)}
+                      disabled={isUpdatingLiveEvent}
+                    >
+                      <span className="live-event-item__title">{item.title || "Untitled Event"}</span>
+                      {item.date && <span className="live-event-item__date">{item.date}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="owner-card">
+              <h3>Guest Check-in</h3>
+              <p className="hint">
+                Enter the 12-character check-in token from the guest's Digital Pass to mark them as
+                arrived.
+              </p>
+              <form onSubmit={handleCheckIn} className="check-in-form">
+                <input
+                  type="text"
+                  placeholder="Enter token (e.g. ABC123XYZ789)"
+                  value={checkInToken}
+                  onChange={(e) => setCheckInToken(e.target.value.toUpperCase())}
+                  maxLength={12}
+                  className="check-in-input"
+                />
+                <button type="submit" className="button primary" disabled={isCheckingIn}>
+                  {isCheckingIn ? "Checking in..." : "Check In Guest"}
+                </button>
+              </form>
+              {checkInFeedback && (
+                <div className={`feedback-box ${checkInFeedback.tone}`}>
+                  {checkInFeedback.text}
+                </div>
+              )}
+            </section>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="owner-placeholder">
         <p>
@@ -1095,6 +1217,7 @@ const OwnerDashboard: React.FC = () => {
               {[
                 { value: "design", label: "Design" },
                 { value: "rsvp", label: "RSVP" },
+                { value: "live", label: "Live" },
                 { value: "analytics", label: "Analytics" },
                 { value: "export", label: "Export" },
               ].map((tab) => (

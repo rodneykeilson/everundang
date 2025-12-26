@@ -108,6 +108,13 @@ export const id = {
   rsvpAlreadySubmitted: "Anda sudah mengirim RSVP.",
   rsvpClosed: "RSVP sudah ditutup untuk acara ini.",
 
+  // Digital Pass
+  passTitle: "Tiket Masuk Digital",
+  passBadge: "TIKET MASUK",
+  passInstructions: "Tunjukkan kode QR ini di lokasi acara untuk check-in.",
+  passGuestLabel: "TAMU",
+  passTokenLabel: "TOKEN",
+
   // Guestbook
   guestbookTitle: "Buku Tamu",
   guestbookEmpty: "Jadilah yang pertama meninggalkan pesan!",

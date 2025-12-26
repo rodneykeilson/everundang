@@ -56,6 +56,7 @@ export interface InvitationRecord {
   rsvpPasscodeHash?: string | null;
   capacity?: number | null;
   ownerSecretHash?: string | null;
+  currentEventId?: string | null;
   hasRsvpPasscode?: boolean;
   createdAt: string;
   updatedAt: string;
@@ -80,6 +81,7 @@ export interface InvitationPayload {
   rsvpPasscodeHash?: string | null;
   capacity?: number | null;
   ownerSecretHash?: string | null;
+  currentEventId?: string | null;
 }
 
 export interface GuestbookPayload {
@@ -98,6 +100,8 @@ export interface RsvpRecord {
   message?: string | null;
   deviceHash?: string | null;
   ipHash?: string | null;
+  checkInToken?: string | null;
+  checkedInAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }

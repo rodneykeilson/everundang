@@ -32,6 +32,8 @@ const mapRsvpRow = (row: any): RsvpRecord => ({
   message: row.message,
   deviceHash: row.device_hash,
   ipHash: row.ip_hash,
+  checkInToken: row.check_in_token,
+  checkedInAt: row.checked_in_at,
   createdAt: row.created_at,
   updatedAt: row.updated_at,
 });
@@ -46,6 +48,7 @@ export async function listRsvps(invitationId: string): Promise<RsvpRecord[]> {
 
 export async function upsertRsvp(invitationId: string, payload: RsvpInput): Promise<RsvpRecord> {
   const id = randomUUID();
+  const checkInToken = randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase();
   const normalizedName = normalizeName(payload.name);
   const status = payload.status ?? "yes";
   const partySize = payload.partySize ?? 1;
@@ -61,18 +64,10 @@ export async function upsertRsvp(invitationId: string, payload: RsvpInput): Prom
        party_size,
        message,
        device_hash,
-       ip_hash
+       ip_hash,
+       check_in_token
      ) VALUES (
-       $1,
-       $2,
-       $3,
-       $4,
-       $5,
-       $6,
-       $7,
-       $8,
-       $9,
-       $10
+       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
      )
      ON CONFLICT (invitation_id, normalized_name)
      DO UPDATE SET
@@ -83,6 +78,7 @@ export async function upsertRsvp(invitationId: string, payload: RsvpInput): Prom
        message = EXCLUDED.message,
        device_hash = COALESCE(EXCLUDED.device_hash, rsvps.device_hash),
        ip_hash = COALESCE(EXCLUDED.ip_hash, rsvps.ip_hash),
+       check_in_token = COALESCE(rsvps.check_in_token, EXCLUDED.check_in_token),
        updated_at = NOW()
      RETURNING *`,
     [
@@ -96,6 +92,7 @@ export async function upsertRsvp(invitationId: string, payload: RsvpInput): Prom
       payload.message?.trim() ?? null,
       payload.deviceHash ?? null,
       payload.ipHash ?? null,
+      checkInToken,
     ],
   );
 
@@ -238,4 +235,17 @@ export async function countYesGuests(invitationId: string): Promise<number> {
     [invitationId],
   );
   return Number(result.rows[0]?.total ?? 0);
+}
+
+export async function checkInGuest(invitationId: string, token: string): Promise<RsvpRecord | null> {
+  const result = await pool.query(
+    `UPDATE rsvps 
+     SET checked_in_at = NOW() 
+     WHERE invitation_id = $1 AND check_in_token = $2 
+     RETURNING *`,
+    [invitationId, token.trim().toUpperCase()],
+  );
+
+  if (result.rows.length === 0) return null;
+  return mapRsvpRow(result.rows[0]);
 }

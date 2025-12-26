@@ -22,6 +22,7 @@ import {
   listRsvps,
   deleteGuestCode,
   upsertRsvp,
+  checkInGuest,
 } from "../repositories/rsvps.js";
 import type { InvitationPayload, InvitationRecord, RsvpRecord, RsvpStatus } from "../types.js";
 import { FRONTEND_URL } from "../config.js";
@@ -583,6 +584,26 @@ router.post(
     }
     next(error);
   }
+  },
+);
+
+router.post(
+  "/:invitationId/check-in",
+  requireOwnerOrAdmin,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { token } = z.object({ token: z.string() }).parse(req.body);
+      const rsvp = await checkInGuest(req.params.invitationId, token);
+      if (!rsvp) {
+        return res.status(404).json({ message: "Invalid check-in token" });
+      }
+      res.json({ message: "Guest checked in successfully", rsvp });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation failed", issues: error.issues });
+      }
+      next(error);
+    }
   },
 );
 

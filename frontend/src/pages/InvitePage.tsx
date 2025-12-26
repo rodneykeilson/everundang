@@ -6,7 +6,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import { addGuestbookEntry, getGiftSuggestions, getInvitation, submitRsvp } from "../api/client";
 import { useLocale } from "../hooks/useLocale";
-import type { Invitation, InvitationDetail, LoveStoryItem, Section, RsvpStats } from "../types";
+import type { Invitation, InvitationDetail, LoveStoryItem, Section, RsvpStats, Rsvp } from "../types";
+import DigitalPass from "../components/DigitalPass";
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
@@ -26,7 +27,7 @@ const formatTime = (value?: string) => {
   return isoCandidate.isValid() ? isoCandidate.format("HH:mm") : undefined;
 };
 
-const renderGenericSection = (section: Section) => {
+const renderGenericSection = (section: Section, currentEventId?: string | null) => {
   switch (section.type) {
     case "loveStory": {
       const timeline = Array.isArray(section.content)
@@ -34,13 +35,18 @@ const renderGenericSection = (section: Section) => {
         : [];
       return (
         <div className="love-story">
-          {timeline.map((item, idx) => (
-            <div key={idx} className="love-story__item">
-              <h4>{item.title ?? `Momen ${idx + 1}`}</h4>
-              {item.date && <span className="love-story__date">{formatDate(item.date)}</span>}
-              <p>{item.description}</p>
-            </div>
-          ))}
+          {timeline.map((item, idx) => {
+            const itemId = `event-${idx}`;
+            const isLive = currentEventId === itemId;
+            return (
+              <div key={idx} className={`love-story__item${isLive ? " is-live" : ""}`}>
+                {isLive && <span className="live-badge">LIVE NOW</span>}
+                <h4>{item.title ?? `Momen ${idx + 1}`}</h4>
+                {item.date && <span className="love-story__date">{formatDate(item.date)}</span>}
+                <p>{item.description}</p>
+              </div>
+            );
+          })}
         </div>
       );
     }
@@ -88,6 +94,7 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<RsvpStats | null>(null);
+  const [submittedRsvp, setSubmittedRsvp] = useState<Rsvp | null>(null);
   const [deviceFingerprint, setDeviceFingerprint] = useState<string | undefined>();
 
   useEffect(() => {
@@ -117,6 +124,7 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
       setFeedback("RSVP saved. Thank you!");
       setError(null);
       setStats(data.stats);
+      setSubmittedRsvp(data.rsvp);
       setName(data.rsvp.name);
       setStatus(data.rsvp.status as RsvpStatusOption);
       setPartySize(String(data.rsvp.partySize));
@@ -271,6 +279,16 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
           {feedback}
         </p>
       ) : null}
+
+      {submittedRsvp && submittedRsvp.status === "yes" && submittedRsvp.checkInToken && (
+        <DigitalPass
+          name={submittedRsvp.name}
+          token={submittedRsvp.checkInToken}
+          eventTitle={invitation.event.title}
+          eventDate={formatDate(invitation.event.date)}
+        />
+      )}
+
       {stats ? (
         <dl className="rsvp-stats" aria-live="polite">
           <div>
@@ -651,7 +669,7 @@ const InvitePage: React.FC = () => {
                   description={description}
                 />
               ) : (
-                renderGenericSection(section)
+                renderGenericSection(section, invitation.currentEventId)
               )}
             </div>
           </section>

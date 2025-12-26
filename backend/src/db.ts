@@ -53,9 +53,12 @@ export async function initDatabase() {
        rsvp_passcode_hash TEXT,
        capacity INTEGER,
        owner_secret_hash TEXT,
+       current_event_id TEXT,
        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
      );`,
+    `ALTER TABLE invitations
+       ADD COLUMN IF NOT EXISTS current_event_id TEXT;`,
     `ALTER TABLE invitations
        ADD COLUMN IF NOT EXISTS title TEXT,
        ADD COLUMN IF NOT EXISTS date_iso TEXT,
@@ -92,9 +95,17 @@ export async function initDatabase() {
        ip_hash TEXT,
        edit_token_hash TEXT,
        edit_token_expires_at TIMESTAMPTZ,
+       check_in_token TEXT,
+       checked_in_at TIMESTAMPTZ,
        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
      );`,
+    `ALTER TABLE rsvps
+       ADD COLUMN IF NOT EXISTS check_in_token TEXT,
+       ADD COLUMN IF NOT EXISTS checked_in_at TIMESTAMPTZ;`,
+    `ALTER TABLE invitations
+       ADD COLUMN IF NOT EXISTS current_event_id TEXT;`,
+    `CREATE UNIQUE INDEX IF NOT EXISTS rsvps_check_in_token_idx ON rsvps (check_in_token) WHERE check_in_token IS NOT NULL;`,
     `CREATE UNIQUE INDEX IF NOT EXISTS rsvps_invitation_normalized_name_idx
        ON rsvps (invitation_id, normalized_name);`,
     `CREATE UNIQUE INDEX IF NOT EXISTS rsvps_invitation_phone_unique_idx

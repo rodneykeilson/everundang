@@ -25,6 +25,7 @@ export interface Section {
 }
 
 export interface LoveStoryItem {
+  id?: string;
   title?: string;
   description?: string;
   date?: string;
@@ -53,6 +54,7 @@ export interface Invitation {
   status?: InvitationStatus;
   rsvpMode?: InvitationRsvpMode;
   capacity?: number | null;
+  currentEventId?: string | null;
   hasRsvpPasscode?: boolean;
   createdAt: string;
   updatedAt: string;
@@ -82,6 +84,7 @@ export interface InvitationFormData {
   status?: InvitationStatus;
   rsvpMode?: InvitationRsvpMode;
   capacity?: number | null;
+  currentEventId?: string | null;
 }
 
 export type InvitationManageResponse = InvitationDetail;
@@ -99,6 +102,8 @@ export interface Rsvp {
   status: "yes" | "maybe" | "no";
   partySize: number;
   message?: string;
+  checkInToken?: string;
+  checkedInAt?: string;
   createdAt: string;
   updatedAt: string;
 }

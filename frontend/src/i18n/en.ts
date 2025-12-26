@@ -108,6 +108,13 @@ export const en = {
   rsvpAlreadySubmitted: "You have already submitted your RSVP.",
   rsvpClosed: "RSVP is now closed for this event.",
 
+  // Digital Pass
+  passTitle: "Digital Entry Pass",
+  passBadge: "ENTRY PASS",
+  passInstructions: "Present this QR code at the venue for check-in.",
+  passGuestLabel: "GUEST",
+  passTokenLabel: "TOKEN",
+
   // Guestbook
   guestbookTitle: "Guestbook",
   guestbookEmpty: "Be the first to leave a message!",

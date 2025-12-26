@@ -34,6 +34,7 @@ const mapInvitationRow = (row: any): InvitationRecord => ({
   rsvpPasscodeHash: row.rsvp_passcode_hash ?? null,
   capacity: row.capacity ?? null,
   ownerSecretHash: row.owner_secret_hash ?? null,
+  currentEventId: row.current_event_id ?? null,
   hasRsvpPasscode: Boolean(row.rsvp_passcode_hash),
   createdAt: row.created_at,
   updatedAt: row.updated_at,
@@ -102,6 +103,7 @@ const buildUpdatedInvitation = (
         ? null
         : payload.capacity ?? existing.capacity ?? null,
     ownerSecretHash: payload.ownerSecretHash ?? existing.ownerSecretHash ?? null,
+    currentEventId: payload.currentEventId ?? existing.currentEventId ?? null,
   };
 };
 
@@ -139,6 +141,7 @@ const applyInvitationUpdate = async (
          rsvp_passcode_hash = $17,
          capacity = $18,
          owner_secret_hash = $19,
+         current_event_id = $20,
          updated_at = NOW()
      WHERE ${identifier === "id" ? "id" : "slug"} = $1
      RETURNING *`,
@@ -162,6 +165,7 @@ const applyInvitationUpdate = async (
       updated.rsvpPasscodeHash,
       updated.capacity,
       updated.ownerSecretHash,
+      updated.currentEventId,
     ],
   );
 
@@ -269,7 +273,8 @@ export async function createInvitation(payload: InvitationPayload): Promise<Invi
        rsvp_mode,
        rsvp_passcode_hash,
        capacity,
-       owner_secret_hash
+       owner_secret_hash,
+       current_event_id
      )
      VALUES (
        $1,
@@ -290,7 +295,8 @@ export async function createInvitation(payload: InvitationPayload): Promise<Invi
        $16,
        $17,
        $18,
-       $19
+       $19,
+       $20
      )
      RETURNING *`,
     [
@@ -313,6 +319,7 @@ export async function createInvitation(payload: InvitationPayload): Promise<Invi
       payload.rsvpPasscodeHash ?? null,
       payload.capacity ?? null,
       payload.ownerSecretHash ?? null,
+      payload.currentEventId ?? null,
     ],
   );
   return mapInvitationRow(result.rows[0]);

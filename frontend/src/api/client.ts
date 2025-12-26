@@ -172,6 +172,7 @@ export function updateInvitationOwner(
     isPublished?: boolean;
     rsvpMode?: InvitationRsvpMode;
     rsvpPasscode?: string | null;
+    currentEventId?: string | null;
   },
   ownerToken: string,
 ) {
@@ -193,6 +194,14 @@ export function rotateOwnerLinkAdmin(id: string, adminSecret: string) {
   return request<OwnerLinkResponse>(`/api/invitations/${id}/rotate-owner-link`, {
     method: "POST",
     headers: withAdminHeaders(adminSecret),
+  });
+}
+
+export function checkInGuest(invitationId: string, token: string, ownerToken: string) {
+  return request<{ message: string; rsvp: Rsvp }>(`/api/invitations/${invitationId}/check-in`, {
+    method: "POST",
+    body: JSON.stringify({ token }),
+    headers: withOwnerHeaders(ownerToken),
   });
 }
 

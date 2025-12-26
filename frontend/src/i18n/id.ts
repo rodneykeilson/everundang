@@ -68,6 +68,15 @@ export const id = {
   // Footer
   footerRights: "Seluruh hak cipta dilindungi.",
 
+  // Celebration Pulse
+  pulseLive: "LIVE",
+  pulseNewInvitation: "Undangan baru dibuat",
+  pulseNewRsvp: "RSVP diterima",
+  pulseNewGuestbook: "Pesan buku tamu baru",
+
+  // Theme Morpher
+  morpherTitle: "Ubah Tema Halaman",
+
   // Common UI
   languageLabel: "Bahasa",
   themeLabel: "Tema",

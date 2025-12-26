@@ -433,7 +433,45 @@ export async function getAnalyticsDashboard(
   };
 }
 
+/**
+ * Gets global activity for the landing page pulse
+ */
+export async function getGlobalActivity() {
+  const invitations = await pool.query(`
+    SELECT slug, headline, created_at 
+    FROM invitations 
+    WHERE status = 'published' 
+    ORDER BY created_at DESC 
+    LIMIT 5
+  `);
+
+  const rsvps = await pool.query(`
+    SELECT i.slug, i.headline, r.name, r.status, r.created_at
+    FROM rsvps r
+    JOIN invitations i ON r.invitation_id = i.id
+    WHERE i.status = 'published'
+    ORDER BY r.created_at DESC
+    LIMIT 5
+  `);
+
+  const guestbook = await pool.query(`
+    SELECT i.slug, i.headline, g.guest_name, g.message, g.created_at
+    FROM guestbook_entries g
+    JOIN invitations i ON g.invitation_id = i.id
+    WHERE i.status = 'published'
+    ORDER BY g.created_at DESC
+    LIMIT 5
+  `);
+
+  return {
+    invitations: invitations.rows,
+    rsvps: rsvps.rows,
+    guestbook: guestbook.rows,
+  };
+}
+
 export default {
+  getGlobalActivity,
   getRsvpTrends,
   getDailyActivity,
   getResponseTimeAnalysis,

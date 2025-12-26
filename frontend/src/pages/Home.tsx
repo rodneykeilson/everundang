@@ -6,6 +6,8 @@ import Hero from "../components/Hero";
 import Features from "../components/Features";
 import HowItWorks from "../components/HowItWorks";
 import Footer from "../components/Footer";
+import CelebrationPulse from "../components/CelebrationPulse";
+import ThemeMorpher from "../components/ThemeMorpher";
 import { getInvitations } from "../api/client";
 import type { Invitation } from "../types";
 import { useLocale } from "../hooks/useLocale";
@@ -56,6 +58,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="page">
+      <CelebrationPulse />
       <Header />
 
       <main>
@@ -165,6 +168,7 @@ const Home: React.FC = () => {
       </main>
 
       <Footer />
+      <ThemeMorpher />
     </div>
   );
 };

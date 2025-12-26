@@ -68,6 +68,15 @@ export const en = {
   // Footer
   footerRights: "All rights reserved.",
 
+  // Celebration Pulse
+  pulseLive: "LIVE",
+  pulseNewInvitation: "New invitation created",
+  pulseNewRsvp: "RSVP received",
+  pulseNewGuestbook: "New guestbook message",
+
+  // Theme Morpher
+  morpherTitle: "Morph Page Theme",
+
   // Common UI
   languageLabel: "Language",
   themeLabel: "Theme",

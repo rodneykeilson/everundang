@@ -29,9 +29,14 @@ backend/.env
 *.tsbuildinfo
 
 # Editor settings
+copilot-instructions.md
 .vscode/
 .idea/
 
 # OS artifacts
 .DS_Store
 Thumbs.db
+
+# Kubernetes local overrides (keep base configs)
+k8s/**/secret-override.yaml
+k8s/**/*-local.yaml

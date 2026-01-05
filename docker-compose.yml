@@ -23,6 +23,8 @@ services:
       DATABASE_URL: postgres://everundang:everundang@db:5432/everundang
       ADMIN_SECRET: changeme
       FRONTEND_URL: http://localhost:5173
+      INVITE_OWNER_JWT_SECRET: local-dev-owner-secret
+      OWNER_TOKEN_TTL_SECONDS: 2592000
     ports:
       - "4000:4000"
 

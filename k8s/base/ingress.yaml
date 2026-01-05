@@ -1,0 +1,39 @@
+# Alternative Ingress for Kubernetes (if not using OpenShift Routes)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: everundang-ingress
+  namespace: everundang
+  labels:
+    app.kubernetes.io/name: everundang
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - everundang.example.com
+    - api.everundang.example.com
+    secretName: everundang-tls
+  rules:
+  - host: everundang.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+  - host: api.everundang.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 4000

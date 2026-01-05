@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: everundang
+  labels:
+    app.kubernetes.io/name: everundang
+    app.kubernetes.io/component: namespace

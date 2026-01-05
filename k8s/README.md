@@ -10,7 +10,9 @@ k8s/
 │   ├── namespace.yaml              # Namespace definition
 │   ├── postgres-*.yaml             # PostgreSQL database resources
 │   ├── backend-*.yaml              # Backend API resources
+│   ├── backend-hpa.yaml            # Backend autoscaling
 │   ├── frontend-*.yaml             # Frontend SPA resources
+│   ├── frontend-hpa.yaml           # Frontend autoscaling
 │   ├── *-route.yaml                # OpenShift Routes
 │   ├── ingress.yaml                # Kubernetes Ingress (alternative)
 │   └── kustomization.yaml          # Base kustomization
@@ -23,7 +25,10 @@ k8s/
 │       ├── replicas-patch.yaml
 │       └── resources-patch.yaml
 ├── deploy.sh / deploy.ps1          # Deployment scripts
-└── delete.sh / delete.ps1          # Cleanup scripts
+├── delete.sh / delete.ps1          # Cleanup scripts
+├── load-test.sh / load-test.ps1    # HPA load testing
+├── HPA_GUIDE.md                    # Autoscaling documentation
+└── README.md                       # This file
 ```
 
 ## 🚀 Quick Start
@@ -242,16 +247,48 @@ oc rollout status deployment/backend -n everundang
 
 ### Scaling
 
-```powershell
-# Scale backend to 5 replicas
-oc scale deployment/backend --replicas=5 -n everundang
+**Note**: With Horizontal Pod Autoscaler (HPA) enabled, manual scaling is not recommended as HPA will override manual changes. See [HPA_GUIDE.md](HPA_GUIDE.md) for autoscaling documentation.
 
-# Scale frontend to 3 replicas
-oc scale deployment/frontend --replicas=3 -n everundang
+```powershell
+# View HPA status
+kubectl get hpa -n everundang
+
+# Test autoscaling with load
+.\k8s\load-test.ps1
+
+# Manual scaling (not recommended with HPA enabled)
+# oc scale deployment/backend --replicas=5 -n everundang
 
 # Check current replicas
 oc get deployment -n everundang
 ```
+
+## 🔄 Horizontal Pod Autoscaler (HPA)
+
+EverUndang uses HPA to automatically scale pods based on CPU and memory usage.
+
+### Quick HPA Commands
+
+```powershell
+# View HPA status
+kubectl get hpa -n everundang
+
+# Watch HPA in real-time
+kubectl get hpa -n everundang -w
+
+# View pod resource usage
+kubectl top pods -n everundang
+
+# Run load test to trigger scaling
+.\k8s\load-test.ps1
+```
+
+### HPA Configuration
+
+- **Backend**: 2-10 replicas (scales at 70% CPU, 80% memory)
+- **Frontend**: 2-8 replicas (scales at 75% CPU, 85% memory)
+
+For detailed HPA documentation, see [HPA_GUIDE.md](HPA_GUIDE.md).
 
 ## 🧹 Cleanup
 

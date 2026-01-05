@@ -14,10 +14,12 @@ resources:
   - backend-deployment.yaml
   - backend-service.yaml
   - backend-route.yaml
+  - backend-hpa.yaml
   - frontend-configmap.yaml
   - frontend-deployment.yaml
   - frontend-service.yaml
   - frontend-route.yaml
+  - frontend-hpa.yaml
 
 commonLabels:
   app.kubernetes.io/name: everundang

@@ -2,12 +2,73 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>app-frontend</title>
+    
+    <!-- Primary Meta Tags -->
+    <title>EverUndang · Digital Wedding Invitations</title>
+    <meta name="title" content="EverUndang · Digital Wedding Invitations" />
+    <meta name="description" content="Create beautiful, interactive digital wedding and event invitations with RSVP management, guestbook, and more." />
+    <meta name="keywords" content="wedding invitation, digital invitation, RSVP, online invitation, event invitation" />
+    <meta name="author" content="EverUndang" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/everundang-icon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#8b5cf6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: dark)" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <!-- PWA iOS Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="EverUndang" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://everundang.com/" />
+    <meta property="og:title" content="EverUndang · Digital Wedding Invitations" />
+    <meta property="og:description" content="Create beautiful, interactive digital wedding and event invitations with RSVP management, guestbook, and more." />
+    <meta property="og:image" content="/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://everundang.com/" />
+    <meta property="twitter:title" content="EverUndang · Digital Wedding Invitations" />
+    <meta property="twitter:description" content="Create beautiful, interactive digital wedding and event invitations with RSVP management, guestbook, and more." />
+    <meta property="twitter:image" content="/og-image.png" />
+    
+    <!-- Preconnect to API -->
+    <link rel="preconnect" href="https://api.everundang.com" crossorigin />
+    <link rel="dns-prefetch" href="https://api.everundang.com" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <noscript>
+      <style>
+        .no-js-message {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          font-family: system-ui, sans-serif;
+          text-align: center;
+          padding: 2rem;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+        }
+      </style>
+      <div class="no-js-message">
+        <div>
+          <h1>JavaScript Required</h1>
+          <p>Please enable JavaScript to use EverUndang.</p>
+        </div>
+      </div>
+    </noscript>
   </body>
 </html>

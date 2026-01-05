@@ -1,0 +1,237 @@
+/**
+ * English translations for EverUndang
+ */
+export const en = {
+  // Navigation
+  navTemplates: "Templates",
+  navFaq: "FAQ",
+  navAdmin: "Admin",
+  navDashboard: "Dashboard",
+
+  // Hero section
+  heroTitle: "Craft immersive digital invitations in minutes",
+  heroSubtitle:
+    "Design, publish, and share beautifully responsive invitations with real-time RSVPs and analytics.",
+  heroPrimaryCta: "Create invitation",
+  heroSecondaryCta: "Explore live demo",
+
+  // Features section
+  featureTemplates: "Curated templates",
+  featureTemplatesDesc:
+    "Start with professionally designed themes for weddings, birthdays, and corporate events.",
+  featureAnalytics: "Insightful analytics",
+  featureAnalyticsDesc:
+    "Understand guest engagement with live RSVPs, conversion funnel, and attendance tracking.",
+  featureSecurity: "Secure by design",
+  featureSecurityDesc:
+    "Owner-only edit links, admin controls, and privacy-first data handling built in.",
+
+  // Templates section
+  sectionTemplatesTitle: "Live Invitations",
+  sectionTemplatesSubtitle:
+    "Preview invitations built with EverUndang and discover layouts ready for your next event.",
+  templatesCuratedLabel: "Curated starting points",
+  templatesLiveLabel: "Live invitations",
+  templateUseButton: "Use this template",
+  templateDetailsButton: "Learn more",
+  templateApplied: "Using template",
+  templateAppliedDescription:
+    "Fields are pre-filled from this template. You can still customise every detail before publishing.",
+  templateClear: "Remove template",
+  templatesEmptyMessage:
+    "No live invitations yet. Publish your first invitation to showcase it here.",
+
+  // Create invitation
+  createTitle: "Launch a new invitation",
+  createLead:
+    "Share a few basics and we will generate a private owner link so you can continue crafting the perfect experience.",
+  createTemplateCallout: "Template applied",
+
+  // Dashboard
+  dashboardCta: "Open dashboard",
+  dashboardTitle: "Your Invitations",
+  dashboardEmpty: "You haven't created any invitations yet.",
+  dashboardCreateFirst: "Create your first invitation",
+
+  // FAQ
+  faqTitle: "Frequently asked questions",
+  faq01Title: "Do I need an account?",
+  faq01Body:
+    "No accounts required. Each invitation comes with an owner link you can safely share with collaborators.",
+  faq02Title: "Can I customise the design?",
+  faq02Body:
+    "Yes. Adjust colours, typography, sections, gallery, RSVP flows, and more in the visual builder.",
+  faq03Title: "Is the guest data secure?",
+  faq03Body:
+    "All sensitive tokens are hashed, links are signed, and you control who can submit RSVPs.",
+
+  // Footer
+  footerRights: "All rights reserved.",
+
+  // Celebration Pulse
+  pulseLive: "LIVE",
+  pulseNewInvitation: "New invitation created",
+  pulseNewRsvp: "RSVP received",
+  pulseNewGuestbook: "New guestbook message",
+
+  // Theme Morpher
+  morpherTitle: "Morph Page Theme",
+
+  // Common UI
+  languageLabel: "Language",
+  themeLabel: "Theme",
+  loading: "Loading...",
+  save: "Save",
+  cancel: "Cancel",
+  delete: "Delete",
+  edit: "Edit",
+  create: "Create",
+  submit: "Submit",
+  back: "Back",
+  next: "Next",
+  close: "Close",
+  confirm: "Confirm",
+  success: "Success",
+  error: "Error",
+  warning: "Warning",
+  info: "Info",
+
+  // RSVP
+  rsvpTitle: "RSVP",
+  rsvpYes: "Yes, I will attend",
+  rsvpMaybe: "Maybe",
+  rsvpNo: "Unable to attend",
+  rsvpPartySize: "Number of guests",
+  rsvpMessage: "Leave a message (optional)",
+  rsvpSubmit: "Submit RSVP",
+  rsvpThankYou: "Thank you for your response!",
+  rsvpAlreadySubmitted: "You have already submitted your RSVP.",
+  rsvpClosed: "RSVP is now closed for this event.",
+
+  // Digital Pass
+  passTitle: "Digital Entry Pass",
+  passBadge: "ENTRY PASS",
+  passInstructions: "Present this QR code at the venue for check-in.",
+  passGuestLabel: "GUEST",
+  passTokenLabel: "TOKEN",
+
+  // Guestbook
+  guestbookTitle: "Guestbook",
+  guestbookEmpty: "Be the first to leave a message!",
+  guestbookPlaceholder: "Write your message...",
+  guestbookNamePlaceholder: "Your name",
+  guestbookSubmit: "Post message",
+
+  // Analytics (new feature)
+  analyticsTitle: "Event Analytics",
+  analyticsOverview: "Overview",
+  analyticsTrends: "RSVP Trends",
+  analyticsActivity: "Daily Activity",
+  analyticsEngagement: "Engagement",
+  analyticsPrediction: "Attendance Prediction",
+  analyticsRsvpRate: "Response Rate",
+  analyticsConfirmedGuests: "Confirmed Guests",
+  analyticsMaybeGuests: "Tentative",
+  analyticsDeclinedGuests: "Declined",
+  analyticsTotalResponses: "Total Responses",
+  analyticsViewsToday: "Views Today",
+  analyticsConversionRate: "Conversion Rate",
+  analyticsPredictedAttendance: "Predicted Attendance",
+  analyticsConfidenceLevel: "Confidence Level",
+  analyticsAverageResponseTime: "Avg. Response Time",
+  analyticsPeakHours: "Peak Activity Hours",
+  analyticsGeographicDistribution: "Geographic Distribution",
+  analyticsDeviceBreakdown: "Device Breakdown",
+
+  // Gift Registry (new feature)
+  giftRegistryTitle: "Gift Registry",
+  giftRegistryDescription:
+    "Help us start our journey together by choosing from our curated gift registry.",
+  giftRegistryEmpty: "No items in the registry yet.",
+  giftRegistryAddItem: "Add Gift Item",
+  giftRegistryReserve: "Reserve This Gift",
+  giftRegistryReserved: "Reserved",
+  giftRegistryAvailable: "Available",
+  giftRegistryContribute: "Contribute",
+  giftRegistryContributionAmount: "Contribution Amount",
+  giftRegistryPreferences: "Gift Preferences",
+  giftRegistryCategories: "Categories",
+  giftRegistryPriceRange: "Price Range",
+  giftRegistrySuggestions: "Suggested Gifts",
+  giftRegistryGetSuggestions: "Get Gift Suggestions",
+  giftRegistryCategoryHome: "Home & Living",
+  giftRegistryCategoryKitchen: "Kitchen & Dining",
+  giftRegistryCategoryElectronics: "Electronics",
+  giftRegistryCategoryExperiences: "Experiences",
+  giftRegistryCategoryCharity: "Charity Donations",
+  giftRegistryCategoryCash: "Cash Contributions",
+  giftRegistryCategoryTravel: "Travel & Honeymoon",
+  giftRegistryCategoryFashion: "Fashion & Accessories",
+  giftRegistryCategoryWellness: "Wellness & Self-Care",
+  giftRegistryCategoryCustom: "Custom",
+
+  // Audit/Security (new feature)
+  auditLogTitle: "Activity Log",
+  auditLogEmpty: "No activity recorded yet.",
+  auditLogAction: "Action",
+  auditLogActor: "Performed By",
+  auditLogTimestamp: "Time",
+  auditLogDetails: "Details",
+  securityLogTitle: "Security Events",
+  securityRateLimited: "Rate Limited",
+  securityFailedAuth: "Failed Authentication",
+  securitySuspiciousActivity: "Suspicious Activity",
+
+  // Error messages
+  errorGeneric: "Something went wrong. Please try again.",
+  errorNotFound: "The page you're looking for doesn't exist.",
+  errorUnauthorized: "You don't have permission to access this resource.",
+  errorNetwork: "Network error. Please check your connection.",
+  errorValidation: "Please check your input and try again.",
+  errorRateLimit: "Too many requests. Please wait a moment.",
+
+  // Owner Dashboard
+  ownerDashboardTitle: "Manage Your Invitation",
+  ownerDashboardRsvps: "RSVP Responses",
+  ownerDashboardGuestbook: "Guestbook Messages",
+  ownerDashboardSettings: "Settings",
+  ownerDashboardAnalytics: "Analytics",
+  ownerDashboardGiftRegistry: "Gift Registry",
+  ownerDashboardExport: "Export Data",
+  ownerDashboardShareLink: "Share Link",
+  ownerDashboardCopyLink: "Copy Link",
+  ownerDashboardLinkCopied: "Link copied to clipboard!",
+  ownerDashboardRotateLink: "Rotate Owner Link",
+  ownerDashboardRotateLinkWarning:
+    "This will invalidate the current owner link. Make sure to save the new one.",
+
+  // Invitation status
+  statusDraft: "Draft",
+  statusPublished: "Published",
+  statusClosed: "Closed",
+
+  // Date/Time formatting
+  dateToday: "Today",
+  dateYesterday: "Yesterday",
+  dateDaysAgo: "{days} days ago",
+  timeHoursAgo: "{hours} hours ago",
+  timeMinutesAgo: "{minutes} minutes ago",
+  timeJustNow: "Just now",
+
+  // Confirmation dialogs
+  confirmDelete: "Are you sure you want to delete this?",
+  confirmDeleteDescription: "This action cannot be undone.",
+  confirmLeave: "Are you sure you want to leave?",
+  confirmLeaveDescription: "You have unsaved changes that will be lost.",
+
+  // Accessibility
+  a11ySkipToContent: "Skip to content",
+  a11yOpenMenu: "Open menu",
+  a11yCloseMenu: "Close menu",
+  a11yToggleTheme: "Toggle theme",
+  a11ySelectLanguage: "Select language",
+  a11yLoading: "Loading content...",
+  a11yError: "An error occurred",
+} as const;
+
+export type TranslationKey = keyof typeof en;

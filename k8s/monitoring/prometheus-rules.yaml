@@ -1,0 +1,94 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.28.0/configmap.json
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-rules
+  namespace: monitoring
+data:
+  everundang-rules.yml: |
+    groups:
+    - name: everundang_alerts
+      interval: 30s
+      rules:
+      # Backend alerts
+      - alert: BackendDown
+        expr: up{job="everundang-backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: backend
+        annotations:
+          summary: "EverUndang backend is down"
+          description: "Backend service has been down for more than 2 minutes"
+
+      - alert: BackendHighMemory
+        expr: container_memory_usage_bytes{pod=~"backend-.*"} / container_spec_memory_limit_bytes{pod=~"backend-.*"} > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "Backend memory usage is high"
+          description: "Backend pod {{ $labels.pod }} memory usage is above 85%"
+
+      - alert: BackendHighCPU
+        expr: rate(container_cpu_usage_seconds_total{pod=~"backend-.*"}[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: backend
+        annotations:
+          summary: "Backend CPU usage is high"
+          description: "Backend pod {{ $labels.pod }} CPU usage is above 80%"
+
+      # Frontend alerts
+      - alert: FrontendDown
+        expr: up{job="everundang-frontend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: frontend
+        annotations:
+          summary: "EverUndang frontend is down"
+          description: "Frontend service has been down for more than 2 minutes"
+
+      # Database alerts
+      - alert: PostgresDown
+        expr: up{pod=~"postgres-.*"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "Database has been down for more than 1 minute"
+
+      # HPA alerts
+      - alert: HPAMaxReplicasReached
+        expr: kube_horizontalpodautoscaler_status_current_replicas >= kube_horizontalpodautoscaler_spec_max_replicas
+        for: 5m
+        labels:
+          severity: warning
+          component: autoscaling
+        annotations:
+          summary: "HPA has reached maximum replicas"
+          description: "HPA {{ $labels.horizontalpodautoscaler }} has been at max replicas for 5 minutes"
+
+      # Pod alerts
+      - alert: PodCrashLooping
+        expr: rate(kube_pod_container_status_restarts_total[15m]) > 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Pod is crash looping"
+          description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is crash looping"
+
+      - alert: PodNotReady
+        expr: kube_pod_status_phase{phase!~"Running|Succeeded"} > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pod is not ready"
+          description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has been not ready for 5 minutes"

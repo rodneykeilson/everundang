@@ -78,3 +78,68 @@ jobs:
             VITE_API_URL=${{ secrets.FRONTEND_API_URL || 'http://localhost:4000' }}
           tags: ${{ steps.meta-frontend.outputs.tags }}
           labels: ${{ steps.meta-frontend.outputs.labels }}
+
+  deploy-to-kubernetes:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'latest'
+
+      - name: Configure kubeconfig
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          mkdir -p $HOME/.kube
+          echo "$KUBE_CONFIG" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Verify cluster connection
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Deploy to Kubernetes with Kustomize
+        run: |
+          cd k8s
+          kubectl apply -k overlays/production
+
+      - name: Restart deployments to pull latest images
+        run: |
+          kubectl rollout restart deployment/backend -n everundang
+          kubectl rollout restart deployment/frontend -n everundang
+
+      - name: Wait for deployments to be ready
+        run: |
+          kubectl rollout status deployment/backend -n everundang --timeout=5m
+          kubectl rollout status deployment/frontend -n everundang --timeout=5m
+
+      - name: Verify deployment
+        run: |
+          echo "Deployment Status:"
+          kubectl get deployments -n everundang
+          echo ""
+          echo "Pod Status:"
+          kubectl get pods -n everundang
+          echo ""
+          echo "HPA Status:"
+          kubectl get hpa -n everundang
+
+      - name: Check application health
+        run: |
+          # Wait for service to be ready
+          sleep 10
+          
+          # Get backend service status
+          kubectl get svc backend -n everundang
+          
+          echo "✅ Deployment completed successfully!"

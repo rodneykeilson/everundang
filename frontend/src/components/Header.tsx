@@ -36,15 +36,17 @@ const Header: React.FC = () => {
         <nav aria-label="Primary navigation" className="app-header__nav">
           <Link
             to="/#templates"
-            className="nav-link"
+            className="nav-link nav-link--anchor"
             onClick={(event) => handleSectionClick(event, "templates")}
+            title="Scrolls to section on homepage"
           >
             {t("navTemplates")}
           </Link>
           <Link
             to="/#faq"
-            className="nav-link"
+            className="nav-link nav-link--anchor"
             onClick={(event) => handleSectionClick(event, "faq")}
+            title="Scrolls to section on homepage"
           >
             {t("navFaq")}
           </Link>

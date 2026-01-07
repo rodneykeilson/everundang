@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -40,6 +40,8 @@ const defaultFormState = (): FormState => ({
   secondaryColor: "#f472b6",
 });
 
+type WizardStep = 1 | 2 | 3;
+
 const CreateInvitation: React.FC = () => {
   const { t } = useLocale();
   const toast = useToast();
@@ -49,6 +51,13 @@ const CreateInvitation: React.FC = () => {
   const [isSubmitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<TemplatePreset | null>(null);
+  const [currentStep, setCurrentStep] = useState<WizardStep>(1);
+
+  const steps = useMemo(() => [
+    { number: 1, label: t("wizardStep1") },
+    { number: 2, label: t("wizardStep2") },
+    { number: 3, label: t("wizardStep3") },
+  ], [t]);
 
   useEffect(() => {
     document.title = "Create Invitation · EverUndang";
@@ -100,20 +109,49 @@ const CreateInvitation: React.FC = () => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  const validateStep = (step: WizardStep): boolean => {
+    setError(null);
+    switch (step) {
+      case 1:
+        if (!form.slug.trim()) {
+          setError(t("formErrorSlug"));
+          return false;
+        }
+        if (!form.brideName.trim() || !form.groomName.trim()) {
+          setError(t("formErrorNames"));
+          return false;
+        }
+        return true;
+      case 2:
+        if (!form.eventVenue.trim()) {
+          setError(t("formErrorVenue"));
+          return false;
+        }
+        return true;
+      case 3:
+        return true;
+      default:
+        return true;
+    }
+  };
+
+  const handleNext = () => {
+    if (validateStep(currentStep) && currentStep < 3) {
+      setCurrentStep((prev) => (prev + 1) as WizardStep);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep((prev) => (prev - 1) as WizardStep);
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
 
-    if (!form.slug.trim()) {
-      setError(t("formErrorSlug"));
-      return;
-    }
-    if (!form.brideName.trim() || !form.groomName.trim()) {
-      setError(t("formErrorNames"));
-      return;
-    }
-    if (!form.eventVenue.trim()) {
-      setError(t("formErrorVenue"));
+    if (!validateStep(1) || !validateStep(2)) {
       return;
     }
 
@@ -169,6 +207,19 @@ const CreateInvitation: React.FC = () => {
             <p className="section__lead">{t("createLead")}</p>
           </header>
 
+          {/* Step Indicator */}
+          <nav className="wizard-steps" aria-label="Form progress">
+            {steps.map((step) => (
+              <div
+                key={step.number}
+                className={`wizard-step ${currentStep === step.number ? "wizard-step--active" : ""} ${currentStep > step.number ? "wizard-step--completed" : ""}`}
+              >
+                <span className="wizard-step__number">{step.number}</span>
+                <span className="wizard-step__label">{step.label}</span>
+              </div>
+            ))}
+          </nav>
+
           <form className="create-form" onSubmit={handleSubmit}>
             {selectedTemplate ? (
               <aside className="template-banner" role="status">
@@ -189,124 +240,182 @@ const CreateInvitation: React.FC = () => {
               </aside>
             ) : null}
             {error && <p className="form-message error">{error}</p>}
-            <div className="grid two">
-              <label>
-                {t("formInvitationSlug")}
-                <input
-                  value={form.slug}
-                  onChange={(event) => updateField("slug", event.target.value)}
-                  placeholder={t("formSlugPlaceholder")}
-                  pattern="[a-z0-9-]{3,}"
-                  required
-                />
-                <span className="hint">{t("formInvitationSlugHint")}</span>
-              </label>
-              <label>
-                {t("formHeadline")}
-                <input
-                  value={form.headline}
-                  onChange={(event) => updateField("headline", event.target.value)}
-                  placeholder={t("formHeadlinePlaceholder")}
-                  required
-                />
-                <span className="hint">{t("formHeadlineHelper")}</span>
-              </label>
-            </div>
 
-            <fieldset>
-              <legend>{t("formCoupleFieldset")}</legend>
-              <div className="grid two">
+            {/* Step 1: Basic Info */}
+            {currentStep === 1 && (
+              <div className="wizard-content">
+                <div className="grid two">
+                  <label>
+                    {t("formInvitationSlug")}
+                    <input
+                      value={form.slug}
+                      onChange={(event) => updateField("slug", event.target.value)}
+                      placeholder={t("formSlugPlaceholder")}
+                      pattern="[a-z0-9-]{3,}"
+                      required
+                    />
+                    <span className="hint">{t("formInvitationSlugHint")}</span>
+                  </label>
+                  <label>
+                    {t("formHeadline")}
+                    <input
+                      value={form.headline}
+                      onChange={(event) => updateField("headline", event.target.value)}
+                      placeholder={t("formHeadlinePlaceholder")}
+                      required
+                    />
+                    <span className="hint">{t("formHeadlineHelper")}</span>
+                  </label>
+                </div>
+
+                <fieldset>
+                  <legend>{t("formCoupleFieldset")}</legend>
+                  <div className="grid two">
+                    <label>
+                      {t("formFirstName")}
+                      <input
+                        value={form.brideName}
+                        onChange={(event) => updateField("brideName", event.target.value)}
+                        required
+                      />
+                    </label>
+                    <label>
+                      {t("formSecondName")}
+                      <input
+                        value={form.groomName}
+                        onChange={(event) => updateField("groomName", event.target.value)}
+                        required
+                      />
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+            )}
+
+            {/* Step 2: Event Details */}
+            {currentStep === 2 && (
+              <div className="wizard-content">
+                <fieldset>
+                  <legend>{t("formEventFieldset")}</legend>
+                  <div className="grid two">
+                    <label>
+                      {t("formEventTitle")}
+                      <input
+                        value={form.eventTitle}
+                        onChange={(event) => updateField("eventTitle", event.target.value)}
+                        required
+                      />
+                    </label>
+                    <label>
+                      {t("formEventVenue")}
+                      <input
+                        value={form.eventVenue}
+                        onChange={(event) => updateField("eventVenue", event.target.value)}
+                        required
+                      />
+                    </label>
+                    <label>
+                      {t("formEventDate")}
+                      <input
+                        type="date"
+                        value={form.eventDate}
+                        onChange={(event) => updateField("eventDate", event.target.value)}
+                        required
+                      />
+                    </label>
+                    <label>
+                      {t("formEventTime")}
+                      <input
+                        type="time"
+                        value={form.eventTime}
+                        onChange={(event) => updateField("eventTime", event.target.value)}
+                      />
+                    </label>
+                  </div>
+                  <label>
+                    {t("formEventAddress")}
+                    <input
+                      value={form.eventAddress}
+                      onChange={(event) => updateField("eventAddress", event.target.value)}
+                    />
+                  </label>
+                  <label>
+                    {t("formEventMapLink")}
+                    <input
+                      value={form.eventMap}
+                      onChange={(event) => updateField("eventMap", event.target.value)}
+                      placeholder={t("formEventMapPlaceholder")}
+                      type="url"
+                    />
+                  </label>
+                </fieldset>
+
                 <label>
-                  {t("formFirstName")}
+                  {t("formBackgroundImage")}
                   <input
-                    value={form.brideName}
-                    onChange={(event) => updateField("brideName", event.target.value)}
-                    required
+                    value={form.backgroundImageUrl}
+                    onChange={(event) => updateField("backgroundImageUrl", event.target.value)}
+                    placeholder={t("formBackgroundImagePlaceholder")}
+                    type="url"
                   />
-                </label>
-                <label>
-                  {t("formSecondName")}
-                  <input
-                    value={form.groomName}
-                    onChange={(event) => updateField("groomName", event.target.value)}
-                    required
-                  />
+                  <span className="hint">
+                    {t("formBackgroundImageHint")}
+                  </span>
                 </label>
               </div>
-            </fieldset>
+            )}
 
-            <fieldset>
-              <legend>{t("formEventFieldset")}</legend>
-              <div className="grid two">
-                <label>
-                  {t("formEventTitle")}
-                  <input
-                    value={form.eventTitle}
-                    onChange={(event) => updateField("eventTitle", event.target.value)}
-                    required
-                  />
-                </label>
-                <label>
-                  {t("formEventVenue")}
-                  <input
-                    value={form.eventVenue}
-                    onChange={(event) => updateField("eventVenue", event.target.value)}
-                    required
-                  />
-                </label>
-                <label>
-                  {t("formEventDate")}
-                  <input
-                    type="date"
-                    value={form.eventDate}
-                    onChange={(event) => updateField("eventDate", event.target.value)}
-                    required
-                  />
-                </label>
-                <label>
-                  {t("formEventTime")}
-                  <input
-                    type="time"
-                    value={form.eventTime}
-                    onChange={(event) => updateField("eventTime", event.target.value)}
-                  />
-                </label>
+            {/* Step 3: Review */}
+            {currentStep === 3 && (
+              <div className="wizard-content wizard-review">
+                <div className="review-section">
+                  <h3>{t("wizardStep1")}</h3>
+                  <dl className="review-grid">
+                    <dt>{t("formInvitationSlug")}</dt>
+                    <dd>{form.slug || "—"}</dd>
+                    <dt>{t("formHeadline")}</dt>
+                    <dd>{form.headline || "—"}</dd>
+                    <dt>{t("formCoupleFieldset")}</dt>
+                    <dd>{form.brideName} &amp; {form.groomName}</dd>
+                  </dl>
+                </div>
+                <div className="review-section">
+                  <h3>{t("wizardStep2")}</h3>
+                  <dl className="review-grid">
+                    <dt>{t("formEventTitle")}</dt>
+                    <dd>{form.eventTitle || "—"}</dd>
+                    <dt>{t("formEventVenue")}</dt>
+                    <dd>{form.eventVenue || "—"}</dd>
+                    <dt>{t("formEventDate")}</dt>
+                    <dd>{form.eventDate}</dd>
+                    <dt>{t("formEventTime")}</dt>
+                    <dd>{form.eventTime || "—"}</dd>
+                    {form.eventAddress && (
+                      <>
+                        <dt>{t("formEventAddress")}</dt>
+                        <dd>{form.eventAddress}</dd>
+                      </>
+                    )}
+                  </dl>
+                </div>
               </div>
-              <label>
-                {t("formEventAddress")}
-                <input
-                  value={form.eventAddress}
-                  onChange={(event) => updateField("eventAddress", event.target.value)}
-                />
-              </label>
-              <label>
-                {t("formEventMapLink")}
-                <input
-                  value={form.eventMap}
-                  onChange={(event) => updateField("eventMap", event.target.value)}
-                  placeholder={t("formEventMapPlaceholder")}
-                  type="url"
-                />
-              </label>
-            </fieldset>
+            )}
 
-            <label>
-              {t("formBackgroundImage")}
-              <input
-                value={form.backgroundImageUrl}
-                onChange={(event) => updateField("backgroundImageUrl", event.target.value)}
-                placeholder={t("formBackgroundImagePlaceholder")}
-                type="url"
-              />
-              <span className="hint">
-                {t("formBackgroundImageHint")}
-              </span>
-            </label>
-
-            <footer className="form-actions">
-              <button type="submit" className="ui-button primary" disabled={isSubmitting}>
-                {isSubmitting ? t("formCreatingButton") : t("formCreateButton")}
-              </button>
+            <footer className="form-actions wizard-actions">
+              {currentStep > 1 && (
+                <button type="button" className="ui-button subtle" onClick={handlePrevious}>
+                  {t("wizardPrevious")}
+                </button>
+              )}
+              {currentStep < 3 ? (
+                <button type="button" className="ui-button primary" onClick={handleNext}>
+                  {t("wizardNext")}
+                </button>
+              ) : (
+                <button type="submit" className="ui-button primary" disabled={isSubmitting}>
+                  {isSubmitting ? t("formCreatingButton") : t("formCreateButton")}
+                </button>
+              )}
             </footer>
           </form>
         </div>

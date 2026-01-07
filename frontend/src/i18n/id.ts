@@ -341,4 +341,11 @@ export const id = {
   guestbookFormMessagePlaceholder: "Bagikan ucapan Anda",
   loadingGiftIdeas: "Memuat ide hadiah…",
   sharedSuccessfully: "Berhasil dibagikan",
+
+  // Wizard steps
+  wizardStep1: "Info Dasar",
+  wizardStep2: "Detail Acara",
+  wizardStep3: "Tinjau & Buat",
+  wizardNext: "Selanjutnya",
+  wizardPrevious: "Sebelumnya",
 } as const;

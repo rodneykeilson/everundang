@@ -131,6 +131,16 @@ img {
   color: #c7d2fe;
 }
 
+.badge--live {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15));
+  color: #10b981;
+}
+
+[data-theme="dark"] .badge--live {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(59, 130, 246, 0.25));
+  color: #34d399;
+}
+
 .logo-mark {
   display: inline-flex;
   align-items: center;
@@ -188,6 +198,19 @@ img {
 .nav-link:hover {
   background: rgba(99, 102, 241, 0.12);
   color: var(--color-brand);
+}
+
+/* Scroll anchor links - visually distinguished from page navigation */
+.nav-link--anchor {
+  position: relative;
+}
+
+.nav-link--anchor::after {
+  content: "↓";
+  font-size: 0.7em;
+  margin-left: 4px;
+  opacity: 0.6;
+  vertical-align: middle;
 }
 
 .nav-link--primary {
@@ -1228,6 +1251,145 @@ img {
   color: var(--color-text-muted);
 }
 
+/* Wizard Steps */
+.wizard-steps {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 2rem;
+}
+
+.wizard-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  transition: all var(--transition);
+}
+
+.wizard-step__number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-border);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.wizard-step--active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15));
+  color: var(--color-text);
+}
+
+.wizard-step--active .wizard-step__number {
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-strong));
+  color: #fff;
+}
+
+.wizard-step--completed {
+  color: var(--color-text-muted);
+}
+
+.wizard-step--completed .wizard-step__number {
+  background: #10b981;
+  color: #fff;
+}
+
+.wizard-step--completed .wizard-step__number::after {
+  content: "✓";
+}
+
+.wizard-step--completed .wizard-step__number {
+  font-size: 0;
+}
+
+.wizard-step--completed .wizard-step__number::after {
+  font-size: 0.85rem;
+}
+
+.wizard-content {
+  animation: wizard-fade-in 0.3s ease-out;
+}
+
+@keyframes wizard-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.wizard-actions {
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.wizard-review .review-section {
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.wizard-review .review-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--color-brand);
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 0.5rem 1rem;
+}
+
+.review-grid dt {
+  font-weight: 500;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.review-grid dd {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 640px) {
+  .wizard-steps {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .wizard-step {
+    padding: 10px 16px;
+  }
+
+  .wizard-step__label {
+    display: block;
+  }
+
+  .review-grid {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .review-grid dt {
+    margin-top: 0.5rem;
+  }
+}
+
 .form-actions,
 .owner-form__actions {
   display: flex;
@@ -1525,16 +1687,30 @@ img {
 }
 
 .admin-console__status-select {
-  padding: 6px 10px;
+  padding: 8px 14px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-border);
   background: var(--color-surface-muted, var(--color-surface));
   color: inherit;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.admin-console__status-select:hover:not(:disabled) {
+  border-color: var(--color-brand);
+}
+
+.admin-console__status-select:focus {
+  outline: none;
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .admin-console__status-select:disabled {
   opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .admin-console__actions {

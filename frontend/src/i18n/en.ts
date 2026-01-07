@@ -341,6 +341,13 @@ export const en = {
   guestbookFormMessagePlaceholder: "Share your wishes",
   loadingGiftIdeas: "Loading gift ideas…",
   sharedSuccessfully: "Shared successfully",
+
+  // Wizard steps
+  wizardStep1: "Basic Info",
+  wizardStep2: "Event Details",
+  wizardStep3: "Review & Create",
+  wizardNext: "Next",
+  wizardPrevious: "Previous",
 } as const;
 
 export type TranslationKey = keyof typeof en;

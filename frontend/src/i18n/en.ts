@@ -326,6 +326,21 @@ export const en = {
   notFoundTitle: "Page Not Found",
   notFoundDescription: "The page you're looking for doesn't exist or has been moved.",
   notFoundBackHome: "Back to Home",
+
+  // InvitePage
+  loadingInvitation: "Loading invitation...",
+  invitationNotFound: "Invitation not found or not published.",
+  invitationNotPublished: "This invitation is not published.",
+  guestbookSending: "Sending…",
+  guestbookSend: "Send message",
+  guestbookSectionTitle: "Guestbook",
+  guestbookSectionLead: "Leave your blessings and keep the memories forever.",
+  guestbookFormName: "Name",
+  guestbookFormMessage: "Message",
+  guestbookFormNamePlaceholder: "Your name",
+  guestbookFormMessagePlaceholder: "Share your wishes",
+  loadingGiftIdeas: "Loading gift ideas…",
+  sharedSuccessfully: "Shared successfully",
 } as const;
 
 export type TranslationKey = keyof typeof en;

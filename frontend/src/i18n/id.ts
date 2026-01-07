@@ -326,4 +326,19 @@ export const id = {
   notFoundTitle: "Halaman Tidak Ditemukan",
   notFoundDescription: "Halaman yang Anda cari tidak ada atau telah dipindahkan.",
   notFoundBackHome: "Kembali ke Beranda",
+
+  // InvitePage
+  loadingInvitation: "Memuat undangan...",
+  invitationNotFound: "Undangan tidak ditemukan atau belum dipublikasikan.",
+  invitationNotPublished: "Undangan ini belum dipublikasikan.",
+  guestbookSending: "Mengirim…",
+  guestbookSend: "Kirim pesan",
+  guestbookSectionTitle: "Buku Tamu",
+  guestbookSectionLead: "Tinggalkan ucapan dan simpan kenangan selamanya.",
+  guestbookFormName: "Nama",
+  guestbookFormMessage: "Pesan",
+  guestbookFormNamePlaceholder: "Nama Anda",
+  guestbookFormMessagePlaceholder: "Bagikan ucapan Anda",
+  loadingGiftIdeas: "Memuat ide hadiah…",
+  sharedSuccessfully: "Berhasil dibagikan",
 } as const;

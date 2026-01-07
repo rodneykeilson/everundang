@@ -321,4 +321,9 @@ export const id = {
   workflowStep2Body: "Kirim link pemilik ke kolaborator, publikasikan undangan, dan kirimkan link tamu melalui aplikasi chat.",
   workflowStep3Title: "Pantau RSVP",
   workflowStep3Body: "Pantau respons, ekspor daftar tamu, dan kelola kehadiran dari satu dashboard.",
+
+  // 404 page
+  notFoundTitle: "Halaman Tidak Ditemukan",
+  notFoundDescription: "Halaman yang Anda cari tidak ada atau telah dipindahkan.",
+  notFoundBackHome: "Kembali ke Beranda",
 } as const;

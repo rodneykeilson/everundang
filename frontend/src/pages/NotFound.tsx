@@ -7,8 +7,11 @@
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { useLocale } from "../hooks/useLocale";
 
 const NotFound: React.FC = () => {
+  const { t } = useLocale();
+
   return (
     <>
       <Header />
@@ -42,7 +45,7 @@ const NotFound: React.FC = () => {
             marginBottom: "0.5rem",
           }}
         >
-          Page Not Found
+          {t("notFoundTitle")}
         </h2>
         <p
           style={{
@@ -51,7 +54,7 @@ const NotFound: React.FC = () => {
             marginBottom: "2rem",
           }}
         >
-          The page you're looking for doesn't exist or has been moved.
+          {t("notFoundDescription")}
         </p>
         <Link
           to="/"
@@ -68,7 +71,7 @@ const NotFound: React.FC = () => {
           onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
           onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
         >
-          Back to Home
+          {t("notFoundBackHome")}
         </Link>
       </main>
       <Footer />

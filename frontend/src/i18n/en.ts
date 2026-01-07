@@ -321,6 +321,11 @@ export const en = {
   workflowStep2Body: "Send the owner link to collaborators, publish your invite, and deliver guest links via chat apps.",
   workflowStep3Title: "Track RSVPs",
   workflowStep3Body: "Monitor responses, export guest lists, and manage attendance from a single dashboard.",
+
+  // 404 page
+  notFoundTitle: "Page Not Found",
+  notFoundDescription: "The page you're looking for doesn't exist or has been moved.",
+  notFoundBackHome: "Back to Home",
 } as const;
 
 export type TranslationKey = keyof typeof en;

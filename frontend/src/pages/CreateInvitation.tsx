@@ -105,15 +105,15 @@ const CreateInvitation: React.FC = () => {
     setError(null);
 
     if (!form.slug.trim()) {
-      setError("Please provide a slug for your invitation.");
+      setError(t("formErrorSlug"));
       return;
     }
     if (!form.brideName.trim() || !form.groomName.trim()) {
-      setError("Please add both names for the couple.");
+      setError(t("formErrorNames"));
       return;
     }
     if (!form.eventVenue.trim()) {
-      setError("Please provide the main venue for the event.");
+      setError(t("formErrorVenue"));
       return;
     }
 
@@ -191,22 +191,22 @@ const CreateInvitation: React.FC = () => {
             {error && <p className="form-message error">{error}</p>}
             <div className="grid two">
               <label>
-                Invitation slug
+                {t("formInvitationSlug")}
                 <input
                   value={form.slug}
                   onChange={(event) => updateField("slug", event.target.value)}
-                  placeholder="aditya-naya"
+                  placeholder={t("formSlugPlaceholder")}
                   pattern="[a-z0-9-]{3,}"
                   required
                 />
-                <span className="hint">Slug appears in your public link: /i/your-slug</span>
+                <span className="hint">{t("formInvitationSlugHint")}</span>
               </label>
               <label>
-                Headline
+                {t("formHeadline")}
                 <input
                   value={form.headline}
                   onChange={(event) => updateField("headline", event.target.value)}
-                  placeholder="Celebrate Our Wedding"
+                  placeholder={t("formHeadlinePlaceholder")}
                   required
                 />
                 <span className="hint">{t("formHeadlineHelper")}</span>
@@ -214,10 +214,10 @@ const CreateInvitation: React.FC = () => {
             </div>
 
             <fieldset>
-              <legend>Couple</legend>
+              <legend>{t("formCoupleFieldset")}</legend>
               <div className="grid two">
                 <label>
-                  First name
+                  {t("formFirstName")}
                   <input
                     value={form.brideName}
                     onChange={(event) => updateField("brideName", event.target.value)}
@@ -225,7 +225,7 @@ const CreateInvitation: React.FC = () => {
                   />
                 </label>
                 <label>
-                  Second name
+                  {t("formSecondName")}
                   <input
                     value={form.groomName}
                     onChange={(event) => updateField("groomName", event.target.value)}
@@ -236,10 +236,10 @@ const CreateInvitation: React.FC = () => {
             </fieldset>
 
             <fieldset>
-              <legend>Event</legend>
+              <legend>{t("formEventFieldset")}</legend>
               <div className="grid two">
                 <label>
-                  Event title
+                  {t("formEventTitle")}
                   <input
                     value={form.eventTitle}
                     onChange={(event) => updateField("eventTitle", event.target.value)}
@@ -247,7 +247,7 @@ const CreateInvitation: React.FC = () => {
                   />
                 </label>
                 <label>
-                  Event venue
+                  {t("formEventVenue")}
                   <input
                     value={form.eventVenue}
                     onChange={(event) => updateField("eventVenue", event.target.value)}
@@ -255,7 +255,7 @@ const CreateInvitation: React.FC = () => {
                   />
                 </label>
                 <label>
-                  Date
+                  {t("formEventDate")}
                   <input
                     type="date"
                     value={form.eventDate}
@@ -264,7 +264,7 @@ const CreateInvitation: React.FC = () => {
                   />
                 </label>
                 <label>
-                  Time
+                  {t("formEventTime")}
                   <input
                     type="time"
                     value={form.eventTime}
@@ -273,39 +273,39 @@ const CreateInvitation: React.FC = () => {
                 </label>
               </div>
               <label>
-                Address (optional)
+                {t("formEventAddress")}
                 <input
                   value={form.eventAddress}
                   onChange={(event) => updateField("eventAddress", event.target.value)}
                 />
               </label>
               <label>
-                Map link (optional)
+                {t("formEventMapLink")}
                 <input
                   value={form.eventMap}
                   onChange={(event) => updateField("eventMap", event.target.value)}
-                  placeholder="https://maps.google.com/..."
+                  placeholder={t("formEventMapPlaceholder")}
                   type="url"
                 />
               </label>
             </fieldset>
 
             <label>
-              Background image URL (optional)
+              {t("formBackgroundImage")}
               <input
                 value={form.backgroundImageUrl}
                 onChange={(event) => updateField("backgroundImageUrl", event.target.value)}
-                placeholder="https://images.example.com/invite-background.jpg"
+                placeholder={t("formBackgroundImagePlaceholder")}
                 type="url"
               />
               <span className="hint">
-                Use a wide image for the hero background. You can change this later from the owner dashboard.
+                {t("formBackgroundImageHint")}
               </span>
             </label>
 
             <footer className="form-actions">
               <button type="submit" className="ui-button primary" disabled={isSubmitting}>
-                {isSubmitting ? "Generating owner link…" : "Create invitation"}
+                {isSubmitting ? t("formCreatingButton") : t("formCreateButton")}
               </button>
             </footer>
           </form>

@@ -26,11 +26,10 @@ const Features: React.FC = () => {
     <section className="section" aria-labelledby="features-heading">
       <div className="container">
         <header className="section__header">
-          <p className="eyebrow">Product pillars</p>
-          <h2 id="features-heading">Built for every celebration</h2>
+          <p className="eyebrow">{t("eyebrowProductPillars")}</p>
+          <h2 id="features-heading">{t("featuresSectionTitle")}</h2>
           <p className="section__lead">
-            EverUndang combines a polished guest experience with the tooling hosts need to stay in
-            control.
+            {t("featuresSectionLead")}
           </p>
         </header>
         <div className="feature-grid">

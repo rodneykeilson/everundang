@@ -69,7 +69,7 @@ const Home: React.FC = () => {
         <section id="templates" className="section">
           <div className="container">
             <header className="section__header">
-              <p className="eyebrow">Showcase</p>
+              <p className="eyebrow">{t("eyebrowShowcase")}</p>
               <h2>{t("sectionTemplatesTitle")}</h2>
               <p className="section__lead">{t("sectionTemplatesSubtitle")}</p>
             </header>
@@ -110,7 +110,7 @@ const Home: React.FC = () => {
 
               <div className="template-group">
                 <h3 className="template-subheading">{t("templatesLiveLabel")}</h3>
-                {invitationQuery.isLoading && <p className="loading">Loading…</p>}
+                {invitationQuery.isLoading && <p className="loading">{t("loading")}</p>}
                 {published.length > 0 ? (
                   <div className="template-grid">
                     {published.map((invitation) => (
@@ -152,7 +152,7 @@ const Home: React.FC = () => {
         <section id="faq" className="section section--muted">
           <div className="container">
             <header className="section__header">
-              <p className="eyebrow">Help centre</p>
+              <p className="eyebrow">{t("eyebrowHelpCentre")}</p>
               <h2>{t("faqTitle")}</h2>
             </header>
             <div className="faq-grid">

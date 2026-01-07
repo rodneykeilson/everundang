@@ -21,6 +21,9 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      backend-image: ${{ steps.meta-backend.outputs.tags }}
+      frontend-image: ${{ steps.meta-frontend.outputs.tags }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -75,15 +78,51 @@ jobs:
           context: ./frontend
           push: true
           build-args: |
-            VITE_API_URL=${{ secrets.FRONTEND_API_URL || 'http://localhost:4000' }}
+            VITE_API_URL=${{ secrets.FRONTEND_API_URL || 'https://everundang-backend.onrender.com' }}
           tags: ${{ steps.meta-frontend.outputs.tags }}
           labels: ${{ steps.meta-frontend.outputs.labels }}
+
+  deploy-to-render:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Render Backend Deploy
+        env:
+          RENDER_BACKEND_DEPLOY_HOOK: ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}
+        run: |
+          if [ -n "$RENDER_BACKEND_DEPLOY_HOOK" ]; then
+            curl -X POST "$RENDER_BACKEND_DEPLOY_HOOK"
+            echo "✅ Backend deploy triggered"
+          else
+            echo "⏭️ Backend deploy hook not configured, skipping"
+          fi
+        continue-on-error: true
+
+      - name: Trigger Render Frontend Deploy
+        env:
+          RENDER_FRONTEND_DEPLOY_HOOK: ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}
+        run: |
+          if [ -n "$RENDER_FRONTEND_DEPLOY_HOOK" ]; then
+            curl -X POST "$RENDER_FRONTEND_DEPLOY_HOOK"
+            echo "✅ Frontend deploy triggered"
+          else
+            echo "⏭️ Frontend deploy hook not configured, skipping"
+          fi
+        continue-on-error: true
+
+      - name: Deployment Summary
+        run: |
+          echo "🚀 Render deployment triggered!"
+          echo "Frontend: https://everundang.onrender.com"
+          echo "Backend: https://everundang-backend.onrender.com"
 
   deploy-to-kubernetes:
     name: Deploy to Kubernetes
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.ENABLE_K8S_DEPLOY == 'true'
     permissions:
       contents: read
     steps:

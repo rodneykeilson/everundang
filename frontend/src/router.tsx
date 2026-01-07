@@ -1,5 +1,6 @@
 import { createHashRouter } from "react-router-dom";
-import Home from "./pages/Home";
+import AppLayout from "./components/AppLayout";
+import DashboardHome from "./pages/DashboardHome";
 import InvitePage from "./pages/InvitePage";
 import Dashboard from "./pages/Dashboard";
 import CreateInvitation from "./pages/CreateInvitation";
@@ -10,15 +11,27 @@ import NotFound from "./pages/NotFound";
 const router = createHashRouter([
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <AppLayout>
+        <DashboardHome />
+      </AppLayout>
+    ),
   },
   {
     path: "/new",
-    element: <CreateInvitation />,
+    element: (
+      <AppLayout>
+        <CreateInvitation />
+      </AppLayout>
+    ),
   },
   {
     path: "/edit/:id",
-    element: <OwnerDashboard />,
+    element: (
+      <AppLayout>
+        <OwnerDashboard />
+      </AppLayout>
+    ),
   },
   {
     path: "/i/:slug",
@@ -26,11 +39,19 @@ const router = createHashRouter([
   },
   {
     path: "/dashboard",
-    element: <Dashboard />,
+    element: (
+      <AppLayout>
+        <Dashboard />
+      </AppLayout>
+    ),
   },
   {
     path: "/admin",
-    element: <AdminConsole />,
+    element: (
+      <AppLayout>
+        <AdminConsole />
+      </AppLayout>
+    ),
   },
   {
     path: "*",

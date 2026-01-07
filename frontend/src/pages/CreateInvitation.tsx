@@ -1,7 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import { createInvitation } from "../api/client";
 import type { InvitationFormData } from "../types";
 import { useLocale } from "../hooks/useLocale";
@@ -197,16 +195,13 @@ const CreateInvitation: React.FC = () => {
   };
 
   return (
-    <div className="page">
-      <Header />
-      <main className="section">
-        <div className="container create-flow">
-          <header className="section__header">
-            <p className="eyebrow">{t("heroPrimaryCta")}</p>
-            <h1>{t("createTitle")}</h1>
-            <p className="section__lead">{t("createLead")}</p>
-          </header>
+    <>
+      <div className="page-title">
+        <h1 className="page-title__main">✨ {t("createTitle")}</h1>
+        <p className="page-title__sub">{t("createLead")}</p>
+      </div>
 
+      <div className="create-flow">
           {/* Step Indicator */}
           <nav className="wizard-steps" aria-label="Form progress">
             {steps.map((step) => (
@@ -419,9 +414,7 @@ const CreateInvitation: React.FC = () => {
             </footer>
           </form>
         </div>
-      </main>
-      <Footer />
-    </div>
+    </>
   );
 };
 

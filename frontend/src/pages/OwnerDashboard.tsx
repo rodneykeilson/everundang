@@ -1102,143 +1102,139 @@ const OwnerDashboard: React.FC = () => {
   const renderContent = () => {
     if (!ownerToken) {
       return (
-        <div className="owner-state">
-          <p>Missing owner key. Please use the private link shared when the invitation was created.</p>
+        <div className="empty-state">
+          <div className="empty-state__icon">🔐</div>
+          <h3 className="empty-state__title">Missing owner key</h3>
+          <p className="empty-state__text">Please use the private link shared when the invitation was created.</p>
         </div>
       );
     }
 
     if (invitationQuery.isLoading) {
       return (
-        <div className="owner-state">
-          <p>Loading your invitation…</p>
+        <div className="empty-state">
+          <div className="empty-state__icon">⏳</div>
+          <h3 className="empty-state__title">{t("loading")}</h3>
         </div>
       );
     }
 
     if (errorMessage) {
       return (
-        <div className="owner-state error">
-          <p>{errorMessage}</p>
+        <div className="empty-state">
+          <div className="empty-state__icon">❌</div>
+          <h3 className="empty-state__title">{t("error")}</h3>
+          <p className="empty-state__text">{errorMessage}</p>
         </div>
       );
     }
 
     if (!invitation) {
       return (
-        <div className="owner-state">
-          <p>Invitation not found.</p>
+        <div className="empty-state">
+          <div className="empty-state__icon">📭</div>
+          <h3 className="empty-state__title">Invitation not found</h3>
         </div>
       );
     }
 
     return (
       <>
-        <header className="owner-dashboard__header">
-          <div>
-            <p className="eyebrow">Owner dashboard</p>
-            <h1>{invitation.headline}</h1>
-            <div className="owner-dashboard__meta">
-              <span className="slug">/#/i/{invitation.slug}</span>
-              {currentStatus && <span className={`status-badge status-${currentStatus}`}>{currentStatus}</span>}
+        {/* Compact Header with Status */}
+        <div className="page-title" style={{ marginBottom: 16 }}>
+          <h1 className="page-title__main" style={{ fontSize: "1.5rem" }}>
+            {invitation.headline}
+          </h1>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8, flexWrap: "wrap" }}>
+            <span style={{ fontSize: "0.875rem", color: "var(--color-text-muted)" }}>
+              /{invitation.slug}
+            </span>
+            <select
+              value={currentStatus}
+              onChange={(e) => handleStatusChange(e.target.value as InvitationStatus)}
+              disabled={savingStatus}
+              className="status-select"
+              style={{ padding: "6px 12px", borderRadius: 8, fontSize: "0.875rem" }}
+            >
+              {statusOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <button
+              type="button"
+              className="quick-action-btn"
+              style={{ padding: "6px 12px", fontSize: "0.875rem" }}
+              onClick={handlePreviewPublic}
+            >
+              👁️ Preview
+            </button>
+          </div>
+        </div>
+
+        {feedback && <p className="owner-feedback" style={{ marginBottom: 16 }}>{feedback}</p>}
+
+        {/* Quick Actions Bar */}
+        <div className="quick-actions" style={{ marginBottom: 24 }}>
+          <button type="button" className="quick-action-btn" onClick={() => handleCopy(shareUrl, "Public link")}>
+            📋 Copy Link
+          </button>
+          {shareLinks.map((item) => (
+            <a key={item.label} href={item.href} target="_blank" rel="noopener" className="quick-action-btn">
+              {item.label === "WhatsApp" ? "💬" : item.label === "Telegram" ? "✈️" : "📧"} {item.label}
+            </a>
+          ))}
+          <button type="button" onClick={handleDownloadQr} className="quick-action-btn" disabled={qrDownloading}>
+            {qrDownloading ? "⏳" : "📱"} QR Code
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="tabs" style={{ marginBottom: 24 }}>
+          {[
+            { value: "design", label: "✏️ Design", icon: "✏️" },
+            { value: "rsvp", label: "📋 RSVP", icon: "📋" },
+            { value: "live", label: "🎉 Live", icon: "🎉" },
+            { value: "analytics", label: "📊 Analytics", icon: "📊" },
+            { value: "export", label: "📦 Export", icon: "📦" },
+          ].map((tab) => (
+            <button
+              key={tab.value}
+              type="button"
+              className={`tab ${activeTab === tab.value ? "tab--active" : ""}`}
+              onClick={() => setActiveTab(tab.value as DashboardTab)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab Content in Dashboard Card */}
+        <div className="dashboard-card">
+          {renderTabContent()}
+        </div>
+
+        {/* Owner Link Section - Collapsible Footer */}
+        <details style={{ marginTop: 24 }}>
+          <summary style={{ cursor: "pointer", fontWeight: 500, padding: "12px 0" }}>
+            🔑 Owner Link Settings
+          </summary>
+          <div className="dashboard-card" style={{ marginTop: 12 }}>
+            <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: 12 }}>
+              Keep this link private. Anyone with it can edit your invitation.
+            </p>
+            <code style={{ display: "block", padding: 12, background: "var(--color-surface-alt)", borderRadius: 8, fontSize: "0.75rem", wordBreak: "break-all", marginBottom: 12 }}>
+              {ownerLink}
+            </code>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button type="button" className="quick-action-btn" onClick={() => handleCopy(ownerLink, "Owner link")}>
+                📋 Copy
+              </button>
+              <button type="button" className="quick-action-btn" onClick={handleRotateLink} disabled={rotatingLink}>
+                {rotatingLink ? "⏳ Rotating…" : "🔄 Regenerate"}
+              </button>
             </div>
           </div>
-        </header>
-
-        {feedback && <p className="owner-feedback">{feedback}</p>}
-
-        <section className="owner-layout">
-          <aside className="owner-sidebar">
-            <article className="owner-panel">
-              <header>
-                <h2>Share</h2>
-              </header>
-              <p className="hint">Use these shortcuts to spread the word instantly.</p>
-              <div className="share-list">
-                <button type="button" className="link-btn" onClick={() => handleCopy(shareUrl, "Public link")}>
-                  Copy public link
-                </button>
-                {shareLinks.map((item) => (
-                  <a key={item.label} href={item.href} target="_blank" rel="noopener" className="link-btn">
-                    {item.label}
-                  </a>
-                ))}
-                <button
-                  type="button"
-                  onClick={handleDownloadQr}
-                  className="link-btn"
-                  disabled={qrDownloading}
-                >
-                  {qrDownloading ? "Preparing QR…" : "Download QR"}
-                </button>
-              </div>
-              <div className="owner-panel__section">
-                <h3>Owner link</h3>
-                <code className="owner-link" title={ownerLink}>
-                  {ownerLink}
-                </code>
-                <div className="owner-panel__actions">
-                  <button type="button" className="link-btn" onClick={() => handleCopy(ownerLink, "Owner link")}>
-                    Copy owner link
-                  </button>
-                  <button
-                    type="button"
-                    className="link-btn"
-                    onClick={handleRotateLink}
-                    disabled={rotatingLink}
-                  >
-                    {rotatingLink ? "Rotating…" : "Regenerate link"}
-                  </button>
-                </div>
-              </div>
-            </article>
-
-            <article className="owner-panel">
-              <header>
-                <h2>Status</h2>
-              </header>
-              <p className="hint">Control guest access with a single switch.</p>
-              <ul className="status-list">
-                {statusOptions.map((option) => (
-                  <li key={option.value}>
-                    <button
-                      type="button"
-                      className={`status-item ${currentStatus === option.value ? "active" : ""}`}
-                      onClick={() => handleStatusChange(option.value)}
-                      disabled={savingStatus}
-                    >
-                      <span className="status-item__label">{option.label}</span>
-                      <span className="status-item__description">{option.description}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          </aside>
-
-          <div className="owner-main">
-            <nav className="owner-tabs" aria-label="Owner workspace sections">
-              {[
-                { value: "design", label: "Design" },
-                { value: "rsvp", label: "RSVP" },
-                { value: "live", label: "Live" },
-                { value: "analytics", label: "Analytics" },
-                { value: "export", label: "Export" },
-              ].map((tab) => (
-                <button
-                  key={tab.value}
-                  type="button"
-                  className={activeTab === tab.value ? "active" : ""}
-                  onClick={() => setActiveTab(tab.value as DashboardTab)}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </nav>
-
-            <section className="owner-tab-content">{renderTabContent()}</section>
-          </div>
-        </section>
+        </details>
       </>
     );
   };

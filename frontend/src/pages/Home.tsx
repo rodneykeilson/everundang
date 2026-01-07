@@ -119,7 +119,7 @@ const Home: React.FC = () => {
                         key={invitation.id}
                         className="template-card"
                       >
-                        <span className="badge">/#/i/{invitation.slug}</span>
+                        <span className="badge badge--live">✨ Live</span>
                         <h3>{invitation.headline}</h3>
                         <p>
                           {invitation.couple.brideName} &amp; {invitation.couple.groomName}

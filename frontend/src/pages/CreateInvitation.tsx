@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { createInvitation } from "../api/client";
 import type { InvitationFormData } from "../types";
 import { useLocale } from "../hooks/useLocale";
+import { useToast } from "../hooks/useToast";
 import { getTemplatePreset, type TemplatePreset } from "../data/curatedTemplates";
 
 interface FormState {
@@ -41,6 +42,7 @@ const defaultFormState = (): FormState => ({
 
 const CreateInvitation: React.FC = () => {
   const { t } = useLocale();
+  const toast = useToast();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [form, setForm] = useState<FormState>(defaultFormState);
@@ -145,9 +147,11 @@ const CreateInvitation: React.FC = () => {
       };
 
       const response = await createInvitation(payload);
+      toast.success(t("invitationCreated"));
       navigate(`/edit/${response.invitation.id}?k=${response.ownerToken}`);
     } catch (createError) {
       const message = createError instanceof Error ? createError.message : "Failed to create invitation.";
+      toast.error(message);
       setError(message);
     } finally {
       setSubmitting(false);
@@ -174,7 +178,12 @@ const CreateInvitation: React.FC = () => {
                   </p>
                   <p className="template-banner__body">{t("templateAppliedDescription")}</p>
                 </div>
-                <button type="button" className="ui-button subtle" onClick={handleClearTemplate}>
+                <button 
+                  type="button" 
+                  className="ui-button subtle" 
+                  onClick={handleClearTemplate}
+                  title={t("templateClearHelper")}
+                >
                   {t("templateClear")}
                 </button>
               </aside>
@@ -200,6 +209,7 @@ const CreateInvitation: React.FC = () => {
                   placeholder="Celebrate Our Wedding"
                   required
                 />
+                <span className="hint">{t("formHeadlineHelper")}</span>
               </label>
             </div>
 

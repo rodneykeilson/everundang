@@ -232,6 +232,43 @@ export const en = {
   a11ySelectLanguage: "Select language",
   a11yLoading: "Loading content...",
   a11yError: "An error occurred",
+
+  // Toast messages
+  languageChanged: "Language changed to {language}",
+  linkCopied: "Link copied to clipboard!",
+  rsvpSuccess: "RSVP submitted successfully!",
+  rsvpUpdated: "RSVP updated successfully!",
+  guestbookSuccess: "Message posted successfully!",
+  invitationCreated: "Invitation created successfully!",
+  invitationDeleted: "Invitation deleted successfully!",
+  changesSaved: "Changes saved successfully!",
+  adminAuthenticated: "Admin access granted",
+  adminSignedOut: "Signed out of admin console",
+
+  // Footer
+  footerTerms: "Terms of Service",
+  footerPrivacy: "Privacy Policy",
+  footerStatus: "System Status",
+  footerComingSoon: "Coming soon",
+
+  // Form helpers
+  formHeadlineHelper: "Main title displayed on your invitation",
+  formCoupleNamesHelper: "Names as they will appear on the invitation",
+  formEventDateHelper: "When is your event taking place?",
+  formEventLocationHelper: "Venue name and address",
+  templateClearHelper: "Remove template and start with blank form",
+
+  // Admin
+  adminEnterSecret: "Enter admin secret to access dashboard",
+  adminSecretPlaceholder: "Admin secret key",
+  adminConnect: "Connect",
+  adminConnected: "Connected to admin dashboard",
+
+  // Guestbook
+  guestbookEmptyInviting: "No messages yet. Share your blessings! 🎉",
+
+  // Demo button
+  heroSecondaryCtaLong: "View sample invitation",
 } as const;
 
 export type TranslationKey = keyof typeof en;

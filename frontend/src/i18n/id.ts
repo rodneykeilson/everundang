@@ -275,4 +275,50 @@ export const id = {
 
   // Demo button
   heroSecondaryCtaLong: "Lihat contoh undangan",
+
+  // CreateInvitation form labels
+  formInvitationSlug: "Slug undangan",
+  formInvitationSlugHint: "Slug muncul di link publik: /i/slug-anda",
+  formSlugPlaceholder: "aditya-naya",
+  formHeadline: "Judul utama",
+  formHeadlinePlaceholder: "Rayakan Pernikahan Kami",
+  formCoupleFieldset: "Pasangan",
+  formFirstName: "Nama pertama",
+  formSecondName: "Nama kedua",
+  formEventFieldset: "Acara",
+  formEventTitle: "Judul acara",
+  formEventVenue: "Tempat acara",
+  formEventDate: "Tanggal",
+  formEventTime: "Waktu",
+  formEventAddress: "Alamat (opsional)",
+  formEventMapLink: "Link peta (opsional)",
+  formEventMapPlaceholder: "https://maps.google.com/...",
+  formBackgroundImage: "URL gambar latar (opsional)",
+  formBackgroundImagePlaceholder: "https://images.example.com/invite-background.jpg",
+  formBackgroundImageHint: "Gunakan gambar lebar untuk latar hero. Anda dapat mengubahnya nanti dari dashboard pemilik.",
+  formCreateButton: "Buat undangan",
+  formCreatingButton: "Membuat link pemilik…",
+  formErrorSlug: "Mohon berikan slug untuk undangan Anda.",
+  formErrorNames: "Mohon tambahkan kedua nama pasangan.",
+  formErrorVenue: "Mohon berikan tempat acara utama.",
+
+  // Section eyebrows
+  eyebrowShowcase: "Galeri",
+  eyebrowHelpCentre: "Pusat bantuan",
+  eyebrowProductPillars: "Keunggulan produk",
+  eyebrowWorkflow: "Cara kerja",
+
+  // Features section
+  featuresSectionTitle: "Dibangun untuk setiap perayaan",
+  featuresSectionLead: "EverUndang menggabungkan pengalaman tamu yang menawan dengan alat yang dibutuhkan penyelenggara untuk tetap terkendali.",
+
+  // How it works section
+  workflowSectionTitle: "Dari ide ke undangan live dalam tiga langkah",
+  workflowSectionLead: "Berkolaborasi dengan pasangan atau tim, publikasikan dalam sekali klik, dan jaga tamu tetap terlibat melalui pengalaman yang menyenangkan.",
+  workflowStep1Title: "Desain dalam hitungan menit",
+  workflowStep1Body: "Pilih template, atur bagian-bagian, dan pratinjau setiap perubahan secara instan di berbagai perangkat.",
+  workflowStep2Title: "Bagikan dengan aman",
+  workflowStep2Body: "Kirim link pemilik ke kolaborator, publikasikan undangan, dan kirimkan link tamu melalui aplikasi chat.",
+  workflowStep3Title: "Pantau RSVP",
+  workflowStep3Body: "Pantau respons, ekspor daftar tamu, dan kelola kehadiran dari satu dashboard.",
 } as const;

@@ -275,6 +275,52 @@ export const en = {
 
   // Demo button
   heroSecondaryCtaLong: "View sample invitation",
+
+  // CreateInvitation form labels
+  formInvitationSlug: "Invitation slug",
+  formInvitationSlugHint: "Slug appears in your public link: /i/your-slug",
+  formSlugPlaceholder: "aditya-naya",
+  formHeadline: "Headline",
+  formHeadlinePlaceholder: "Celebrate Our Wedding",
+  formCoupleFieldset: "Couple",
+  formFirstName: "First name",
+  formSecondName: "Second name",
+  formEventFieldset: "Event",
+  formEventTitle: "Event title",
+  formEventVenue: "Event venue",
+  formEventDate: "Date",
+  formEventTime: "Time",
+  formEventAddress: "Address (optional)",
+  formEventMapLink: "Map link (optional)",
+  formEventMapPlaceholder: "https://maps.google.com/...",
+  formBackgroundImage: "Background image URL (optional)",
+  formBackgroundImagePlaceholder: "https://images.example.com/invite-background.jpg",
+  formBackgroundImageHint: "Use a wide image for the hero background. You can change this later from the owner dashboard.",
+  formCreateButton: "Create invitation",
+  formCreatingButton: "Generating owner link…",
+  formErrorSlug: "Please provide a slug for your invitation.",
+  formErrorNames: "Please add both names for the couple.",
+  formErrorVenue: "Please provide the main venue for the event.",
+
+  // Section eyebrows
+  eyebrowShowcase: "Showcase",
+  eyebrowHelpCentre: "Help centre",
+  eyebrowProductPillars: "Product pillars",
+  eyebrowWorkflow: "Workflow",
+
+  // Features section
+  featuresSectionTitle: "Built for every celebration",
+  featuresSectionLead: "EverUndang combines a polished guest experience with the tooling hosts need to stay in control.",
+
+  // How it works section
+  workflowSectionTitle: "From idea to live invite in three steps",
+  workflowSectionLead: "Collaborate with your partner or team, publish in a click, and keep guests engaged through a delightful experience.",
+  workflowStep1Title: "Design in minutes",
+  workflowStep1Body: "Pick a template, arrange sections, and preview every change instantly across devices.",
+  workflowStep2Title: "Share securely",
+  workflowStep2Body: "Send the owner link to collaborators, publish your invite, and deliver guest links via chat apps.",
+  workflowStep3Title: "Track RSVPs",
+  workflowStep3Body: "Monitor responses, export guest lists, and manage attendance from a single dashboard.",
 } as const;
 
 export type TranslationKey = keyof typeof en;

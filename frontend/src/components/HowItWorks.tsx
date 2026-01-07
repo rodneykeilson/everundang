@@ -1,34 +1,39 @@
-const steps = [
+import { useLocale } from "../hooks/useLocale";
+import type { TranslationKey } from "../i18n";
+
+const steps: Array<{
+  number: string;
+  titleKey: TranslationKey;
+  bodyKey: TranslationKey;
+}> = [
   {
     number: "01",
-    title: "Design in minutes",
-    body:
-      "Pick a template, arrange sections, and preview every change instantly across devices.",
+    titleKey: "workflowStep1Title",
+    bodyKey: "workflowStep1Body",
   },
   {
     number: "02",
-    title: "Share securely",
-    body:
-      "Send the owner link to collaborators, publish your invite, and deliver guest links via chat apps.",
+    titleKey: "workflowStep2Title",
+    bodyKey: "workflowStep2Body",
   },
   {
     number: "03",
-    title: "Track RSVPs",
-    body:
-      "Monitor responses, export guest lists, and manage attendance from a single dashboard.",
+    titleKey: "workflowStep3Title",
+    bodyKey: "workflowStep3Body",
   },
 ];
 
 const HowItWorks: React.FC = () => {
+  const { t } = useLocale();
+
   return (
     <section className="section" aria-labelledby="workflow-heading">
       <div className="container">
         <header className="section__header">
-          <p className="eyebrow">Workflow</p>
-          <h2 id="workflow-heading">From idea to live invite in three steps</h2>
+          <p className="eyebrow">{t("eyebrowWorkflow")}</p>
+          <h2 id="workflow-heading">{t("workflowSectionTitle")}</h2>
           <p className="section__lead">
-            Collaborate with your partner or team, publish in a click, and keep guests engaged through
-            a delightful experience.
+            {t("workflowSectionLead")}
           </p>
         </header>
         <ol className="workflow-grid">
@@ -37,8 +42,8 @@ const HowItWorks: React.FC = () => {
               <span className="workflow-card__index" aria-hidden="true">
                 {step.number}
               </span>
-              <h3>{step.title}</h3>
-              <p>{step.body}</p>
+              <h3>{t(step.titleKey)}</h3>
+              <p>{t(step.bodyKey)}</p>
             </li>
           ))}
         </ol>

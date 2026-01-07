@@ -251,7 +251,7 @@ const CreateInvitation: React.FC = () => {
                       value={form.slug}
                       onChange={(event) => updateField("slug", event.target.value)}
                       placeholder={t("formSlugPlaceholder")}
-                      pattern="[a-z0-9-]{3,}"
+                      pattern="[a-z0-9\-]{3,}"
                       required
                     />
                     <span className="hint">{t("formInvitationSlugHint")}</span>

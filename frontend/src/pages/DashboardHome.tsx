@@ -42,9 +42,16 @@ const DashboardHome: React.FC = () => {
         <Link to="/new" className="quick-action-btn quick-action-btn--primary">
           ✨ {t("heroPrimaryCta")}
         </Link>
-        <a href="#templates" className="quick-action-btn">
+        <button 
+          type="button" 
+          className="quick-action-btn"
+          onClick={() => {
+            const templatesSection = document.getElementById("templates");
+            templatesSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+        >
           📚 {t("navTemplates")}
-        </a>
+        </button>
         <Link to="/admin" className="quick-action-btn">
           ⚙️ {t("navAdmin")}
         </Link>

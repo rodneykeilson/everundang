@@ -721,7 +721,13 @@ const OwnerDashboard: React.FC = () => {
             <button type="submit" className="ui-button primary" disabled={savingDesign}>
               {savingDesign ? "Saving…" : "Save changes"}
             </button>
-            <button type="button" className="ui-button subtle" onClick={handlePreviewPublic}>
+            <button 
+              type="button" 
+              className="ui-button subtle" 
+              onClick={handlePreviewPublic}
+              disabled={currentStatus !== "published"}
+              title={currentStatus !== "published" ? "Publish the invitation to preview" : ""}
+            >
               Preview public page
             </button>
           </div>
@@ -1187,12 +1193,19 @@ const OwnerDashboard: React.FC = () => {
               className="quick-action-btn"
               style={{ padding: "6px 12px", fontSize: "0.875rem" }}
               onClick={handlePreviewPublic}
+              disabled={currentStatus !== "published"}
+              title={currentStatus !== "published" ? "Publish the invitation to preview" : ""}
             >
               👁️ Preview
             </button>
           </div>
         </div>
 
+        {currentStatus !== "published" && (
+          <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: 16 }}>
+            💡 Publish your invitation to preview and share the public page.
+          </p>
+        )}
         {feedback && <p className="owner-feedback" style={{ marginBottom: 16 }}>{feedback}</p>}
 
         {/* Quick Actions Bar */}

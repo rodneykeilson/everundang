@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import { useToast } from "../hooks/useToast";
 import { useLocale } from "../hooks/useLocale";
 import {
@@ -1246,12 +1244,8 @@ const OwnerDashboard: React.FC = () => {
   };
 
   return (
-    <div className="page">
-      <Header />
-      <main className="section section--muted">
-        <div className="container owner-dashboard">{renderContent()}</div>
-      </main>
-      <Footer />
+    <div className="owner-dashboard">
+      {renderContent()}
     </div>
   );
 };

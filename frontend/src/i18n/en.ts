@@ -3,10 +3,12 @@
  */
 export const en = {
   // Navigation
+  navHome: "Home",
   navTemplates: "Templates",
   navFaq: "FAQ",
   navAdmin: "Admin",
   navDashboard: "Dashboard",
+  navCreate: "Create New",
 
   // Hero section
   heroTitle: "Craft immersive digital invitations in minutes",
@@ -52,6 +54,20 @@ export const en = {
   dashboardTitle: "Your Invitations",
   dashboardEmpty: "You haven't created any invitations yet.",
   dashboardCreateFirst: "Create your first invitation",
+  dashboardSubtitle: "Manage your digital invitations and track guest responses.",
+  welcomeBack: "Welcome to EverUndang",
+  statTotalInvitations: "Total Invitations",
+  statPublished: "Published",
+  statDrafts: "Drafts",
+  statTemplates: "Templates",
+  recentInvitations: "Recent Invitations",
+  recentInvitationsDesc: "Your latest created invitations",
+  emptyInvitationsTitle: "No invitations yet",
+  emptyInvitationsDesc: "Create your first digital invitation to get started.",
+  statusPublished: "Published",
+  statusDraft: "Draft",
+  featuresSectionTitle: "Why EverUndang?",
+  featuresSectionSubtitle: "Everything you need for beautiful digital invitations",
 
   // FAQ
   faqTitle: "Frequently asked questions",
@@ -205,11 +221,6 @@ export const en = {
   ownerDashboardRotateLinkWarning:
     "This will invalidate the current owner link. Make sure to save the new one.",
 
-  // Invitation status
-  statusDraft: "Draft",
-  statusPublished: "Published",
-  statusClosed: "Closed",
-
   // Date/Time formatting
   dateToday: "Today",
   dateYesterday: "Yesterday",
@@ -308,8 +319,7 @@ export const en = {
   eyebrowProductPillars: "Product pillars",
   eyebrowWorkflow: "Workflow",
 
-  // Features section
-  featuresSectionTitle: "Built for every celebration",
+  // Features section (legacy - for non-dashboard pages)
   featuresSectionLead: "EverUndang combines a polished guest experience with the tooling hosts need to stay in control.",
 
   // How it works section

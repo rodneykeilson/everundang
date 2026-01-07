@@ -3,10 +3,12 @@
  */
 export const id = {
   // Navigation
+  navHome: "Beranda",
   navTemplates: "Template",
   navFaq: "FAQ",
   navAdmin: "Admin",
   navDashboard: "Dashboard",
+  navCreate: "Buat Baru",
 
   // Hero section
   heroTitle: "Buat undangan digital yang menawan dalam hitungan menit",
@@ -52,6 +54,20 @@ export const id = {
   dashboardTitle: "Undangan Anda",
   dashboardEmpty: "Anda belum membuat undangan apapun.",
   dashboardCreateFirst: "Buat undangan pertama Anda",
+  dashboardSubtitle: "Kelola undangan digital Anda dan pantau respons tamu.",
+  welcomeBack: "Selamat datang di EverUndang",
+  statTotalInvitations: "Total Undangan",
+  statPublished: "Diterbitkan",
+  statDrafts: "Draf",
+  statTemplates: "Template",
+  recentInvitations: "Undangan Terbaru",
+  recentInvitationsDesc: "Undangan yang terakhir Anda buat",
+  emptyInvitationsTitle: "Belum ada undangan",
+  emptyInvitationsDesc: "Buat undangan digital pertama Anda untuk memulai.",
+  statusPublished: "Diterbitkan",
+  statusDraft: "Draf",
+  featuresSectionTitle: "Mengapa EverUndang?",
+  featuresSectionSubtitle: "Semua yang Anda butuhkan untuk undangan digital yang indah",
 
   // FAQ
   faqTitle: "Pertanyaan umum",
@@ -205,11 +221,6 @@ export const id = {
   ownerDashboardRotateLinkWarning:
     "Ini akan menghapus validasi link pemilik saat ini. Pastikan untuk menyimpan yang baru.",
 
-  // Invitation status
-  statusDraft: "Draf",
-  statusPublished: "Diterbitkan",
-  statusClosed: "Ditutup",
-
   // Date/Time formatting
   dateToday: "Hari Ini",
   dateYesterday: "Kemarin",
@@ -308,8 +319,7 @@ export const id = {
   eyebrowProductPillars: "Keunggulan produk",
   eyebrowWorkflow: "Cara kerja",
 
-  // Features section
-  featuresSectionTitle: "Dibangun untuk setiap perayaan",
+  // Features section (legacy - for non-dashboard pages)
   featuresSectionLead: "EverUndang menggabungkan pengalaman tamu yang menawan dengan alat yang dibutuhkan penyelenggara untuk tetap terkendali.",
 
   // How it works section

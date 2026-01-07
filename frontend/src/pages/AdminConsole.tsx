@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import {
   deleteInvitationAdmin,
   getInvitations,
@@ -254,17 +252,13 @@ const AdminConsole: React.FC = () => {
 
   return (
     <div className="admin-console">
-      <Header />
-      <main className="admin-console__main">
-        <div className="admin-console__container">
-          <header>
-            <p className="eyebrow">Administration</p>
-            <h1>Invitation oversight</h1>
-            <p className="section-shell__lead">
-              Review every invitation in the system, prune spam submissions, and jump into public links quickly.
-            </p>
-          </header>
-
+      <div className="page-title">
+        <h1 className="page-title__main">⚙️ {t("navAdmin")}</h1>
+        <p className="page-title__sub">
+          Review every invitation in the system, prune spam submissions, and jump into public links quickly.
+        </p>
+      </div>
+      <div className="admin-console__container">
           {!isAuthenticated && (
             <section className="admin-console__card" aria-label="Admin authentication">
               <header>
@@ -426,8 +420,6 @@ const AdminConsole: React.FC = () => {
             </section>
           )}
         </div>
-      </main>
-      <Footer />
     </div>
   );
 };

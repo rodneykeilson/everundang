@@ -1,14 +1,8 @@
 /* Modern App Layout - Sidebar Navigation */
 
 .app-layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
   min-height: 100vh;
-  transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.app-layout--collapsed {
-  grid-template-columns: 72px 1fr;
+  position: relative;
 }
 
 /* Mobile Header */
@@ -260,16 +254,19 @@
   min-height: 100vh;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--color-bg);
+  width: calc(100% - 260px);
 }
 
 .app-layout--collapsed .app-main {
   margin-left: 72px;
+  width: calc(100% - 72px);
 }
 
 .app-content {
   padding: 32px;
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
   animation: content-fade-in 0.4s ease;
 }
 
@@ -286,10 +283,6 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .app-layout {
-    grid-template-columns: 1fr;
-  }
-
   .mobile-header {
     display: flex;
   }
@@ -314,6 +307,7 @@
   .app-main {
     margin-left: 0;
     padding-top: 60px;
+    width: 100%;
   }
 
   .app-content {

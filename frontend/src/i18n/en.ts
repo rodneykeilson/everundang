@@ -257,6 +257,12 @@ export const en = {
   formEventDateHelper: "When is your event taking place?",
   formEventLocationHelper: "Venue name and address",
   templateClearHelper: "Remove template and start with blank form",
+  formFullName: "Full name",
+  formPhone: "Phone (optional)",
+  formPhonePlaceholder: "WhatsApp number",
+  formPartySize: "Party size",
+  formMessage: "Message (optional)",
+  formMessagePlaceholder: "Add a note for the couple",
 
   // Admin
   adminEnterSecret: "Enter admin secret to access dashboard",

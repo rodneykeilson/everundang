@@ -72,12 +72,6 @@ const renderGenericSection = (section: Section, currentEventId?: string | null) 
 
 type RsvpStatusOption = "yes" | "maybe" | "no";
 
-const RSVP_STATUS_LABELS: Record<RsvpStatusOption, { label: string; helper: string }> = {
-  yes: { label: "Yes", helper: "I will attend" },
-  maybe: { label: "Maybe", helper: "Still deciding" },
-  no: { label: "No", helper: "I can't make it" },
-};
-
 interface RsvpSectionProps {
   slug: string;
   invitation: Invitation;
@@ -86,6 +80,7 @@ interface RsvpSectionProps {
 
 const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description }) => {
   const toast = useToast();
+  const { t } = useLocale();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [status, setStatus] = useState<RsvpStatusOption>("yes");
@@ -98,6 +93,12 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
   const [stats, setStats] = useState<RsvpStats | null>(null);
   const [submittedRsvp, setSubmittedRsvp] = useState<Rsvp | null>(null);
   const [deviceFingerprint, setDeviceFingerprint] = useState<string | undefined>();
+
+  const RSVP_STATUS_OPTIONS: Array<{ value: RsvpStatusOption; label: string; helper: string }> = useMemo(() => [
+    { value: "yes", label: t("rsvpYes"), helper: "" },
+    { value: "maybe", label: t("rsvpMaybe"), helper: "" },
+    { value: "no", label: t("rsvpNo"), helper: "" },
+  ], [t]);
 
   useEffect(() => {
     if (!slug || typeof window === "undefined") return;
@@ -208,19 +209,18 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
       ) : null}
       <form className="rsvp-form" onSubmit={handleSubmit}>
         <div className="rsvp-status-toggle" role="group" aria-label="RSVP status">
-          {(Object.keys(RSVP_STATUS_LABELS) as RsvpStatusOption[]).map((option) => {
-            const { label, helper } = RSVP_STATUS_LABELS[option];
-            const isActive = status === option;
+          {RSVP_STATUS_OPTIONS.map((option) => {
+            const isActive = status === option.value;
             return (
               <button
-                key={option}
+                key={option.value}
                 type="button"
                 className={`rsvp-status-button${isActive ? " is-active" : ""}`}
-                onClick={() => setStatus(option)}
+                onClick={() => setStatus(option.value)}
                 aria-pressed={isActive}
               >
-                <span>{label}</span>
-                <small>{helper}</small>
+                <span>{option.label}</span>
+                {option.helper && <small>{option.helper}</small>}
               </button>
             );
           })}
@@ -228,15 +228,15 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
 
         <div className="form-grid">
           <label>
-            Full name
-            <input value={name} onChange={(event) => setName(event.target.value)} required />
+            {t("formFullName")}
+            <input value={name} onChange={(event) => setName(event.target.value)} required placeholder={t("guestbookNamePlaceholder")} />
           </label>
           <label>
-            Phone (optional)
-            <input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="WhatsApp number" />
+            {t("formPhone")}
+            <input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder={t("formPhonePlaceholder")} />
           </label>
           <label>
-            Party size
+            {t("formPartySize")}
             <input
               type="number"
               min={1}
@@ -258,18 +258,18 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
             </label>
           ) : null}
           <label className="form-grid__full">
-            Message (optional)
+            {t("formMessage")}
             <textarea
               value={message}
               onChange={(event) => setMessage(event.target.value)}
               maxLength={500}
-              placeholder="Add a note for the couple"
+              placeholder={t("formMessagePlaceholder")}
             />
           </label>
         </div>
 
         <button type="submit" className="ui-button primary" disabled={mutation.isPending}>
-          {mutation.isPending ? "Sending…" : "Submit RSVP"}
+          {mutation.isPending ? t("loading") : t("rsvpSubmit")}
         </button>
       </form>
 

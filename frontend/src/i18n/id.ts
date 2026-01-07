@@ -257,6 +257,12 @@ export const id = {
   formEventDateHelper: "Kapan acara Anda berlangsung?",
   formEventLocationHelper: "Nama dan alamat tempat acara",
   templateClearHelper: "Hapus template dan mulai dengan form kosong",
+  formFullName: "Nama lengkap",
+  formPhone: "Telepon (opsional)",
+  formPhonePlaceholder: "Nomor WhatsApp",
+  formPartySize: "Jumlah tamu",
+  formMessage: "Pesan (opsional)",
+  formMessagePlaceholder: "Tambahkan catatan untuk pasangan",
 
   // Admin
   adminEnterSecret: "Masukkan kunci admin untuk mengakses dashboard",

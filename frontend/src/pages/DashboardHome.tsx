@@ -100,7 +100,7 @@ const DashboardHome: React.FC = () => {
               const status = invitation.status ?? (invitation.isPublished ? "published" : "draft");
               return (
                 <Link
-                  to={status === "published" ? `/i/${invitation.slug}` : `/edit/${invitation.id}`}
+                  to={`/i/${invitation.slug}`}
                   key={invitation.id}
                   className="invitation-card animate-slide-up"
                   style={{ animationDelay: `${index * 0.05}s` }}

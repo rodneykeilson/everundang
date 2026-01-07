@@ -528,7 +528,14 @@ const InvitePage: React.FC = () => {
   }, [invitation]);
 
   if (query.isLoading) {
-    return <div className="page-loading">{t("loadingInvitation")}</div>;
+    return (
+      <div className="invite-compact" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "3rem", marginBottom: 16 }}>💌</div>
+          <p>{t("loadingInvitation")}</p>
+        </div>
+      </div>
+    );
   }
 
   if (query.error instanceof Error) {
@@ -536,226 +543,265 @@ const InvitePage: React.FC = () => {
       query.error.message === "Invitation not found"
         ? t("invitationNotFound")
         : query.error.message;
-    return <div className="page-error">{notFoundMessage}</div>;
+    return (
+      <div className="invite-compact" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "3rem", marginBottom: 16 }}>❌</div>
+          <p>{notFoundMessage}</p>
+        </div>
+      </div>
+    );
   }
 
   if (!invitation || !invitation.isPublished) {
-    return <div className="page-error">{t("invitationNotPublished")}</div>;
+    return (
+      <div className="invite-compact" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "3rem", marginBottom: 16 }}>🔒</div>
+          <p>{t("invitationNotPublished")}</p>
+        </div>
+      </div>
+    );
   }
 
   const eventTime = formatTime(invitation.event.time);
-  const hasBackgroundImage = Boolean(invitation.theme?.backgroundImageUrl);
-  const hasRsvpSection = invitation.sections.some((section) => section.type === "rsvp");
 
   return (
-    <div className={`invite${hasBackgroundImage ? " invite--with-background" : ""}`} style={themeStyle}>
-      <header className="invite__hero" style={heroStyle}>
-        <div className="invite__meta">
-          <span className="status-badge">{invitation.event.title}</span>
-          <h1>
-            {invitation.couple.brideName} &amp; {invitation.couple.groomName}
-          </h1>
-          <p className="invite__headline">{invitation.headline}</p>
-          <p className="invite__date">
-            {formatDate(invitation.event.date)}
-            {eventTime ? ` · ${eventTime} WIB` : ""}
-          </p>
+    <div className="invite-compact" style={themeStyle}>
+      {/* Compact Hero Banner */}
+      <header className="invite-compact__hero" style={{
+        ...heroStyle,
+        padding: "40px 24px",
+        textAlign: "center",
+        borderRadius: 0,
+        minHeight: "auto",
+      }}>
+        <div className="invite-compact__event-badge" style={{
+          display: "inline-block",
+          background: "rgba(255,255,255,0.2)",
+          backdropFilter: "blur(10px)",
+          padding: "6px 16px",
+          borderRadius: 20,
+          fontSize: "0.85rem",
+          marginBottom: 12,
+        }}>
+          {invitation.event.title}
         </div>
-        <div className="invite__actions">
+        <h1 style={{ fontSize: "2rem", margin: "0 0 8px", fontWeight: 700 }}>
+          {invitation.couple.brideName} &amp; {invitation.couple.groomName}
+        </h1>
+        <p style={{ opacity: 0.9, margin: "0 0 8px" }}>{invitation.headline}</p>
+        <p style={{ fontSize: "0.95rem", opacity: 0.8 }}>
+          📅 {formatDate(invitation.event.date)} {eventTime ? `· ${eventTime} WIB` : ""}
+        </p>
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 20, flexWrap: "wrap" }}>
           {invitation.event.mapLink && (
             <a
               href={invitation.event.mapLink}
               className="ui-button primary"
               target="_blank"
               rel="noreferrer"
+              style={{ fontSize: "0.9rem" }}
             >
-              Open maps
+              📍 Open Maps
             </a>
           )}
-          <button type="button" className="ui-button subtle" onClick={handleShare}>
-            Share invite
+          <button type="button" className="ui-button subtle" onClick={handleShare} style={{ fontSize: "0.9rem" }}>
+            📤 Share
           </button>
-          {shareStatus && <p className="hint" role="status">{shareStatus}</p>}
         </div>
+        {shareStatus && <p style={{ marginTop: 12, fontSize: "0.85rem" }}>{shareStatus}</p>}
       </header>
 
-      <section className="invite__section" aria-labelledby="event-info-heading">
-        <div className="section-shell">
-          <header>
-            <h2 id="event-info-heading">Event details</h2>
-            <p className="section-shell__lead">
-              Join us as we celebrate surrounded by family and friends. Save the date and location below.
-            </p>
-          </header>
-          <dl className="event-summary">
+      {/* Main Content Grid */}
+      <div className="invite-compact__content" style={{
+        maxWidth: 1200,
+        margin: "0 auto",
+        padding: "24px 16px",
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+        gap: 20,
+      }}>
+        {/* Event Details Card */}
+        <div className="invite-compact__card" style={{
+          background: "var(--color-surface)",
+          borderRadius: 16,
+          padding: 20,
+          border: "1px solid var(--color-border)",
+        }}>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            📍 Event Details
+          </h2>
+          <div style={{ display: "grid", gap: 12 }}>
             <div>
-              <dt>Date</dt>
-              <dd>{formatDate(invitation.event.date)}</dd>
+              <span style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase" }}>Date</span>
+              <p style={{ margin: "4px 0 0", fontWeight: 500 }}>{formatDate(invitation.event.date)}</p>
             </div>
             {eventTime && (
               <div>
-                <dt>Time</dt>
-                <dd>{eventTime} WIB</dd>
+                <span style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase" }}>Time</span>
+                <p style={{ margin: "4px 0 0", fontWeight: 500 }}>{eventTime} WIB</p>
               </div>
             )}
             <div>
-              <dt>Venue</dt>
-              <dd>{invitation.event.venue}</dd>
+              <span style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase" }}>Venue</span>
+              <p style={{ margin: "4px 0 0", fontWeight: 500 }}>{invitation.event.venue}</p>
             </div>
             {invitation.event.address && (
               <div>
-                <dt>Address</dt>
-                <dd>{invitation.event.address}</dd>
+                <span style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", textTransform: "uppercase" }}>Address</span>
+                <p style={{ margin: "4px 0 0", fontWeight: 500 }}>{invitation.event.address}</p>
               </div>
             )}
-          </dl>
-
-          <div className="calendar-actions" aria-label="Add to calendar">
-            <button type="button" className="ui-button subtle" onClick={handleDownloadCalendar}>
-              Download calendar (.ics)
+          </div>
+          <div style={{ display: "flex", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
+            <button type="button" className="ui-button subtle" onClick={handleDownloadCalendar} style={{ fontSize: "0.85rem" }}>
+              📅 Save to Calendar
             </button>
-            {googleCalendarUrl ? (
-              <a className="ui-button subtle" href={googleCalendarUrl} target="_blank" rel="noreferrer">
-                Add to Google Calendar
+            {googleCalendarUrl && (
+              <a className="ui-button subtle" href={googleCalendarUrl} target="_blank" rel="noreferrer" style={{ fontSize: "0.85rem" }}>
+                Google Cal
               </a>
-            ) : null}
+            )}
           </div>
         </div>
-      </section>
 
-      <section className="invite__section" aria-labelledby="gift-ideas-heading">
-        <div className="section-shell">
-          <header>
-            <h2 id="gift-ideas-heading">Gift ideas</h2>
-            <p className="section-shell__lead">
-              A curated list of gift ideas for guests who want inspiration.
-            </p>
-          </header>
+        {/* RSVP Card */}
+        <div className="invite-compact__card" style={{
+          background: "var(--color-surface)",
+          borderRadius: 16,
+          padding: 20,
+          border: "1px solid var(--color-border)",
+        }}>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            ✉️ RSVP
+          </h2>
+          <RsvpSection
+            slug={invitation.slug}
+            invitation={invitation}
+            description="Let us know if you can celebrate with us."
+          />
+        </div>
 
+        {/* Gift Ideas Card */}
+        <div className="invite-compact__card" style={{
+          background: "var(--color-surface)",
+          borderRadius: 16,
+          padding: 20,
+          border: "1px solid var(--color-border)",
+        }}>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            🎁 Gift Ideas
+          </h2>
           {giftSuggestionsQuery.isLoading ? (
-            <p className="hint" aria-live="polite">{t("loadingGiftIdeas")}</p>
+            <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem" }}>{t("loadingGiftIdeas")}</p>
           ) : giftSuggestionsQuery.data?.suggestions?.length ? (
-            <div className="gift-grid">
-              {giftSuggestionsQuery.data.suggestions.map((gift) => (
-                <article key={`${gift.name}-${gift.category}`} className="gift-card">
-                  <header className="gift-card__header">
-                    <h3>{gift.name}</h3>
-                    <span className="gift-card__price">{formatCurrency(gift.estimatedPrice, "IDR")}</span>
-                  </header>
-                  <p className="gift-card__desc">{gift.description}</p>
-                  <p className="gift-card__reason">{gift.reason}</p>
-                </article>
+            <div style={{ display: "grid", gap: 12 }}>
+              {giftSuggestionsQuery.data.suggestions.slice(0, 3).map((gift) => (
+                <div key={`${gift.name}-${gift.category}`} style={{
+                  padding: 12,
+                  background: "var(--color-surface-alt)",
+                  borderRadius: 10,
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                    <span style={{ fontWeight: 500, fontSize: "0.9rem" }}>{gift.name}</span>
+                    <span style={{ fontSize: "0.85rem", color: "var(--color-brand)" }}>{formatCurrency(gift.estimatedPrice, "IDR")}</span>
+                  </div>
+                  <p style={{ fontSize: "0.8rem", color: "var(--color-text-muted)", margin: 0 }}>{gift.description}</p>
+                </div>
               ))}
             </div>
           ) : (
-            <p className="empty">Gift ideas will appear here soon.</p>
+            <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem" }}>Gift ideas will appear here soon.</p>
           )}
         </div>
-      </section>
 
-      {invitation.sections.map((section, index) => {
-        const isRsvpSection = section.type === "rsvp";
-        const description =
-          isRsvpSection && typeof section.content === "string"
-            ? section.content
-            : undefined;
-
-        return (
-          <section
-            key={`${section.type}-${index}`}
-            className="invite__section"
-            aria-labelledby={`section-${index}`}
-          >
-            <div className="section-shell">
-              <header>
-                <h2 id={`section-${index}`}>{section.title}</h2>
-              </header>
-              {isRsvpSection ? (
-                <RsvpSection
-                  slug={invitation.slug}
-                  invitation={invitation}
-                  description={description}
-                />
-              ) : (
-                renderGenericSection(section, invitation.currentEventId)
-              )}
-            </div>
-          </section>
-        );
-      })}
-
-      {!hasRsvpSection ? (
-        <section className="invite__section" aria-labelledby="default-rsvp-heading">
-          <div className="section-shell">
-            <header>
-              <h2 id="default-rsvp-heading">RSVP</h2>
-            </header>
-            <RsvpSection
-              slug={invitation.slug}
-              invitation={invitation}
-              description="Let us know if you can celebrate with us."
-            />
-          </div>
-        </section>
-      ) : null}
-
-      <section className="invite__section" aria-labelledby="guestbook-heading">
-        <div className="section-shell">
-          <header>
-            <h2 id="guestbook-heading">{t("guestbookSectionTitle")}</h2>
-            <p className="section-shell__lead">{t("guestbookSectionLead")}</p>
-          </header>
+        {/* Guestbook Card */}
+        <div className="invite-compact__card" style={{
+          background: "var(--color-surface)",
+          borderRadius: 16,
+          padding: 20,
+          border: "1px solid var(--color-border)",
+        }}>
+          <h2 style={{ fontSize: "1.1rem", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            💬 {t("guestbookSectionTitle")}
+          </h2>
           <form
-            className="guestbook-form"
             onSubmit={(event) => {
               event.preventDefault();
               mutation.mutate();
             }}
+            style={{ marginBottom: 16 }}
           >
-            <div className="form-grid">
-              <label>
-                {t("guestbookFormName")}
-                <input
-                  value={guestName}
-                  onChange={(event) => setGuestName(event.target.value)}
-                  placeholder={t("guestbookFormNamePlaceholder")}
-                  required
-                />
-              </label>
-              <label className="form-grid__full">
-                {t("guestbookFormMessage")}
-                <textarea
-                  value={message}
-                  onChange={(event) => setMessage(event.target.value)}
-                  placeholder={t("guestbookFormMessagePlaceholder")}
-                  maxLength={500}
-                  required
-                />
-              </label>
-            </div>
-            <button type="submit" className="ui-button primary" disabled={mutation.isPending}>
+            <input
+              value={guestName}
+              onChange={(event) => setGuestName(event.target.value)}
+              placeholder={t("guestbookFormNamePlaceholder")}
+              required
+              style={{ width: "100%", marginBottom: 8, padding: "10px 12px", borderRadius: 8, border: "1px solid var(--color-border)", background: "var(--color-surface-alt)" }}
+            />
+            <textarea
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              placeholder={t("guestbookFormMessagePlaceholder")}
+              maxLength={500}
+              required
+              rows={3}
+              style={{ width: "100%", marginBottom: 8, padding: "10px 12px", borderRadius: 8, border: "1px solid var(--color-border)", background: "var(--color-surface-alt)", resize: "vertical" }}
+            />
+            <button type="submit" className="ui-button primary" disabled={mutation.isPending} style={{ fontSize: "0.9rem" }}>
               {mutation.isPending ? t("guestbookSending") : t("guestbookSend")}
             </button>
           </form>
-          {submitError && <p className="form-message error">{submitError}</p>}
-
-          <div className="guestbook-list">
+          {submitError && <p style={{ color: "#ef4444", fontSize: "0.85rem", marginBottom: 12 }}>{submitError}</p>}
+          
+          <div style={{ maxHeight: 200, overflowY: "auto" }}>
             {detail?.guestbook?.length ? (
-              detail.guestbook.map((entry) => (
-                <article key={entry.id} className="guestbook-entry">
-                  <header>
-                    <h3>{entry.guestName}</h3>
-                    <time dateTime={entry.createdAt}>{dayjs(entry.createdAt).fromNow()}</time>
-                  </header>
-                  <p>{entry.message}</p>
-                </article>
+              detail.guestbook.slice(0, 5).map((entry) => (
+                <div key={entry.id} style={{ padding: "10px 0", borderBottom: "1px solid var(--color-border)" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                    <span style={{ fontWeight: 500, fontSize: "0.9rem" }}>{entry.guestName}</span>
+                    <time style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>{dayjs(entry.createdAt).fromNow()}</time>
+                  </div>
+                  <p style={{ fontSize: "0.85rem", margin: 0, color: "var(--color-text-muted)" }}>{entry.message}</p>
+                </div>
               ))
             ) : (
-              <p className="empty">No messages yet. Share your blessings! 🎉</p>
+              <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem" }}>No messages yet. Share your blessings! 🎉</p>
             )}
           </div>
         </div>
-      </section>
+      </div>
+
+      {/* Additional Sections (collapsible) */}
+      {invitation.sections.length > 0 && (
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px 24px" }}>
+          {invitation.sections.filter(s => s.type !== "rsvp").map((section, index) => (
+            <details key={`${section.type}-${index}`} style={{ marginBottom: 12 }}>
+              <summary style={{
+                cursor: "pointer",
+                padding: "16px 20px",
+                background: "var(--color-surface)",
+                borderRadius: 12,
+                fontWeight: 500,
+                border: "1px solid var(--color-border)",
+              }}>
+                {section.type === "loveStory" && "💕 "}{section.type === "gallery" && "📷 "}{section.title}
+              </summary>
+              <div style={{
+                padding: 20,
+                background: "var(--color-surface)",
+                borderRadius: "0 0 12px 12px",
+                marginTop: -1,
+                border: "1px solid var(--color-border)",
+                borderTop: "none",
+              }}>
+                {renderGenericSection(section, invitation.currentEventId)}
+              </div>
+            </details>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

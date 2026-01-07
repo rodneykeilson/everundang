@@ -104,6 +104,10 @@
   display: flex;
   align-items: center;
   transition: opacity 0.2s ease;
+  color: var(--color-text);
+  text-decoration: none;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .app-layout--collapsed .sidebar__logo {

@@ -268,25 +268,27 @@ const AdminConsole: React.FC = () => {
           {!isAuthenticated && (
             <section className="admin-console__card" aria-label="Admin authentication">
               <header>
-                <h2>Authenticate</h2>
+                <h2>{t("adminConnect")}</h2>
                 <p className="hint">
-                  Paste the shared admin secret to unlock full access. Your key is stored locally for convenience.
+                  {t("adminEnterSecret")}
                 </p>
               </header>
               <form className="owner-form" onSubmit={handleConnect}>
                 <label>
-                  Admin secret
+                  {t("adminSecretPlaceholder")}
                   <input
+                    type="password"
                     value={inputKey}
                     onChange={(event) => setInputKey(event.target.value)}
                     placeholder="••••••••"
+                    autoComplete="current-password"
                     required
                   />
                 </label>
                 {formError && <p className="form-message error">{formError}</p>}
                 <div className="admin-console__actions">
                   <button type="submit" className="ui-button primary">
-                    Unlock console
+                    {t("adminConnect")}
                   </button>
                 </div>
               </form>
@@ -297,7 +299,7 @@ const AdminConsole: React.FC = () => {
             <section className="admin-console__card" aria-label="Admin controls">
               <header>
                 <h2>Controls</h2>
-                <p className="hint">Current session is bound to the admin secret in local storage.</p>
+                <p className="hint">{t("adminConnected")}</p>
               </header>
               <div className="admin-console__actions">
                 <button type="button" className="ui-button subtle" onClick={handleSignOut}>

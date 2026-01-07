@@ -3,6 +3,8 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { useToast } from "../hooks/useToast";
+import { useLocale } from "../hooks/useLocale";
 import {
   deleteGuestCode,
   fetchInvitationQr,
@@ -98,6 +100,8 @@ const OwnerDashboard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
+  const toast = useToast();
+  const { t } = useLocale();
 
   const initialToken = searchParams.get("k") ?? "";
   const [ownerToken, setOwnerToken] = useState(initialToken);
@@ -293,9 +297,11 @@ const OwnerDashboard: React.FC = () => {
   const handleCopy = async (value: string, label: string) => {
     try {
       await navigator.clipboard.writeText(value);
+      toast.success(t("linkCopied"));
       setFeedback(`${label} copied to clipboard.`);
     } catch (copyError) {
       const message = copyError instanceof Error ? copyError.message : "Copy failed.";
+      toast.error(message);
       setFeedback(message);
     }
   };

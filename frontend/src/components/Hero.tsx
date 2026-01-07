@@ -18,7 +18,7 @@ const Hero: React.FC = () => {
               {t("heroPrimaryCta")}
             </Link>
             <Link to="/#templates" className="ui-button subtle">
-              {t("heroSecondaryCta")}
+              {t("heroSecondaryCtaLong")}
             </Link>
           </div>
         </div>

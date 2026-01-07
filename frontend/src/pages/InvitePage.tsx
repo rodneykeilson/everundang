@@ -6,6 +6,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
 import { addGuestbookEntry, getGiftSuggestions, getInvitation, submitRsvp } from "../api/client";
 import { useLocale } from "../hooks/useLocale";
+import { useToast } from "../hooks/useToast";
 import type { Invitation, InvitationDetail, LoveStoryItem, Section, RsvpStats, Rsvp } from "../types";
 import DigitalPass from "../components/DigitalPass";
 
@@ -84,6 +85,7 @@ interface RsvpSectionProps {
 }
 
 const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description }) => {
+  const toast = useToast();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [status, setStatus] = useState<RsvpStatusOption>("yes");
@@ -121,6 +123,7 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
   const mutation = useMutation({
     mutationFn: (payload: Parameters<typeof submitRsvp>[1]) => submitRsvp(slug, payload),
     onSuccess: (data) => {
+      toast.success("RSVP submitted successfully! 🎉");
       setFeedback("RSVP saved. Thank you!");
       setError(null);
       setStats(data.stats);
@@ -133,6 +136,7 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
     onError: (submissionError: unknown) => {
       const message =
         submissionError instanceof Error ? submissionError.message : "Failed to submit RSVP";
+      toast.error(message);
       setError(message);
       setFeedback(null);
     },
@@ -317,6 +321,7 @@ const InvitePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const queryClient = useQueryClient();
   const { formatCurrency } = useLocale();
+  const toast = useToast();
   const [guestName, setGuestName] = useState("");
   const [message, setMessage] = useState("");
   const [submitError, setSubmitError] = useState<string>("");
@@ -334,10 +339,13 @@ const InvitePage: React.FC = () => {
       setGuestName("");
       setMessage("");
       setSubmitError("");
+      toast.success("Message posted successfully! 🎉");
       await queryClient.invalidateQueries({ queryKey: ["invitation", slug] });
     },
     onError: (error: unknown) => {
-      setSubmitError(error instanceof Error ? error.message : "Failed to send message");
+      const errorMessage = error instanceof Error ? error.message : "Failed to send message";
+      toast.error(errorMessage);
+      setSubmitError(errorMessage);
     },
   });
 
@@ -743,7 +751,7 @@ const InvitePage: React.FC = () => {
                 </article>
               ))
             ) : (
-              <p className="empty">No messages yet. Be the first to congratulate!</p>
+              <p className="empty">No messages yet. Share your blessings! 🎉</p>
             )}
           </div>
         </div>

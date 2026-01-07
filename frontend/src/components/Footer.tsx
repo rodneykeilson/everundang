@@ -9,15 +9,15 @@ const Footer: React.FC = () => {
       <div className="container app-footer__inner">
         <p>© {yr} EverUndang. {t("footerRights")}</p>
         <nav aria-label="Legal" className="footer-links">
-          <a href="#" className="footer-link">
-            Terms
-          </a>
-          <a href="#" className="footer-link">
-            Privacy
-          </a>
-          <a href="#" className="footer-link">
-            Status
-          </a>
+          <span className="footer-link footer-link--disabled" title={t("footerComingSoon")}>
+            {t("footerTerms")}
+          </span>
+          <span className="footer-link footer-link--disabled" title={t("footerComingSoon")}>
+            {t("footerPrivacy")}
+          </span>
+          <span className="footer-link footer-link--disabled" title={t("footerComingSoon")}>
+            {t("footerStatus")}
+          </span>
         </nav>
       </div>
     </footer>

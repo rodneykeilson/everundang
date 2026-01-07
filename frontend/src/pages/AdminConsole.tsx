@@ -8,6 +8,8 @@ import {
   rotateOwnerLinkAdmin,
   updateInvitationAdmin,
 } from "../api/client";
+import { useToast } from "../hooks/useToast";
+import { useLocale } from "../hooks/useLocale";
 import type { Invitation, InvitationStatus } from "../types";
 
 const STORAGE_KEY = "everundang-admin-key";
@@ -27,10 +29,11 @@ const formatDate = (value: string) => {
 
 const AdminConsole: React.FC = () => {
   const queryClient = useQueryClient();
+  const toast = useToast();
+  const { t } = useLocale();
   const [inputKey, setInputKey] = useState<string>(() => readStoredAdminKey());
   const [activeKey, setActiveKey] = useState<string>(() => readStoredAdminKey());
   const [formError, setFormError] = useState<string | null>(null);
-  const [actionFeedback, setActionFeedback] = useState<string | null>(null);
   const [pendingStatusId, setPendingStatusId] = useState<string | null>(null);
   const [pendingOwnerLinkId, setPendingOwnerLinkId] = useState<string | null>(null);
   const [rowMessages, setRowMessages] = useState<Record<string, string>>({});
@@ -53,12 +56,12 @@ const AdminConsole: React.FC = () => {
   const deleteMutation = useMutation({
     mutationFn: (invitationId: string) => deleteInvitationAdmin(invitationId, activeKey),
     onSuccess: () => {
-      setActionFeedback("Invitation deleted");
+      toast.success(t("invitationDeleted"));
       queryClient.invalidateQueries({ queryKey: ["admin-invitations"] });
     },
     onError: (error: unknown) => {
       const message = error instanceof Error ? error.message : "Unable to delete invitation.";
-      setActionFeedback(message);
+      toast.error(message);
     },
   });
 
@@ -79,7 +82,6 @@ const AdminConsole: React.FC = () => {
       ),
     onMutate: ({ invitationId }) => {
       setPendingStatusId(invitationId);
-      setActionFeedback(null);
       setFormError(null);
     },
     onSuccess: (updated, { adminSecret }) => {
@@ -87,7 +89,7 @@ const AdminConsole: React.FC = () => {
         current?.map((inv) => (inv.id === updated.id ? updated : inv)) ?? current,
       );
       const updatedStatus = updated.status ?? (updated.isPublished ? "published" : "draft");
-      setActionFeedback(`Status updated to ${updatedStatus}`);
+      toast.success(`Status updated to ${updatedStatus}`);
       setFormError(null);
       if (updatedStatus === "published") {
         setRowMessages((previous) => {
@@ -114,7 +116,6 @@ const AdminConsole: React.FC = () => {
       rotateOwnerLinkAdmin(invitationId, adminSecret),
     onMutate: ({ invitationId }) => {
       setPendingOwnerLinkId(invitationId);
-      setActionFeedback(null);
       setFormError(null);
     },
     onSuccess: async ({ invitation: updatedInvitation, ownerLink }, { adminSecret }) => {
@@ -129,14 +130,14 @@ const AdminConsole: React.FC = () => {
       if (canCopy) {
         try {
           await navigator.clipboard.writeText(ownerLink);
-          setActionFeedback("Owner link copied to clipboard");
+          toast.success(t("linkCopied"));
           setFormError(null);
           return;
         } catch (error) {
           console.warn("Failed to copy owner link", error);
         }
       }
-      setActionFeedback(`Owner link ready: ${ownerLink}`);
+      toast.info(`Owner link ready: ${ownerLink}`);
       setFormError(null);
     },
     onError: (error: unknown) => {
@@ -179,7 +180,6 @@ const AdminConsole: React.FC = () => {
 
   const handleConnect = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setActionFeedback(null);
 
     const trimmed = inputKey.trim();
     if (!trimmed) {
@@ -189,6 +189,7 @@ const AdminConsole: React.FC = () => {
 
     setFormError(null);
     setActiveKey(trimmed);
+    toast.success(t("adminAuthenticated"));
     if (typeof window !== "undefined") {
       window.localStorage.setItem(STORAGE_KEY, trimmed);
     }
@@ -197,9 +198,9 @@ const AdminConsole: React.FC = () => {
   const handleSignOut = () => {
     setActiveKey("");
     setInputKey("");
-    setActionFeedback(null);
     setFormError(null);
     setRowMessages({});
+    toast.info(t("adminSignedOut"));
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(STORAGE_KEY);
     }
@@ -231,7 +232,6 @@ const AdminConsole: React.FC = () => {
         [invitation.id]: "Publish the invitation before previewing the public page.",
       }));
       setFormError(null);
-      setActionFeedback(null);
       return;
     }
     if (typeof window === "undefined") {
@@ -313,7 +313,6 @@ const AdminConsole: React.FC = () => {
                 </button>
               </div>
               {formError && <p className="form-message error">{formError}</p>}
-              {actionFeedback && <p className="form-message success">{actionFeedback}</p>}
             </section>
           )}
 

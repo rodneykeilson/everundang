@@ -232,4 +232,41 @@ export const id = {
   a11ySelectLanguage: "Pilih bahasa",
   a11yLoading: "Memuat konten...",
   a11yError: "Terjadi error",
+
+  // Toast messages
+  languageChanged: "Bahasa diubah ke {language}",
+  linkCopied: "Link tersalin ke clipboard!",
+  rsvpSuccess: "RSVP berhasil dikirim!",
+  rsvpUpdated: "RSVP berhasil diperbarui!",
+  guestbookSuccess: "Pesan berhasil dikirim!",
+  invitationCreated: "Undangan berhasil dibuat!",
+  invitationDeleted: "Undangan berhasil dihapus!",
+  changesSaved: "Perubahan berhasil disimpan!",
+  adminAuthenticated: "Akses admin diberikan",
+  adminSignedOut: "Keluar dari konsol admin",
+
+  // Footer
+  footerTerms: "Syarat Layanan",
+  footerPrivacy: "Kebijakan Privasi",
+  footerStatus: "Status Sistem",
+  footerComingSoon: "Segera hadir",
+
+  // Form helpers
+  formHeadlineHelper: "Judul utama yang ditampilkan di undangan",
+  formCoupleNamesHelper: "Nama yang akan muncul di undangan",
+  formEventDateHelper: "Kapan acara Anda berlangsung?",
+  formEventLocationHelper: "Nama dan alamat tempat acara",
+  templateClearHelper: "Hapus template dan mulai dengan form kosong",
+
+  // Admin
+  adminEnterSecret: "Masukkan kunci admin untuk mengakses dashboard",
+  adminSecretPlaceholder: "Kunci rahasia admin",
+  adminConnect: "Hubungkan",
+  adminConnected: "Terhubung ke dashboard admin",
+
+  // Guestbook
+  guestbookEmptyInviting: "Belum ada pesan. Bagikan ucapan Anda! 🎉",
+
+  // Demo button
+  heroSecondaryCtaLong: "Lihat contoh undangan",
 } as const;

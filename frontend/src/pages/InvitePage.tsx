@@ -320,7 +320,7 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
 const InvitePage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const queryClient = useQueryClient();
-  const { formatCurrency } = useLocale();
+  const { t, formatCurrency } = useLocale();
   const toast = useToast();
   const [guestName, setGuestName] = useState("");
   const [message, setMessage] = useState("");
@@ -528,19 +528,19 @@ const InvitePage: React.FC = () => {
   }, [invitation]);
 
   if (query.isLoading) {
-    return <div className="page-loading">Loading invitation...</div>;
+    return <div className="page-loading">{t("loadingInvitation")}</div>;
   }
 
   if (query.error instanceof Error) {
     const notFoundMessage =
       query.error.message === "Invitation not found"
-        ? "Invitation not found or not published."
+        ? t("invitationNotFound")
         : query.error.message;
     return <div className="page-error">{notFoundMessage}</div>;
   }
 
   if (!invitation || !invitation.isPublished) {
-    return <div className="page-error">This invitation is not published.</div>;
+    return <div className="page-error">{t("invitationNotPublished")}</div>;
   }
 
   const eventTime = formatTime(invitation.event.time);
@@ -633,7 +633,7 @@ const InvitePage: React.FC = () => {
           </header>
 
           {giftSuggestionsQuery.isLoading ? (
-            <p className="hint" aria-live="polite">Loading gift ideas…</p>
+            <p className="hint" aria-live="polite">{t("loadingGiftIdeas")}</p>
           ) : giftSuggestionsQuery.data?.suggestions?.length ? (
             <div className="gift-grid">
               {giftSuggestionsQuery.data.suggestions.map((gift) => (
@@ -702,8 +702,8 @@ const InvitePage: React.FC = () => {
       <section className="invite__section" aria-labelledby="guestbook-heading">
         <div className="section-shell">
           <header>
-            <h2 id="guestbook-heading">Guestbook</h2>
-            <p className="section-shell__lead">Leave your blessings and keep the memories forever.</p>
+            <h2 id="guestbook-heading">{t("guestbookSectionTitle")}</h2>
+            <p className="section-shell__lead">{t("guestbookSectionLead")}</p>
           </header>
           <form
             className="guestbook-form"
@@ -714,27 +714,27 @@ const InvitePage: React.FC = () => {
           >
             <div className="form-grid">
               <label>
-                Name
+                {t("guestbookFormName")}
                 <input
                   value={guestName}
                   onChange={(event) => setGuestName(event.target.value)}
-                  placeholder="Your name"
+                  placeholder={t("guestbookFormNamePlaceholder")}
                   required
                 />
               </label>
               <label className="form-grid__full">
-                Message
+                {t("guestbookFormMessage")}
                 <textarea
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}
-                  placeholder="Share your wishes"
+                  placeholder={t("guestbookFormMessagePlaceholder")}
                   maxLength={500}
                   required
                 />
               </label>
             </div>
             <button type="submit" className="ui-button primary" disabled={mutation.isPending}>
-              {mutation.isPending ? "Sending…" : "Send message"}
+              {mutation.isPending ? t("guestbookSending") : t("guestbookSend")}
             </button>
           </form>
           {submitError && <p className="form-message error">{submitError}</p>}

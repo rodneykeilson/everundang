@@ -330,8 +330,8 @@ router.post("/", async (req: Request, res: Response, next: NextFunction) => {
       ownerSecretHash: secretHash,
     });
     const ownerToken = signOwnerToken(invitation.id, secret);
-  const normalizedFrontend = FRONTEND_URL.replace(/\/$/, "");
-  const ownerLink = `${normalizedFrontend}/#/edit/${invitation.id}?k=${ownerToken}`;
+    const normalizedFrontend = FRONTEND_URL.replace(/\/$/, "");
+    const ownerLink = `${normalizedFrontend}/#/edit/${invitation.id}?k=${encodeURIComponent(ownerToken)}`;
     res.status(201).json({ invitation: sanitizeInvitation(invitation), ownerToken, ownerLink });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -485,7 +485,7 @@ router.post(
       }
       const ownerToken = signOwnerToken(invitationId, secret);
       const normalizedFrontend = FRONTEND_URL.replace(/\/$/, "");
-  const ownerLink = `${normalizedFrontend}/#/edit/${invitationId}?k=${ownerToken}`;
+      const ownerLink = `${normalizedFrontend}/#/edit/${invitationId}?k=${encodeURIComponent(ownerToken)}`;
       res.json({ invitation: sanitizeInvitation(updated), ownerToken, ownerLink });
     } catch (error) {
       next(error);

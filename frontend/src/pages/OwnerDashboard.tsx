@@ -224,7 +224,7 @@ const OwnerDashboard: React.FC = () => {
   const ownerLink = useMemo(() => {
     if (!invitation || !ownerToken) return "";
     const base = window.location.origin;
-    return `${base}/#/edit/${invitation.id}?k=${ownerToken}`;
+    return `${base}/#/edit/${invitation.id}?k=${encodeURIComponent(ownerToken)}`;
   }, [invitation, ownerToken]);
 
   const shareLinks = useMemo(() => {
@@ -294,9 +294,31 @@ const OwnerDashboard: React.FC = () => {
 
   const handleCopy = async (value: string, label: string) => {
     try {
-      await navigator.clipboard.writeText(value);
-      toast.success(t("linkCopied"));
-      setFeedback(`${label} copied to clipboard.`);
+      // Try modern clipboard API first
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+        toast.success(t("linkCopied"));
+        setFeedback(`${label} copied to clipboard.`);
+      } else {
+        // Fallback for non-HTTPS contexts
+        const textArea = document.createElement("textarea");
+        textArea.value = value;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand("copy");
+          toast.success(t("linkCopied"));
+          setFeedback(`${label} copied to clipboard.`);
+        } catch {
+          throw new Error("Copy command failed");
+        } finally {
+          textArea.remove();
+        }
+      }
     } catch (copyError) {
       const message = copyError instanceof Error ? copyError.message : "Copy failed.";
       toast.error(message);

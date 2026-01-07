@@ -121,21 +121,35 @@ const AdminConsole: React.FC = () => {
         current?.map((inv) => (updatedInvitation && inv.id === updatedInvitation.id ? updatedInvitation : inv)) ??
         current,
       );
-      const canCopy =
-        typeof navigator !== "undefined" &&
-        typeof navigator.clipboard !== "undefined" &&
-        typeof navigator.clipboard.writeText === "function";
-      if (canCopy) {
-        try {
+      
+      // Try to copy to clipboard
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
           await navigator.clipboard.writeText(ownerLink);
           toast.success(t("linkCopied"));
-          setFormError(null);
-          return;
-        } catch (error) {
-          console.warn("Failed to copy owner link", error);
+        } else {
+          // Fallback for non-HTTPS contexts
+          const textArea = document.createElement("textarea");
+          textArea.value = ownerLink;
+          textArea.style.position = "fixed";
+          textArea.style.left = "-999999px";
+          textArea.style.top = "-999999px";
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          try {
+            document.execCommand("copy");
+            toast.success(t("linkCopied"));
+          } catch {
+            toast.info(`Owner link ready: ${ownerLink}`);
+          } finally {
+            textArea.remove();
+          }
         }
+      } catch (error) {
+        console.warn("Failed to copy owner link", error);
+        toast.info(`Owner link ready: ${ownerLink}`);
       }
-      toast.info(`Owner link ready: ${ownerLink}`);
       setFormError(null);
     },
     onError: (error: unknown) => {

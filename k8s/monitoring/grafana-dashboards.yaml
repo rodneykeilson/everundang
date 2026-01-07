@@ -1,0 +1,184 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+data:
+  everundang-overview.json: |
+    {
+      "dashboard": {
+        "title": "EverUndang - Overview",
+        "tags": ["everundang", "overview"],
+        "timezone": "browser",
+        "schemaVersion": 16,
+        "version": 1,
+        "refresh": "30s",
+        "panels": [
+          {
+            "id": 1,
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+            "type": "graph",
+            "title": "Backend Pod CPU Usage",
+            "targets": [
+              {
+                "expr": "rate(container_cpu_usage_seconds_total{pod=~\"backend-.*\", namespace=\"everundang\"}[5m])",
+                "legendFormat": "{{pod}}"
+              }
+            ],
+            "yaxes": [
+              {"format": "percentunit", "label": "CPU Usage"}
+            ]
+          },
+          {
+            "id": 2,
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+            "type": "graph",
+            "title": "Backend Pod Memory Usage",
+            "targets": [
+              {
+                "expr": "container_memory_usage_bytes{pod=~\"backend-.*\", namespace=\"everundang\"}",
+                "legendFormat": "{{pod}}"
+              }
+            ],
+            "yaxes": [
+              {"format": "bytes", "label": "Memory"}
+            ]
+          },
+          {
+            "id": 3,
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+            "type": "graph",
+            "title": "Frontend Pod CPU Usage",
+            "targets": [
+              {
+                "expr": "rate(container_cpu_usage_seconds_total{pod=~\"frontend-.*\", namespace=\"everundang\"}[5m])",
+                "legendFormat": "{{pod}}"
+              }
+            ],
+            "yaxes": [
+              {"format": "percentunit", "label": "CPU Usage"}
+            ]
+          },
+          {
+            "id": 4,
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+            "type": "graph",
+            "title": "Frontend Pod Memory Usage",
+            "targets": [
+              {
+                "expr": "container_memory_usage_bytes{pod=~\"frontend-.*\", namespace=\"everundang\"}",
+                "legendFormat": "{{pod}}"
+              }
+            ],
+            "yaxes": [
+              {"format": "bytes", "label": "Memory"}
+            ]
+          },
+          {
+            "id": 5,
+            "gridPos": {"h": 6, "w": 8, "x": 0, "y": 16},
+            "type": "stat",
+            "title": "Backend Replicas",
+            "targets": [
+              {
+                "expr": "kube_deployment_status_replicas_available{deployment=\"backend\", namespace=\"everundang\"}"
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "gridPos": {"h": 6, "w": 8, "x": 8, "y": 16},
+            "type": "stat",
+            "title": "Frontend Replicas",
+            "targets": [
+              {
+                "expr": "kube_deployment_status_replicas_available{deployment=\"frontend\", namespace=\"everundang\"}"
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "gridPos": {"h": 6, "w": 8, "x": 16, "y": 16},
+            "type": "stat",
+            "title": "Database Status",
+            "targets": [
+              {
+                "expr": "kube_deployment_status_replicas_available{deployment=\"postgres\", namespace=\"everundang\"}"
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "gridPos": {"h": 8, "w": 24, "x": 0, "y": 22},
+            "type": "graph",
+            "title": "HPA Current vs Desired Replicas",
+            "targets": [
+              {
+                "expr": "kube_horizontalpodautoscaler_status_current_replicas{namespace=\"everundang\"}",
+                "legendFormat": "{{horizontalpodautoscaler}} - Current"
+              },
+              {
+                "expr": "kube_horizontalpodautoscaler_status_desired_replicas{namespace=\"everundang\"}",
+                "legendFormat": "{{horizontalpodautoscaler}} - Desired"
+              }
+            ],
+            "yaxes": [
+              {"format": "short", "label": "Replicas"}
+            ]
+          }
+        ]
+      }
+    }
+
+  kubernetes-cluster.json: |
+    {
+      "dashboard": {
+        "title": "Kubernetes Cluster - EverUndang",
+        "tags": ["kubernetes", "cluster"],
+        "timezone": "browser",
+        "schemaVersion": 16,
+        "version": 1,
+        "refresh": "30s",
+        "panels": [
+          {
+            "id": 1,
+            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+            "type": "graph",
+            "title": "Cluster CPU Usage",
+            "targets": [
+              {
+                "expr": "sum(rate(container_cpu_usage_seconds_total[5m]))",
+                "legendFormat": "Total CPU"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+            "type": "graph",
+            "title": "Cluster Memory Usage",
+            "targets": [
+              {
+                "expr": "sum(container_memory_usage_bytes)",
+                "legendFormat": "Total Memory"
+              }
+            ],
+            "yaxes": [
+              {"format": "bytes"}
+            ]
+          },
+          {
+            "id": 3,
+            "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8},
+            "type": "table",
+            "title": "Pod Status",
+            "targets": [
+              {
+                "expr": "kube_pod_info{namespace=\"everundang\"}",
+                "format": "table"
+              }
+            ]
+          }
+        ]
+      }
+    }

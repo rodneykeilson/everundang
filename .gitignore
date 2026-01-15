@@ -39,4 +39,4 @@ Thumbs.db
 
 # Kubernetes local overrides (keep base configs)
 k8s/**/secret-override.yaml
-k8s/**/*-local.yaml
+k8s/**/*-local.yamlUAS_Video_Guide.tex

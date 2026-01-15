@@ -9,8 +9,25 @@ param(
     [int]$Concurrent = 10,
     
     [Parameter(Mandatory=$false)]
-    [string]$TargetUrl = "http://localhost:4000/health"
+    [string]$TargetUrl = ""
 )
+
+# Auto-detect backend URL if not provided
+if ([string]::IsNullOrEmpty($TargetUrl)) {
+    Write-Host "🔍 Detecting backend service URL..." -ForegroundColor Cyan
+    
+    # Try to get service from kubectl
+    if (Get-Command kubectl -ErrorAction SilentlyContinue) {
+        $TargetUrl = "http://localhost:4000/health"
+        Write-Host "⚠️  Using port-forward URL: $TargetUrl" -ForegroundColor Yellow
+        Write-Host "   Make sure you're running: kubectl port-forward -n everundang svc/backend 4000:4000" -ForegroundColor Yellow
+        Write-Host ""
+    } else {
+        Write-Host "❌ kubectl not found and no URL provided" -ForegroundColor Red
+        Write-Host "   Usage: .\load-test.ps1 -TargetUrl http://your-backend-url/health" -ForegroundColor Yellow
+        exit 1
+    }
+}
 
 Write-Host "🔥 Starting Load Test for HPA Demo" -ForegroundColor Cyan
 Write-Host "Target: $TargetUrl" -ForegroundColor Yellow

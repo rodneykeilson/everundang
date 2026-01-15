@@ -10,6 +10,10 @@ if (-not (Get-Command kubectl -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
+# Get script directory
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+Set-Location $ScriptDir
+
 # Create monitoring namespace
 Write-Host "📦 Creating monitoring namespace..." -ForegroundColor Cyan
 kubectl apply -f monitoring/namespace.yaml

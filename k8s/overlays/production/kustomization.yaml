@@ -3,23 +3,9 @@ kind: Kustomization
 
 namespace: everundang
 
-bases:
+resources:
   - ../../base
 
-patchesStrategicMerge:
-  - replicas-patch.yaml
-  - resources-patch.yaml
-
-configMapGenerator:
-  - name: backend-config
-    behavior: merge
-    literals:
-      - NODE_ENV=production
-
-secretGenerator:
-  - name: backend-secret
-    behavior: replace
-    literals:
-      - ADMIN_SECRET=${ADMIN_SECRET}
-      - INVITE_OWNER_JWT_SECRET=${INVITE_OWNER_JWT_SECRET}
-      - DATABASE_URL=${DATABASE_URL}
+patches:
+  - path: replicas-patch.yaml
+  - path: resources-patch.yaml

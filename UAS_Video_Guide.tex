@@ -1,0 +1,249 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  backgroundcolor=\color{gray!5}
+}
+
+\title{EverUndang UAS Video Guide \& Script (5 Presenters)}
+\author{Rodney \and Charles \and Jhonsen \and Dylan \and Felix}
+\date{January 15, 2026}
+
+\begin{document}
+\maketitle
+
+\section{Role Assignment (5 People)}
+\begin{itemize}
+  \item \textbf{Rodney}: Pembukaan, arsitektur singkat, alur demo, dan penutup (leader segmen)
+  \item \textbf{Charles}: Deployment Kubernetes/OpenShift
+  \item \textbf{Jhonsen}: Horizontal Pod Autoscaler (HPA)
+  \item \textbf{Dylan}: CI/CD pipeline (GitHub Actions + deploy Kubernetes)
+  \item \textbf{Felix}: Monitoring (Prometheus + Grafana)
+\end{itemize}
+
+\section{Global Setup (Everyone Should Follow)}
+\subsection*{Prerequisites}
+\begin{itemize}
+  \item Git installed
+  \item Docker installed
+  \item Kubernetes/OpenShift cluster access
+  \item \texttt{kubectl} or \texttt{oc} CLI
+  \item Optional: \texttt{kustomize}
+\end{itemize}
+
+\subsection*{Repository}
+\begin{lstlisting}
+# Clone repo
+https://github.com/rodneykeilson/everundang.git
+
+# Project root
+cd EverUndang
+\end{lstlisting}
+
+\subsection*{Important Folders}
+\begin{itemize}
+  \item \texttt{k8s/} - Kubernetes/OpenShift manifests, overlays, scripts
+  \item \texttt{.github/workflows/} - CI/CD workflows
+  \item \texttt{backend/} - Express API
+  \item \texttt{frontend/} - React SPA
+\end{itemize}
+
+\section{Rodney Script: Pembukaan \& Alur Demo (Leader)}
+\subsection*{Tujuan}
+Menjelaskan gambaran singkat aplikasi, struktur repo, dan alur demo. Rodney memimpin video dan mengarahkan segmen ke tiap anggota.
+
+\subsection*{Langkah \& Script (Rodney)}
+\textbf{Tab/Window yang dibuka:}
+\begin{itemize}
+  \item File Explorer (folder repo EverUndang)
+  \item Terminal (PowerShell)
+  \item Browser (GitHub repo dan Actions)
+\end{itemize}
+
+\textbf{Yang dilakukan \& diucapkan:}
+\begin{enumerate}
+  \item Buka folder proyek di File Explorer dan tunjukkan struktur utama.
+  \item Di terminal, jalankan:
+\begin{lstlisting}
+cd D:\Kuliah\Semester 7\DevOps\EverUndang
+dir
+\end{lstlisting}
+  \item Ucapkan:
+  “Halo, saya Rodney. Di video ini kita akan menunjukkan implementasi Kubernetes/OpenShift, HPA, CI/CD, dan monitoring untuk aplikasi EverUndang. Saya akan memandu alur demo.”
+
+  \item Tunjukkan folder penting sambil menyebutkan fungsinya:
+  \begin{itemize}
+    \item \texttt{k8s/} untuk deployment, HPA, monitoring
+    \item \texttt{.github/workflows/} untuk CI/CD
+    \item \texttt{backend/} dan \texttt{frontend/}
+  \end{itemize}
+
+  \item Ucapkan:
+  “Setelah ini, Charles akan mendemokan deployment Kubernetes/OpenShift. Lalu Jhonsen membahas HPA, Dylan membahas CI/CD, dan Felix menutup dengan monitoring.”
+\end{enumerate}
+
+\section{Charles Script: Deployment Kubernetes/OpenShift}
+\subsection*{Tujuan}
+Menunjukkan manifest Kubernetes/OpenShift dan proses deploy.
+
+\subsection*{Langkah \& Script (Charles)}
+\textbf{Tab/Window yang dibuka:}
+\begin{itemize}
+  \item VS Code: folder \texttt{k8s/}
+  \item Terminal (PowerShell)
+\end{itemize}
+
+\textbf{Yang dilakukan \& diucapkan:}
+\begin{enumerate}
+  \item Buka folder \texttt{k8s/} di VS Code dan tampilkan struktur folder di Explorer.
+  \item Ucapkan:
+  “Halo, saya Charles. Saya akan demo deployment Kubernetes/OpenShift untuk EverUndang.”
+
+  \item Tunjukkan file \texttt{k8s/base/kustomization.yaml}, \texttt{backend-deployment.yaml}, dan \texttt{frontend-deployment.yaml}.
+  \item Ucapkan:
+  “Di folder \texttt{k8s/base} ada namespace, service, deployment, configmap, dan secret. Ini fondasi deployment.”
+
+  \item Buka overlay dev dan prod (\texttt{k8s/overlays/development/} dan \texttt{k8s/overlays/production/}).
+  \item Ucapkan:
+  “Overlay digunakan untuk membedakan konfigurasi dev vs production, seperti jumlah replica dan resource.”
+
+  \item Di terminal, jalankan perintah deploy:
+\begin{lstlisting}
+.\k8s\deploy.ps1 development
+\end{lstlisting}
+  \item Setelah selesai, jalankan:
+\begin{lstlisting}
+kubectl get all -n everundang
+kubectl get ingress -n everundang
+oc get routes -n everundang   # jika OpenShift
+\end{lstlisting}
+
+  \item Ucapkan:
+  “Ini memastikan semua pod, service, dan akses publik sudah aktif.”
+\end{enumerate}
+
+\section{Jhonsen Script: Horizontal Pod Autoscaler (HPA)}
+\subsection*{Tujuan}
+Menunjukkan konfigurasi HPA dan demo scaling.
+
+\subsection*{Langkah \& Script (Jhonsen)}
+\textbf{Tab/Window yang dibuka:}
+\begin{itemize}
+  \item VS Code: \texttt{k8s/base/backend-hpa.yaml} dan \texttt{k8s/base/frontend-hpa.yaml}
+  \item Terminal (PowerShell)
+\end{itemize}
+
+\textbf{Yang dilakukan \& diucapkan:}
+\begin{enumerate}
+  \item Buka \texttt{backend-hpa.yaml}, tunjukkan \texttt{minReplicas}, \texttt{maxReplicas}, dan target CPU/Memory.
+  \item Ucapkan:
+  “Halo, saya Jhonsen. Ini konfigurasi HPA untuk backend dan frontend. HPA menambah atau mengurangi pod berdasarkan CPU dan memory.”
+
+  \item Di terminal, cek HPA:
+\begin{lstlisting}
+kubectl get hpa -n everundang
+kubectl describe hpa backend-hpa -n everundang
+kubectl describe hpa frontend-hpa -n everundang
+\end{lstlisting}
+
+  \item Jalankan load test:
+\begin{lstlisting}
+.\k8s\load-test.ps1 -DurationSeconds 180 -Concurrent 20
+\end{lstlisting}
+
+  \item Buka tab terminal kedua (atau split) dan jalankan:
+\begin{lstlisting}
+kubectl get pods -n everundang -w
+\end{lstlisting}
+
+  \item Ucapkan:
+  “Saat beban naik, jumlah pod akan bertambah. Setelah beban turun, pod akan kembali ke jumlah minimum.”
+\end{enumerate}
+
+\section{Dylan Script: CI/CD pada Kubernetes}
+\subsection*{Tujuan}
+Menunjukkan pipeline CI/CD di GitHub Actions, build image, push ke GHCR, dan deploy ke Kubernetes.
+
+\subsection*{Langkah \& Script (Dylan)}
+\textbf{Tab/Window yang dibuka:}
+\begin{itemize}
+  \item Browser: GitHub repo \textrm{Actions}
+  \item VS Code: \texttt{.github/workflows/ci.yml} dan \texttt{.github/workflows/deploy.yml}
+\end{itemize}
+
+\textbf{Yang dilakukan \& diucapkan:}
+\begin{enumerate}
+  \item Buka GitHub Actions di browser, tunjukkan workflow CI dan Deploy.
+  \item Ucapkan:
+  “Halo, saya Dylan. Saya akan jelaskan CI/CD untuk EverUndang menggunakan GitHub Actions.”
+
+  \item Di VS Code, buka \texttt{ci.yml} dan tunjukkan job backend dan frontend build.
+  \item Ucapkan:
+  “Workflow CI berjalan saat push atau PR untuk memastikan build backend dan frontend sukses.”
+
+  \item Buka \texttt{deploy.yml}, tunjukkan langkah build/push image dan bagian deploy ke Kubernetes.
+  \item Ucapkan:
+  “Deploy workflow membangun image, push ke GHCR, lalu apply Kustomize ke cluster Kubernetes saat \texttt{ENABLE\_K8S\_DEPLOY=true}.”
+
+  \item Tunjukkan bagian penggunaan secret \texttt{KUBE\_CONFIG} dan langkah \texttt{kubectl apply -k overlays/production}.
+  \item Ucapkan:
+  “Dengan kubeconfig di GitHub Secrets, pipeline otomatis deploy tanpa perlu manual.”
+\end{enumerate}
+
+\section{Felix Script: Monitoring (Prometheus \& Grafana)}
+\subsection*{Tujuan}
+Deploy monitoring stack dan tampilkan dashboard Grafana.
+
+\subsection*{Langkah \& Script (Felix)}
+\textbf{Tab/Window yang dibuka:}
+\begin{itemize}
+  \item VS Code: \texttt{k8s/monitoring/}
+  \item Terminal (PowerShell)
+  \item Browser: Grafana dan Prometheus
+\end{itemize}
+
+\textbf{Yang dilakukan \& diucapkan:}
+\begin{enumerate}
+  \item Ucapkan:
+  “Halo, saya Felix. Saya akan mendemokan monitoring dengan Prometheus dan Grafana.”
+
+  \item Di VS Code, buka \texttt{k8s/monitoring/prometheus-deployment.yaml} dan \texttt{grafana-deployment.yaml}.
+  \item Ucapkan:
+  “Prometheus mengumpulkan metrik, Grafana menampilkan dashboard.”
+
+  \item Di terminal, jalankan deploy monitoring:
+\begin{lstlisting}
+.\k8s\deploy-monitoring.ps1
+\end{lstlisting}
+
+  \item Jalankan port-forward Prometheus dan Grafana:
+\begin{lstlisting}
+kubectl port-forward -n monitoring svc/prometheus 9090:9090
+kubectl port-forward -n monitoring svc/grafana 3000:3000
+\end{lstlisting}
+
+  \item Buka browser ke \texttt{http://localhost:3000} dan login admin/admin.
+  \item Tunjukkan dashboard dan panel CPU, memory, replica.
+  \item Ucapkan:
+  “Di dashboard ini terlihat penggunaan resource dan status pod secara real-time.”
+\end{enumerate}
+
+\section{Recording Checklist (All Presenters)}
+\begin{itemize}
+  \item Use screen recording (OBS or built-in Windows recorder)
+  \item Show commands and outputs clearly
+  \item Speak slowly and explain each step
+  \item Use the provided script as a step-by-step guide
+\end{itemize}
+
+\end{document}

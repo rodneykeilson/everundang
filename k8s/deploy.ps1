@@ -31,11 +31,11 @@ if (-not (Get-Command kustomize -ErrorAction SilentlyContinue)) {
 
 # Create namespace if it doesn't exist
 Write-Host "📦 Creating namespace..." -ForegroundColor Cyan
-& $CLI apply -f k8s/base/namespace.yaml
+& $CLI apply -f base/namespace.yaml
 
 # Apply manifests using kustomize
 Write-Host "📋 Applying manifests for $Environment..." -ForegroundColor Cyan
-kustomize build k8s/overlays/$Environment | & $CLI apply -f -
+kustomize build overlays/$Environment | & $CLI apply -f -
 
 Write-Host ""
 Write-Host "✅ Deployment complete!" -ForegroundColor Green

@@ -6,14 +6,13 @@ metadata:
 data:
   everundang-overview.json: |
     {
-      "dashboard": {
-        "title": "EverUndang - Overview",
-        "tags": ["everundang", "overview"],
-        "timezone": "browser",
-        "schemaVersion": 16,
-        "version": 1,
-        "refresh": "30s",
-        "panels": [
+      "title": "EverUndang - Overview",
+      "tags": ["everundang", "overview"],
+      "timezone": "browser",
+      "schemaVersion": 16,
+      "version": 1,
+      "refresh": "30s",
+      "panels": [
           {
             "id": 1,
             "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
@@ -127,14 +126,12 @@ data:
             ]
           }
         ]
-      }
     }
 
   kubernetes-cluster.json: |
     {
-      "dashboard": {
-        "title": "Kubernetes Cluster - EverUndang",
-        "tags": ["kubernetes", "cluster"],
+      "title": "Kubernetes Cluster - EverUndang",
+      "tags": ["kubernetes", "cluster"],
         "timezone": "browser",
         "schemaVersion": 16,
         "version": 1,
@@ -180,5 +177,4 @@ data:
             ]
           }
         ]
-      }
     }

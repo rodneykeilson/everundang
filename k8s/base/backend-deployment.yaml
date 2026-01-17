@@ -17,7 +17,15 @@ spec:
       labels:
         app.kubernetes.io/name: everundang
         app.kubernetes.io/component: backend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "4000"
+        prometheus.io/path: "/health"
     spec:
+      initContainers:
+      - name: wait-for-postgres
+        image: busybox:1.28
+        command: ['sh', '-c', "until nc -zv postgres 5432; do echo waiting for postgres; sleep 2; done"]
       containers:
       - name: backend
         image: ghcr.io/rodneykeilson/everundang-backend:latest

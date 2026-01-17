@@ -13,12 +13,10 @@ resources:
   - backend-configmap.yaml
   - backend-deployment.yaml
   - backend-service.yaml
-  - backend-route.yaml
   - backend-hpa.yaml
   - frontend-configmap.yaml
   - frontend-deployment.yaml
   - frontend-service.yaml
-  - frontend-route.yaml
   - frontend-hpa.yaml
 
 labels:

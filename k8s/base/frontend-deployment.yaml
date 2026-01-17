@@ -17,6 +17,10 @@ spec:
       labels:
         app.kubernetes.io/name: everundang
         app.kubernetes.io/component: frontend
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "80"
+        prometheus.io/path: "/"
     spec:
       containers:
       - name: frontend

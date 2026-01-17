@@ -7,7 +7,12 @@ param(
     [string]$Environment = 'development'
 )
 
-Write-Host "🚀 Deploying EverUndang to $Environment environment..." -ForegroundColor Cyan
+Write-Host "ðŸš€ Deploying EverUndang to $Environment environment..." -ForegroundColor Cyan
+
+# Get script directory to handle relative paths
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$BaseDir = Join-Path $ScriptDir "base"
+$OverlayDir = Join-Path $ScriptDir "overlays\$Environment"
 
 # Check if kubectl/oc is available
 $CLI = $null
@@ -31,11 +36,11 @@ if (-not (Get-Command kustomize -ErrorAction SilentlyContinue)) {
 
 # Create namespace if it doesn't exist
 Write-Host "📦 Creating namespace..." -ForegroundColor Cyan
-& $CLI apply -f base/namespace.yaml
+& $CLI apply -f "$BaseDir/namespace.yaml"
 
 # Apply manifests using kustomize
 Write-Host "📋 Applying manifests for $Environment..." -ForegroundColor Cyan
-kustomize build overlays/$Environment | & $CLI apply -f -
+kustomize build "$OverlayDir" | & $CLI apply -f -
 
 Write-Host ""
 Write-Host "✅ Deployment complete!" -ForegroundColor Green

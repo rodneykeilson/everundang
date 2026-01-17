@@ -39,16 +39,16 @@ kubectl wait --for=condition=available --timeout=300s deployment/prometheus -n m
 kubectl wait --for=condition=available --timeout=300s deployment/grafana -n monitoring
 
 Write-Host ""
-Write-Host "✅ Monitoring stack deployed successfully!" -ForegroundColor Green
+Write-Host "âœ… Monitoring stack deployed successfully!" -ForegroundColor Green
 Write-Host ""
-Write-Host "📊 Access Prometheus:" -ForegroundColor Cyan
+Write-Host "ðŸ“Š Access Prometheus:" -ForegroundColor Cyan
 Write-Host "   kubectl port-forward -n monitoring svc/prometheus 9090:9090" -ForegroundColor White
 Write-Host "   Then open: http://localhost:9090" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "📈 Access Grafana:" -ForegroundColor Cyan
+Write-Host "ðŸ“ˆ Access Grafana:" -ForegroundColor Cyan
 Write-Host "   kubectl port-forward -n monitoring svc/grafana 3000:3000" -ForegroundColor White
 Write-Host "   Then open: http://localhost:3000" -ForegroundColor Yellow
 Write-Host "   Default credentials: admin / admin" -ForegroundColor Gray
 Write-Host ""
-Write-Host "🔍 Check status:" -ForegroundColor Cyan
+Write-Host "ðŸ” Check status:" -ForegroundColor Cyan
 Write-Host "   kubectl get all -n monitoring" -ForegroundColor White

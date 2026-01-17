@@ -18,6 +18,9 @@ resources:
   - frontend-deployment.yaml
   - frontend-service.yaml
   - frontend-hpa.yaml
+  - ingress.yaml
+  - backend-route.yaml
+  - frontend-route.yaml
 
 labels:
   - pairs:

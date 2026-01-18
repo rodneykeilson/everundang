@@ -39,4 +39,8 @@ Thumbs.db
 
 # Kubernetes local overrides (keep base configs)
 k8s/**/secret-override.yaml
-k8s/**/*-local.yamlUAS_Video_Guide.tex
+k8s/**/*-local.yaml
+
+# UAS Guides (Private)
+UAS_Video_Guide.tex
+FELIX_QUICK_FIX.md

@@ -1,0 +1,570 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    app.kubernetes.io/component: namespace
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: everundang
+---
+apiVersion: v1
+data:
+  FRONTEND_ORIGINS: http://localhost:5173,http://frontend:80
+  FRONTEND_URL: http://frontend:80
+  NODE_ENV: production
+  OWNER_TOKEN_TTL_SECONDS: "2592000"
+  PORT: "4000"
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: backend-config
+  namespace: everundang
+---
+apiVersion: v1
+data:
+  VITE_API_URL: http://backend:4000
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: frontend-config
+  namespace: everundang
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: backend-secret
+  namespace: everundang
+stringData:
+  ADMIN_SECRET: change-this-admin-secret-in-production
+  DATABASE_URL: postgresql://everundang:everundang_secure_password@postgres:5432/everundang
+  INVITE_OWNER_JWT_SECRET: change-this-jwt-secret-in-production-min-32-chars
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/component: database
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: postgres-secret
+  namespace: everundang
+stringData:
+  POSTGRES_DB: everundang
+  POSTGRES_PASSWORD: everundang_secure_password
+  POSTGRES_USER: everundang
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: backend
+  namespace: everundang
+spec:
+  ports:
+  - name: http
+    port: 4000
+    protocol: TCP
+    targetPort: 4000
+  selector:
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/name: everundang
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: frontend
+  namespace: everundang
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: everundang
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: database
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: postgres
+  namespace: everundang
+spec:
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app.kubernetes.io/component: database
+    app.kubernetes.io/name: everundang
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app.kubernetes.io/component: database
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: postgres-pvc
+  namespace: everundang
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: hostpath
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: backend
+  namespace: everundang
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: backend
+      app.kubernetes.io/name: everundang
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /health
+        prometheus.io/port: "4000"
+        prometheus.io/scrape: "true"
+      labels:
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/name: everundang
+    spec:
+      containers:
+      - env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              key: PORT
+              name: backend-config
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              key: NODE_ENV
+              name: backend-config
+        - name: FRONTEND_URL
+          valueFrom:
+            configMapKeyRef:
+              key: FRONTEND_URL
+              name: backend-config
+        - name: FRONTEND_ORIGINS
+          valueFrom:
+            configMapKeyRef:
+              key: FRONTEND_ORIGINS
+              name: backend-config
+        - name: OWNER_TOKEN_TTL_SECONDS
+          valueFrom:
+            configMapKeyRef:
+              key: OWNER_TOKEN_TTL_SECONDS
+              name: backend-config
+        - name: ADMIN_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: ADMIN_SECRET
+              name: backend-secret
+        - name: INVITE_OWNER_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: INVITE_OWNER_JWT_SECRET
+              name: backend-secret
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              key: DATABASE_URL
+              name: backend-secret
+        image: ghcr.io/rodneykeilson/everundang-backend:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 4000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: backend
+        ports:
+        - containerPort: 4000
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 4000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -zv postgres 5432; do echo waiting for postgres; sleep 2; done
+        image: busybox:1.28
+        name: wait-for-postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: frontend
+  namespace: everundang
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: frontend
+      app.kubernetes.io/name: everundang
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /
+        prometheus.io/port: "80"
+        prometheus.io/scrape: "true"
+      labels:
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/name: everundang
+    spec:
+      containers:
+      - env:
+        - name: VITE_API_URL
+          valueFrom:
+            configMapKeyRef:
+              key: VITE_API_URL
+              name: frontend-config
+        image: ghcr.io/rodneykeilson/everundang-frontend:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: frontend
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: database
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: postgres
+  namespace: everundang
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/name: everundang
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: database
+        app.kubernetes.io/name: everundang
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-secret
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-secret
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_DB
+              name: postgres-secret
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:16-alpine
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - everundang
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        name: postgres
+        ports:
+        - containerPort: 5432
+          name: postgres
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - everundang
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-storage
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: backend-hpa
+  namespace: everundang
+spec:
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 15
+        type: Percent
+        value: 50
+      - periodSeconds: 15
+        type: Pods
+        value: 2
+      selectPolicy: Min
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      policies:
+      - periodSeconds: 15
+        type: Percent
+        value: 100
+      - periodSeconds: 15
+        type: Pods
+        value: 4
+      selectPolicy: Max
+      stabilizationWindowSeconds: 0
+  maxReplicas: 10
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 70
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 80
+        type: Utilization
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: frontend-hpa
+  namespace: everundang
+spec:
+  behavior:
+    scaleDown:
+      policies:
+      - periodSeconds: 15
+        type: Percent
+        value: 50
+      - periodSeconds: 15
+        type: Pods
+        value: 1
+      selectPolicy: Min
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      policies:
+      - periodSeconds: 15
+        type: Percent
+        value: 100
+      - periodSeconds: 15
+        type: Pods
+        value: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 0
+  maxReplicas: 8
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 75
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 85
+        type: Utilization
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  labels:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: everundang-ingress
+  namespace: everundang
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: everundang.example.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  - host: api.everundang.example.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: backend
+            port:
+              number: 4000
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - everundang.example.com
+    - api.everundang.example.com
+    secretName: everundang-tls
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: backend
+  namespace: everundang
+spec:
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: backend
+    weight: 100
+  wildcardPolicy: None
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: everundang
+  name: frontend
+  namespace: everundang
+spec:
+  port:
+    targetPort: http
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  to:
+    kind: Service
+    name: frontend
+    weight: 100
+  wildcardPolicy: None

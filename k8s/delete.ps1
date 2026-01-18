@@ -15,7 +15,10 @@ if (Get-Command oc -ErrorAction SilentlyContinue) {
 }
 
 # Delete namespace (this will delete all resources in it)
-Write-Host "Deleting namespace 'everundang' and all its resources..." -ForegroundColor Yellow
+Write-Host "🗑️  Deleting namespace 'everundang' and all its resources..." -ForegroundColor Yellow
 & $CLI delete namespace everundang --ignore-not-found=true
+
+Write-Host "🗑️  Deleting namespace 'monitoring' and all its resources..." -ForegroundColor Yellow
+& $CLI delete namespace monitoring --ignore-not-found=true
 
 Write-Host "✅ All EverUndang resources deleted!" -ForegroundColor Green

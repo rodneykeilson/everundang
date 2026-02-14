@@ -19,6 +19,16 @@
 
 EverUndang is a full-stack web application for creating and managing digital invitations. It includes a public invitation page, owner dashboard, admin console, RSVP handling, guestbook, gift ideas, data exports, and operational tooling for containerized and Kubernetes-based deployments.
 
+## Screenshots
+
+### Landing Page
+
+![Landing Page](screenshots/landing.png)
+
+### Admin Dashboard
+
+![Admin Dashboard](screenshots/admin_dashboard.png)
+
 ## Core Features
 
 - Invitation creation with customizable event and couple details

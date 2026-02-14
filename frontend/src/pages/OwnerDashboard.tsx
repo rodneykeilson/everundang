@@ -1,6 +1,26 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { 
+  Copy, 
+  MessageCircle, 
+  Send, 
+  Mail, 
+  Loader2, 
+  QrCode, 
+  Pencil, 
+  ClipboardList, 
+  Zap, 
+  BarChart3, 
+  Package, 
+  RefreshCw, 
+  AlertCircle,
+  Key,
+  Lock,
+  Inbox,
+  Eye,
+  Lightbulb
+} from "lucide-react";
 import { useToast } from "../hooks/useToast";
 import { useLocale } from "../hooks/useLocale";
 import {
@@ -12,6 +32,8 @@ import {
   rotateOwnerLink,
   updateInvitationOwner,
   checkInGuest,
+  getAnalytics,
+  getExportDownloadUrl,
 } from "../api/client";
 import type {
   GeneratedGuestCode,
@@ -174,6 +196,16 @@ const OwnerDashboard: React.FC = () => {
       return getInvitationRsvpManage(id, ownerToken);
     },
     enabled: Boolean(id && ownerToken && activeTab === "rsvp"),
+    retry: false,
+  });
+
+  const analyticsQuery = useQuery({
+    queryKey: ["owner-invitation-analytics", id, ownerToken],
+    queryFn: async () => {
+      if (!id || !ownerToken) return null;
+      return getAnalytics(id, ownerToken);
+    },
+    enabled: Boolean(id && ownerToken && activeTab === "analytics"),
     retry: false,
   });
 
@@ -1117,6 +1149,85 @@ const OwnerDashboard: React.FC = () => {
       );
     }
 
+    if (activeTab === "analytics") {
+      const stats = analyticsQuery.data;
+      return (
+        <div className="owner-analytics">
+          <div className="owner-card">
+            <h3>Engagement Overview</h3>
+            <p className="hint">Track how many people are viewing and responding to your invitation.</p>
+            
+            <div className="stats-row" style={{ marginTop: 24, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
+              <div className="stat-card" style={{ padding: 20, background: "var(--color-surface-alt)", borderRadius: 12 }}>
+                <span className="stat-label" style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}>Total Visitors</span>
+                <div className="stat-value" style={{ fontSize: "2rem", fontWeight: 700, marginTop: 8 }}>{stats?.pageViews || 0}</div>
+              </div>
+              <div className="stat-card" style={{ padding: 20, background: "var(--color-surface-alt)", borderRadius: 12 }}>
+                <span className="stat-label" style={{ color: "var(--color-text-muted)", fontSize: "0.875rem" }}>RSVP Rate</span>
+                <div className="stat-value" style={{ fontSize: "2rem", fontWeight: 700, marginTop: 8 }}>{stats?.conversionRate ? `${(stats.conversionRate * 100).toFixed(1)}%` : "0%"}</div>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 32 }}>
+              <h4>Daily Traffic</h4>
+              <p className="hint">Coming soon: Interactive charts to visualize your traffic trends.</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (activeTab === "export") {
+      return (
+        <div className="owner-export">
+          <section className="owner-card">
+            <h3>Export Data</h3>
+            <p className="hint">Download your guest list and RSVP data for use in spreadsheets or mailing labels.</p>
+            
+            <div className="export-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginTop: 24 }}>
+              <div className="export-card" style={{ padding: 20, border: "1px solid var(--color-border)", borderRadius: 12 }}>
+                <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
+                  <Package className="text-brand" size={24} />
+                  <strong>RSVP List (CSV)</strong>
+                </div>
+                <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: 16 }}>
+                  Standard Microsoft Excel compatible format with all guest names and responses.
+                </p>
+                <a 
+                  href={getExportDownloadUrl(id!, "csv", ownerToken)} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="ui-button primary"
+                  style={{ textDecoration: "none", width: "100%", display: "flex", justifyContent: "center" }}
+                >
+                  Download CSV
+                </a>
+              </div>
+
+              <div className="export-card" style={{ padding: 20, border: "1px solid var(--color-border)", borderRadius: 12 }}>
+                <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 12 }}>
+                  <Inbox className="text-brand" size={24} />
+                  <strong>Full Report (JSON)</strong>
+                </div>
+                <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: 16 }}>
+                  Detailed data structure including guestbook messages and analytics metrics.
+                </p>
+                <a 
+                  href={getExportDownloadUrl(id!, "json", ownerToken)} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="ui-button"
+                  style={{ textDecoration: "none", width: "100%", display: "flex", justifyContent: "center" }}
+                >
+                  Download JSON
+                </a>
+              </div>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
     return (
       <div className="owner-placeholder">
         <p>
@@ -1131,7 +1242,9 @@ const OwnerDashboard: React.FC = () => {
     if (!ownerToken) {
       return (
         <div className="empty-state">
-          <div className="empty-state__icon">🔐</div>
+          <div className="empty-state__icon">
+            <Lock size={48} />
+          </div>
           <h3 className="empty-state__title">Missing owner key</h3>
           <p className="empty-state__text">Please use the private link shared when the invitation was created.</p>
         </div>
@@ -1141,7 +1254,9 @@ const OwnerDashboard: React.FC = () => {
     if (invitationQuery.isLoading) {
       return (
         <div className="empty-state">
-          <div className="empty-state__icon">⏳</div>
+          <div className="empty-state__icon">
+            <Loader2 className="animate-spin" size={48} />
+          </div>
           <h3 className="empty-state__title">{t("loading")}</h3>
         </div>
       );
@@ -1150,7 +1265,9 @@ const OwnerDashboard: React.FC = () => {
     if (errorMessage) {
       return (
         <div className="empty-state">
-          <div className="empty-state__icon">❌</div>
+          <div className="empty-state__icon">
+            <AlertCircle size={48} />
+          </div>
           <h3 className="empty-state__title">{t("error")}</h3>
           <p className="empty-state__text">{errorMessage}</p>
         </div>
@@ -1160,7 +1277,9 @@ const OwnerDashboard: React.FC = () => {
     if (!invitation) {
       return (
         <div className="empty-state">
-          <div className="empty-state__icon">📭</div>
+          <div className="empty-state__icon">
+            <Inbox size={48} />
+          </div>
           <h3 className="empty-state__title">Invitation not found</h3>
         </div>
       );
@@ -1191,19 +1310,19 @@ const OwnerDashboard: React.FC = () => {
             <button
               type="button"
               className="quick-action-btn"
-              style={{ padding: "6px 12px", fontSize: "0.875rem" }}
+              style={{ padding: "6px 12px", fontSize: "0.875rem", display: "flex", alignItems: "center", gap: 6 }}
               onClick={handlePreviewPublic}
               disabled={currentStatus !== "published"}
               title={currentStatus !== "published" ? "Publish the invitation to preview" : ""}
             >
-              👁️ Preview
+              <Eye size={14} /> Preview
             </button>
           </div>
         </div>
 
         {currentStatus !== "published" && (
-          <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: 16 }}>
-            💡 Publish your invitation to preview and share the public page.
+          <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            <Lightbulb size={16} /> Publish your invitation to preview and share the public page.
           </p>
         )}
         {feedback && <p className="owner-feedback" style={{ marginBottom: 16 }}>{feedback}</p>}
@@ -1211,26 +1330,26 @@ const OwnerDashboard: React.FC = () => {
         {/* Quick Actions Bar */}
         <div className="quick-actions" style={{ marginBottom: 24 }}>
           <button type="button" className="quick-action-btn" onClick={() => handleCopy(shareUrl, "Public link")}>
-            📋 Copy Link
+            <Copy size={16} /> Copy Link
           </button>
           {shareLinks.map((item) => (
             <a key={item.label} href={item.href} target="_blank" rel="noopener" className="quick-action-btn">
-              {item.label === "WhatsApp" ? "💬" : item.label === "Telegram" ? "✈️" : "📧"} {item.label}
+              {item.label === "WhatsApp" ? <MessageCircle size={16} /> : item.label === "Telegram" ? <Send size={16} /> : <Mail size={16} />} {item.label}
             </a>
           ))}
           <button type="button" onClick={handleDownloadQr} className="quick-action-btn" disabled={qrDownloading}>
-            {qrDownloading ? "⏳" : "📱"} QR Code
+            {qrDownloading ? <Loader2 size={16} className="animate-spin" /> : <QrCode size={16} />} QR Code
           </button>
         </div>
 
         {/* Tabs */}
         <div className="tabs" style={{ marginBottom: 24 }}>
           {[
-            { value: "design", label: "✏️ Design", icon: "✏️" },
-            { value: "rsvp", label: "📋 RSVP", icon: "📋" },
-            { value: "live", label: "🎉 Live", icon: "🎉" },
-            { value: "analytics", label: "📊 Analytics", icon: "📊" },
-            { value: "export", label: "📦 Export", icon: "📦" },
+            { value: "design", label: "Design", icon: <Pencil size={16} /> },
+            { value: "rsvp", label: "RSVP", icon: <ClipboardList size={16} /> },
+            { value: "live", label: "Live", icon: <Zap size={16} /> },
+            { value: "analytics", label: "Analytics", icon: <BarChart3 size={16} /> },
+            { value: "export", label: "Export", icon: <Package size={16} /> },
           ].map((tab) => (
             <button
               key={tab.value}
@@ -1238,6 +1357,7 @@ const OwnerDashboard: React.FC = () => {
               className={`tab ${activeTab === tab.value ? "tab--active" : ""}`}
               onClick={() => setActiveTab(tab.value as DashboardTab)}
             >
+              <span className="tab-icon">{tab.icon}</span>
               {tab.label}
             </button>
           ))}
@@ -1250,8 +1370,8 @@ const OwnerDashboard: React.FC = () => {
 
         {/* Owner Link Section - Collapsible Footer */}
         <details style={{ marginTop: 24 }}>
-          <summary style={{ cursor: "pointer", fontWeight: 500, padding: "12px 0" }}>
-            🔑 Owner Link Settings
+          <summary style={{ cursor: "pointer", fontWeight: 500, padding: "12px 0", display: "flex", alignItems: "center", gap: 8 }}>
+            <Key size={16} /> Owner Link Settings
           </summary>
           <div className="dashboard-card" style={{ marginTop: 12 }}>
             <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: 12 }}>
@@ -1262,10 +1382,18 @@ const OwnerDashboard: React.FC = () => {
             </code>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               <button type="button" className="quick-action-btn" onClick={() => handleCopy(ownerLink, "Owner link")}>
-                📋 Copy
+                <Copy size={16} /> Copy
               </button>
               <button type="button" className="quick-action-btn" onClick={handleRotateLink} disabled={rotatingLink}>
-                {rotatingLink ? "⏳ Rotating…" : "🔄 Regenerate"}
+                {rotatingLink ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" /> Rotating…
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw size={16} /> Regenerate
+                  </>
+                )}
               </button>
             </div>
           </div>

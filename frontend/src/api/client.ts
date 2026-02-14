@@ -205,6 +205,18 @@ export function checkInGuest(invitationId: string, token: string, ownerToken: st
   });
 }
 
+export function getAnalytics(invitationId: string, ownerToken: string) {
+  return request<any>(`/api/analytics/${invitationId}`, {
+    headers: withOwnerHeaders(ownerToken),
+  });
+}
+
+export function getExportDownloadUrl(invitationId: string, format: "csv" | "json", ownerToken: string) {
+  // Return the full URL for use in <a> tags or window.open
+  const baseUrl = import.meta.env.VITE_API_URL || "";
+  return `${baseUrl}/api/exports/${invitationId}/rsvps/${format}?ownerToken=${encodeURIComponent(ownerToken)}`;
+}
+
 export function fetchInvitationQr(id: string, ownerToken: string) {
   return request<Blob>(`/api/invitations/${id}/manage/qrcode`, {
     headers: withOwnerHeaders(ownerToken),

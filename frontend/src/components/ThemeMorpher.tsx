@@ -1,14 +1,16 @@
 import React, { useState } from "react";
+import { Sparkles } from "lucide-react";
 import { useLocale } from "../hooks/useLocale";
 import "./ThemeMorpher.css";
 
 const VIBES = [
   {
-    name: "Default",
+    name: "Modern Dark",
     vars: {
-      "--color-brand": "#6366f1",
-      "--color-brand-strong": "#ec4899",
-      "--color-bg": "#f8fafc",
+      "--color-brand": "#a1c2dd",
+      "--color-brand-strong": "#c157b5",
+      "--color-bg": "#09121b",
+      "--color-text": "#e1ecf4",
       "--font-sans": '"Inter", sans-serif',
     },
   },
@@ -71,7 +73,9 @@ const ThemeMorpher: React.FC = () => {
 
   return (
     <button className="theme-morpher" onClick={morph} title={t("morpherTitle")}>
-      <span className="morpher-icon">✨</span>
+      <span className="morpher-icon">
+        <Sparkles size={20} />
+      </span>
       <span className="morpher-label">{VIBES[currentVibe].name}</span>
     </button>
   );

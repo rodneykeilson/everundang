@@ -1,5 +1,6 @@
 import { useTheme } from "../hooks/useTheme";
 import { useLocale } from "../hooks/useLocale";
+import { Sun, Moon } from "lucide-react";
 
 const THEME_LABELS = {
   light: {
@@ -12,7 +13,11 @@ const THEME_LABELS = {
   },
 };
 
-export function ThemeToggle() {
+interface ThemeToggleProps {
+  hideLabel?: boolean;
+}
+
+export function ThemeToggle({ hideLabel }: ThemeToggleProps) {
   const { theme, toggleTheme } = useTheme();
   const { locale, t } = useLocale();
 
@@ -24,9 +29,12 @@ export function ThemeToggle() {
       className="ui-button subtle"
       onClick={toggleTheme}
       aria-label={`${t("themeLabel")}: ${modeLabel}`}
+      title={hideLabel ? modeLabel : undefined}
     >
-      <span aria-hidden="true">{theme === "light" ? "🌞" : "🌜"}</span>
-      <span className="ui-button__label">{modeLabel}</span>
+      <span aria-hidden="true" style={{ display: "flex", alignItems: "center" }}>
+        {theme === "light" ? <Sun size={18} /> : <Moon size={18} />}
+      </span>
+      {!hideLabel && <span className="ui-button__label">{modeLabel}</span>}
     </button>
   );
 }

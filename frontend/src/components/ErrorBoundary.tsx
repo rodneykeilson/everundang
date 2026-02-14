@@ -14,6 +14,7 @@
  */
 
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
+import { AlertTriangle } from "lucide-react";
 
 /**
  * Props for the ErrorBoundary component
@@ -172,7 +173,7 @@ const DefaultErrorFallback: React.FC<DefaultErrorFallbackProps> = ({
     <div className="error-boundary">
       <div className="error-boundary__content">
         <div className="error-boundary__icon" aria-hidden="true">
-          ⚠️
+          <AlertTriangle size={48} style={{ color: "var(--color-error)" }} />
         </div>
         <h2 className="error-boundary__title">Something went wrong</h2>
         <p className="error-boundary__message">

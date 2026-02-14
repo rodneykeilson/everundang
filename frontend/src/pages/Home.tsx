@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "react-router-dom";
 import Header from "../components/Header";
@@ -119,7 +120,10 @@ const Home: React.FC = () => {
                         key={invitation.id}
                         className="template-card"
                       >
-                        <span className="badge badge--live">✨ Live</span>
+                        <span className="badge badge--live">
+                          <Sparkles size={12} style={{ marginRight: 4 }} />
+                          Live
+                        </span>
                         <h3>{invitation.headline}</h3>
                         <p>
                           {invitation.couple.brideName} &amp; {invitation.couple.groomName}

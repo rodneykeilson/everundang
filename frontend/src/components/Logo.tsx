@@ -1,4 +1,8 @@
+import { useId } from "react";
+
 const Logo: React.FC<{ size?: number }> = ({ size = 40 }) => {
+  const gradientId = useId();
+
   return (
     <span className="logo-mark" aria-label="EverUndang">
       <svg
@@ -10,21 +14,21 @@ const Logo: React.FC<{ size?: number }> = ({ size = 40 }) => {
         role="img"
       >
         <defs>
-          <linearGradient id="everundangGradient" x1="0" y1="48" x2="48" y2="0" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#6366F1" />
-            <stop offset="1" stopColor="#EC4899" />
+          <linearGradient id={gradientId} x1="0" y1="48" x2="48" y2="0" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#a1c2dd" />
+            <stop offset="1" stopColor="#c157b5" />
           </linearGradient>
         </defs>
-        <rect width="48" height="48" rx="14" fill="url(#everundangGradient)" opacity="0.18" />
+        <rect width="48" height="48" rx="14" fill={`url(#${gradientId})`} opacity="0.18" />
         <path
           d="M12 30.5C16.2 23.8 24.5 16 35 18.5"
-          stroke="url(#everundangGradient)"
+          stroke={`url(#${gradientId})`}
           strokeWidth="3"
           strokeLinecap="round"
         />
         <path
           d="M14 17c2.5 3 5.5 5 10 5s7.5-2 10-5"
-          stroke="url(#everundangGradient)"
+          stroke={`url(#${gradientId})`}
           strokeWidth="2.5"
           strokeLinecap="round"
         />

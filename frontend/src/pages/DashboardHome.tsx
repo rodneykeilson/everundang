@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { User, BookOpen, Settings, Mail, Plus, Palette, BarChart3, Lock, Heart, FileText } from "lucide-react";
 import { getInvitations } from "../api/client";
 import type { Invitation } from "../types";
 import { useLocale } from "../hooks/useLocale";
@@ -30,7 +31,7 @@ const DashboardHome: React.FC = () => {
       {/* Page Title */}
       <div className="page-title">
         <h1 className="page-title__main">
-          👋 {t("welcomeBack")}
+          <User size={32} className="text-accent" /> {t("welcomeBack")}
         </h1>
         <p className="page-title__sub">
           {t("dashboardSubtitle")}
@@ -40,7 +41,7 @@ const DashboardHome: React.FC = () => {
       {/* Quick Actions */}
       <div className="quick-actions">
         <Link to="/new" className="quick-action-btn quick-action-btn--primary">
-          ✨ {t("heroPrimaryCta")}
+          <Plus size={18} /> {t("heroPrimaryCta")}
         </Link>
         <button 
           type="button" 
@@ -50,10 +51,10 @@ const DashboardHome: React.FC = () => {
             templatesSection?.scrollIntoView({ behavior: "smooth", block: "start" });
           }}
         >
-          📚 {t("navTemplates")}
+          <BookOpen size={18} /> {t("navTemplates")}
         </button>
         <Link to="/admin" className="quick-action-btn">
-          ⚙️ {t("navAdmin")}
+          <Settings size={18} /> {t("navAdmin")}
         </Link>
       </div>
 
@@ -94,7 +95,7 @@ const DashboardHome: React.FC = () => {
           </div>
         ) : invitations.length === 0 ? (
           <div className="empty-state animate-slide-up">
-            <div className="empty-state__icon">💌</div>
+            <div className="empty-state__icon"><Mail size={64} /></div>
             <h3 className="empty-state__title">{t("emptyInvitationsTitle")}</h3>
             <p className="empty-state__text">{t("emptyInvitationsDesc")}</p>
             <Link to="/new" className="ui-button primary">
@@ -113,7 +114,7 @@ const DashboardHome: React.FC = () => {
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   <div className="invitation-card__image">
-                    💒
+                    <Heart size={32} style={{ color: "var(--color-brand-muted)" }} />
                   </div>
                   <div className="invitation-card__body">
                     <h3 className="invitation-card__title">{invitation.headline}</h3>
@@ -127,7 +128,9 @@ const DashboardHome: React.FC = () => {
                           {t("statusPublished")}
                         </>
                       ) : (
-                        <>📝 {t("statusDraft")}</>
+                        <>
+                          <FileText size={12} /> {t("statusDraft")}
+                        </>
                       )}
                     </span>
                   </div>
@@ -185,7 +188,7 @@ const DashboardHome: React.FC = () => {
           <div className="dashboard-card animate-slide-up">
             <div className="dashboard-card__header">
               <h3 className="dashboard-card__title">
-                <span className="dashboard-card__icon">🎨</span>
+                <span className="dashboard-card__icon"><Palette size={20} /></span>
                 {t("featureTemplates")}
               </h3>
             </div>
@@ -195,7 +198,7 @@ const DashboardHome: React.FC = () => {
           <div className="dashboard-card animate-slide-up">
             <div className="dashboard-card__header">
               <h3 className="dashboard-card__title">
-                <span className="dashboard-card__icon">📊</span>
+                <span className="dashboard-card__icon"><BarChart3 size={20} /></span>
                 {t("featureAnalytics")}
               </h3>
             </div>
@@ -205,7 +208,7 @@ const DashboardHome: React.FC = () => {
           <div className="dashboard-card animate-slide-up">
             <div className="dashboard-card__header">
               <h3 className="dashboard-card__title">
-                <span className="dashboard-card__icon">🔒</span>
+                <span className="dashboard-card__icon"><Lock size={20} /></span>
                 {t("featureSecurity")}
               </h3>
             </div>

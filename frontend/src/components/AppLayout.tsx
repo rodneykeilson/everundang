@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { Home, Sparkles, Settings, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import Logo from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -27,9 +28,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   };
 
   const navItems = [
-    { path: "/", icon: "🏠", label: t("navHome") },
-    { path: "/new", icon: "✨", label: t("heroPrimaryCta") },
-    { path: "/admin", icon: "⚙️", label: t("navAdmin") },
+    { path: "/", icon: <Home size={20} />, label: t("navHome") },
+    { path: "/new", icon: <Sparkles size={20} />, label: t("heroPrimaryCta") },
+    { path: "/admin", icon: <Settings size={20} />, label: t("navAdmin") },
   ];
 
   return (
@@ -41,14 +42,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
-          <span className={`hamburger ${mobileMenuOpen ? "hamburger--open" : ""}`}>
-            <span />
-            <span />
-            <span />
-          </span>
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
         <Link to="/" className="mobile-logo">
-          <Logo />
+          <Logo size={32} />
         </Link>
         <div className="mobile-controls">
           <ThemeToggle />
@@ -59,14 +56,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <aside className={`sidebar ${mobileMenuOpen ? "sidebar--open" : ""}`}>
         <div className="sidebar__header">
           <Link to="/" className="sidebar__logo">
-            <Logo />
+            <Logo size={sidebarCollapsed ? 30 : 34} />
           </Link>
           <button
             className="sidebar__collapse-btn"
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            {sidebarCollapsed ? "→" : "←"}
+            {sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
         </div>
 
@@ -76,6 +73,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               key={item.path}
               to={item.path}
               className={`sidebar__link ${isActive(item.path) ? "sidebar__link--active" : ""}`}
+              title={sidebarCollapsed ? item.label : undefined}
             >
               <span className="sidebar__icon">{item.icon}</span>
               <span className="sidebar__label">{item.label}</span>
@@ -85,12 +83,22 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
         <div className="sidebar__footer">
           <div className="sidebar__controls">
-            <LanguageSwitcher />
-            <ThemeToggle />
+            {!sidebarCollapsed && (
+              <div className="sidebar__control-item">
+                <span className="sidebar__control-label">LANGUAGE</span>
+                <LanguageSwitcher />
+              </div>
+            )}
+            <div className="sidebar__control-item">
+              {!sidebarCollapsed && <span className="sidebar__control-label">THEME</span>}
+              <ThemeToggle hideLabel={sidebarCollapsed} />
+            </div>
           </div>
-          <div className="sidebar__version">
-            <span className="sidebar__label">v1.0.0</span>
-          </div>
+          {!sidebarCollapsed && (
+            <div className="sidebar__version">
+              v1.0.0
+            </div>
+          )}
         </div>
       </aside>
 

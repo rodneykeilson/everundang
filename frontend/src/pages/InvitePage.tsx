@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Heart, Calendar, MapPin, Share2, Mail, Gift, AlertCircle, Lock, MessageSquare, Camera } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import utc from "dayjs/plugin/utc";
@@ -124,7 +125,7 @@ const RsvpSection: React.FC<RsvpSectionProps> = ({ slug, invitation, description
   const mutation = useMutation({
     mutationFn: (payload: Parameters<typeof submitRsvp>[1]) => submitRsvp(slug, payload),
     onSuccess: (data) => {
-      toast.success("RSVP submitted successfully! 🎉");
+      toast.success("RSVP submitted successfully!");
       setFeedback("RSVP saved. Thank you!");
       setError(null);
       setStats(data.stats);
@@ -339,7 +340,7 @@ const InvitePage: React.FC = () => {
       setGuestName("");
       setMessage("");
       setSubmitError("");
-      toast.success("Message posted successfully! 🎉");
+      toast.success("Message posted successfully!");
       await queryClient.invalidateQueries({ queryKey: ["invitation", slug] });
     },
     onError: (error: unknown) => {
@@ -531,7 +532,9 @@ const InvitePage: React.FC = () => {
     return (
       <div className="invite-compact" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: 16 }}>💌</div>
+          <div style={{ fontSize: "3rem", marginBottom: 16 }}>
+            <Heart size={48} className="animate-pulse" style={{ color: "var(--color-brand)", margin: "0 auto" }} />
+          </div>
           <p>{t("loadingInvitation")}</p>
         </div>
       </div>
@@ -546,7 +549,9 @@ const InvitePage: React.FC = () => {
     return (
       <div className="invite-compact" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: 16 }}>❌</div>
+          <div style={{ fontSize: "3rem", marginBottom: 16 }}>
+            <AlertCircle size={48} style={{ color: "var(--color-error)", margin: "0 auto" }} />
+          </div>
           <p>{notFoundMessage}</p>
         </div>
       </div>
@@ -557,7 +562,9 @@ const InvitePage: React.FC = () => {
     return (
       <div className="invite-compact" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: 16 }}>🔒</div>
+          <div style={{ fontSize: "3rem", marginBottom: 16 }}>
+            <Lock size={48} style={{ color: "var(--color-text-muted)", margin: "0 auto" }} />
+          </div>
           <p>{t("invitationNotPublished")}</p>
         </div>
       </div>
@@ -591,8 +598,8 @@ const InvitePage: React.FC = () => {
           {invitation.couple.brideName} &amp; {invitation.couple.groomName}
         </h1>
         <p style={{ opacity: 0.9, margin: "0 0 8px" }}>{invitation.headline}</p>
-        <p style={{ fontSize: "0.95rem", opacity: 0.8 }}>
-          📅 {formatDate(invitation.event.date)} {eventTime ? `· ${eventTime} WIB` : ""}
+        <p style={{ fontSize: "0.95rem", opacity: 0.8, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+          <Calendar size={16} /> {formatDate(invitation.event.date)} {eventTime ? `· ${eventTime} WIB` : ""}
         </p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 20, flexWrap: "wrap" }}>
           {invitation.event.mapLink && (
@@ -601,13 +608,13 @@ const InvitePage: React.FC = () => {
               className="ui-button primary"
               target="_blank"
               rel="noreferrer"
-              style={{ fontSize: "0.9rem" }}
+              style={{ fontSize: "0.9rem", display: "flex", alignItems: "center", gap: 6 }}
             >
-              📍 Open Maps
+              <MapPin size={16} /> Open Maps
             </a>
           )}
-          <button type="button" className="ui-button subtle" onClick={handleShare} style={{ fontSize: "0.9rem" }}>
-            📤 Share
+          <button type="button" className="ui-button subtle" onClick={handleShare} style={{ fontSize: "0.9rem", display: "flex", alignItems: "center", gap: 6 }}>
+            <Share2 size={16} /> Share
           </button>
         </div>
         {shareStatus && <p style={{ marginTop: 12, fontSize: "0.85rem" }}>{shareStatus}</p>}
@@ -630,7 +637,7 @@ const InvitePage: React.FC = () => {
           border: "1px solid var(--color-border)",
         }}>
           <h2 style={{ fontSize: "1.1rem", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-            📍 Event Details
+            <MapPin size={20} style={{ color: "var(--color-brand)" }} /> Event Details
           </h2>
           <div style={{ display: "grid", gap: 12 }}>
             <div>
@@ -655,8 +662,8 @@ const InvitePage: React.FC = () => {
             )}
           </div>
           <div style={{ display: "flex", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
-            <button type="button" className="ui-button subtle" onClick={handleDownloadCalendar} style={{ fontSize: "0.85rem" }}>
-              📅 Save to Calendar
+            <button type="button" className="ui-button subtle" onClick={handleDownloadCalendar} style={{ fontSize: "0.85rem", display: "flex", alignItems: "center", gap: 6 }}>
+              <Calendar size={14} /> Save to Calendar
             </button>
             {googleCalendarUrl && (
               <a className="ui-button subtle" href={googleCalendarUrl} target="_blank" rel="noreferrer" style={{ fontSize: "0.85rem" }}>
@@ -674,7 +681,7 @@ const InvitePage: React.FC = () => {
           border: "1px solid var(--color-border)",
         }}>
           <h2 style={{ fontSize: "1.1rem", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-            ✉️ RSVP
+            <Mail size={20} style={{ color: "var(--color-brand)" }} /> RSVP
           </h2>
           <RsvpSection
             slug={invitation.slug}
@@ -691,7 +698,7 @@ const InvitePage: React.FC = () => {
           border: "1px solid var(--color-border)",
         }}>
           <h2 style={{ fontSize: "1.1rem", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-            🎁 Gift Ideas
+            <Gift size={20} style={{ color: "var(--color-brand)" }} /> Gift Ideas
           </h2>
           {giftSuggestionsQuery.isLoading ? (
             <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem" }}>{t("loadingGiftIdeas")}</p>
@@ -724,7 +731,7 @@ const InvitePage: React.FC = () => {
           border: "1px solid var(--color-border)",
         }}>
           <h2 style={{ fontSize: "1.1rem", marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
-            💬 {t("guestbookSectionTitle")}
+            <MessageSquare size={20} style={{ color: "var(--color-brand)" }} /> {t("guestbookSectionTitle")}
           </h2>
           <form
             onSubmit={(event) => {
@@ -767,7 +774,7 @@ const InvitePage: React.FC = () => {
                 </div>
               ))
             ) : (
-              <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem" }}>No messages yet. Share your blessings! 🎉</p>
+              <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem" }}>No messages yet. Share your blessings!</p>
             )}
           </div>
         </div>
@@ -785,8 +792,13 @@ const InvitePage: React.FC = () => {
                 borderRadius: 12,
                 fontWeight: 500,
                 border: "1px solid var(--color-border)",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
               }}>
-                {section.type === "loveStory" && "💕 "}{section.type === "gallery" && "📷 "}{section.title}
+                {section.type === "loveStory" && <Heart size={18} />}
+                {section.type === "gallery" && <Camera size={18} />}
+                {section.title}
               </summary>
               <div style={{
                 padding: 20,

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Settings, ExternalLink, Trash2, RefreshCw } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   deleteInvitationAdmin,
@@ -267,7 +268,9 @@ const AdminConsole: React.FC = () => {
   return (
     <div className="admin-console">
       <div className="page-title">
-        <h1 className="page-title__main">⚙️ {t("navAdmin")}</h1>
+        <h1 className="page-title__main">
+          <Settings size={28} className="inline-icon" /> {t("navAdmin")}
+        </h1>
         <p className="page-title__sub">
           Review every invitation in the system, prune spam submissions, and jump into public links quickly.
         </p>
@@ -319,6 +322,7 @@ const AdminConsole: React.FC = () => {
                   onClick={() => invitationsQuery.refetch()}
                   disabled={invitationsQuery.isFetching}
                 >
+                  <RefreshCw size={16} className={invitationsQuery.isFetching ? "animate-spin" : ""} />
                   {invitationsQuery.isFetching ? "Refreshing…" : "Refresh list"}
                 </button>
               </div>
@@ -357,8 +361,8 @@ const AdminConsole: React.FC = () => {
                         const statusLabel = invitation.status ?? (invitation.isPublished ? "published" : "draft");
                         return (
                           <tr key={invitation.id}>
-                            <td>
-                              <div>
+                            <td style={{ maxWidth: "300px" }}>
+                              <div style={{ wordBreak: "break-word" }}>
                                 <strong>{invitation.headline}</strong>
                                 <div className="hint">Created {formatDate(invitation.createdAt)}</div>
                               </div>
@@ -406,16 +410,20 @@ const AdminConsole: React.FC = () => {
                                   type="button"
                                   className="link-btn"
                                   onClick={() => handleOpenPublic(invitation)}
+                                  title="View public page"
                                 >
-                                  View public
+                                  <ExternalLink size={16} />
+                                  <span className="sr-only">View public</span>
                                 </button>
                                 <button
                                   type="button"
                                   className="link-btn danger"
                                   onClick={() => handleDelete(invitation)}
                                   disabled={deleteMutation.isPending}
+                                  title="Delete invitation"
                                 >
-                                  {deleteMutation.isPending ? "Deleting…" : "Delete"}
+                                  <Trash2 size={16} />
+                                  <span className="sr-only">{deleteMutation.isPending ? "Deleting…" : "Delete"}</span>
                                 </button>
                               </div>
                               {rowMessages[invitation.id] && (

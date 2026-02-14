@@ -1,20 +1,21 @@
+import { Palette, BarChart2, Lock } from "lucide-react";
 import { useLocale } from "../hooks/useLocale";
 import type { TranslationKey } from "../i18n";
 
-const featureList: Array<{ key: TranslationKey; icon: string; descriptionKey: TranslationKey }> = [
+const featureList: Array<{ key: TranslationKey; icon: React.ReactNode; descriptionKey: TranslationKey }> = [
   {
     key: "featureTemplates",
-    icon: "🎨",
+    icon: <Palette size={24} />,
     descriptionKey: "featureTemplatesDesc",
   },
   {
     key: "featureAnalytics",
-    icon: "📊",
+    icon: <BarChart2 size={24} />,
     descriptionKey: "featureAnalyticsDesc",
   },
   {
     key: "featureSecurity",
-    icon: "🔒",
+    icon: <Lock size={24} />,
     descriptionKey: "featureSecurityDesc",
   },
 ];

@@ -282,7 +282,7 @@ export const en = {
   adminConnected: "Connected to admin dashboard",
 
   // Guestbook
-  guestbookEmptyInviting: "No messages yet. Share your blessings! 🎉",
+  guestbookEmptyInviting: "No messages yet. Share your blessings!",
 
   // Demo button
   heroSecondaryCtaLong: "View sample invitation",

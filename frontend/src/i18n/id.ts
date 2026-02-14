@@ -282,7 +282,7 @@ export const id = {
   adminConnected: "Terhubung ke dashboard admin",
 
   // Guestbook
-  guestbookEmptyInviting: "Belum ada pesan. Bagikan ucapan Anda! 🎉",
+  guestbookEmptyInviting: "Belum ada pesan. Bagikan ucapan Anda!",
 
   // Demo button
   heroSecondaryCtaLong: "Lihat contoh undangan",

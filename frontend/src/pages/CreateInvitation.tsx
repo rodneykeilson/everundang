@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { Sparkles } from "lucide-react";
 import { createInvitation } from "../api/client";
 import type { InvitationFormData } from "../types";
 import { useLocale } from "../hooks/useLocale";
@@ -197,7 +198,9 @@ const CreateInvitation: React.FC = () => {
   return (
     <>
       <div className="page-title">
-        <h1 className="page-title__main">✨ {t("createTitle")}</h1>
+        <h1 className="page-title__main">
+          <Sparkles size={32} className="text-accent" /> {t("createTitle")}
+        </h1>
         <p className="page-title__sub">{t("createLead")}</p>
       </div>
 

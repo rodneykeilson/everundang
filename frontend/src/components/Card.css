@@ -10,26 +10,25 @@
    ============================================================================ */
 
 :root {
-  --card-bg: #ffffff;
-  --card-text: #1a1a1a;
-  --card-text-secondary: #6b7280;
-  --card-border: #e5e7eb;
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  --card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  --card-radius: 16px;
+  --card-bg: var(--color-surface);
+  --card-text: var(--color-text);
+  --card-text-secondary: var(--color-text-muted);
+  --card-border: var(--color-border);
+  --card-shadow: var(--shadow-md);
+  --card-hover-shadow: var(--shadow-lg);
+  --card-radius: var(--radius-lg);
   --card-padding: 1.5rem;
-  --card-icon-gradient: linear-gradient(135deg, #fff1d6, #ffdede);
+  --card-icon-gradient: linear-gradient(135deg, var(--color-brand), var(--color-brand-strong));
 }
 
 /* Dark mode */
 .dark {
-  --card-bg: #262626;
-  --card-text: #f3f4f6;
-  --card-text-secondary: #9ca3af;
-  --card-border: #374151;
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  --card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-  --card-icon-gradient: linear-gradient(135deg, rgba(255, 241, 214, 0.2), rgba(255, 222, 222, 0.2));
+  --card-bg: var(--color-surface);
+  --card-text: var(--color-text);
+  --card-text-secondary: var(--color-text-muted);
+  --card-border: var(--color-border);
+  --card-shadow: var(--shadow-md);
+  --card-hover-shadow: var(--shadow-lg);
 }
 
 /* ============================================================================

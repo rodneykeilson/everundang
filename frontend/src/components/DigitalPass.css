@@ -1,26 +1,26 @@
 .digital-pass {
-  background: white;
-  color: #0f172a;
+  background: var(--color-surface);
+  color: var(--color-text);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
   max-width: 340px;
   margin: 2rem auto;
   font-family: var(--font-sans);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-border);
 }
 
 .digital-pass__header {
-  background: #0f172a;
-  color: white;
+  background: var(--color-secondary);
+  color: var(--color-text);
   padding: 24px;
   text-align: center;
 }
 
 .digital-pass__badge {
   display: inline-block;
-  background: #3b82f6;
-  color: white;
+  background: var(--color-brand);
+  color: var(--color-bg);
   font-size: 0.7rem;
   font-weight: 800;
   padding: 4px 12px;
@@ -32,14 +32,14 @@
 .digital-pass__header h3 {
   margin: 0;
   font-size: 1.2rem;
-  color: white;
+  color: var(--color-text);
 }
 
 .digital-pass__header p {
   margin: 4px 0 0;
   font-size: 0.85rem;
   opacity: 0.7;
-  color: white;
+  color: var(--color-text);
 }
 
 .digital-pass__body {
@@ -48,7 +48,7 @@
 }
 
 .digital-pass__qr {
-  background: #f8fafc;
+  background: var(--color-surface-alt);
   padding: 16px;
   border-radius: 16px;
   display: inline-block;
@@ -57,7 +57,6 @@
 
 .digital-pass__qr img {
   display: block;
-  mix-blend-mode: multiply;
 }
 
 .digital-pass__info {
@@ -70,7 +69,7 @@
 .digital-pass__info .label {
   font-size: 0.65rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--color-brand);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -78,25 +77,25 @@
 .digital-pass__info .value {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-text);
   margin-bottom: 12px;
 }
 
 .digital-pass__info .value.token {
   font-family: monospace;
   font-size: 1rem;
-  color: #3b82f6;
+  color: var(--color-brand);
 }
 
 .digital-pass__footer {
   padding: 16px 24px;
-  background: #f8fafc;
-  border-top: 1px dashed #e2e8f0;
+  background: var(--color-surface-alt);
+  border-top: 1px dashed var(--color-border);
   text-align: center;
 }
 
 .digital-pass__footer p {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin: 0;
 }
